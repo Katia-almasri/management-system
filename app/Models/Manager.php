@@ -57,6 +57,8 @@ class Manager extends Authenticatable
     public function trips(){
         return $this->hasMany('App\Models\Trip', 'manager_id', 'id');
     }
+
+
     ############################## End Relations ##############################
 
 

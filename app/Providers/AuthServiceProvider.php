@@ -28,7 +28,9 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::routes();
         Passport::tokensCan([
-            'managers' => 'managers guard Type'
+            'managers' => 'managers guard Type',
+            'sellingports' => 'sellingports guard Type',
+            'farms' => 'farms guard Type',
         ]);
 
     }

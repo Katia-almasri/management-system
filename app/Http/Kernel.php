@@ -78,16 +78,12 @@ class Kernel extends HttpKernel
         'is-deleted-selling-port-exist' => \App\Http\Middleware\isDeletedSellingPortExist::class,
         'is-farm-exist' => \App\Http\Middleware\isFarmExist::class,
         'is-deleted-farm-exist' => \App\Http\Middleware\isDeletedFarmExist::class,
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        'approved' => \App\Http\Middleware\CheckApproved::class,
+        'is-selling-port-order' => \App\Http\Middleware\isSellingPortOrderExist::class,
+
+
+
+
 
     ];
 }

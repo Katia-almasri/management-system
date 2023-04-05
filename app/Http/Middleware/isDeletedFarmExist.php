@@ -21,7 +21,7 @@ class isDeletedFarmExist
     public function handle(Request $request, Closure $next)
     {
         $farmId = $request->FarmId;
-        $deletedFarmExist = Farm::withTrashed()->find($farmId);
+        $deletedFarmExist = Farm::onlyTrashed()->find($farmId);
         if($deletedFarmExist!=null)
             return $next($request);
         return  $this -> returnError('error', 'المزرعة غير محذوفة أو غير متواجدة أصلاً');

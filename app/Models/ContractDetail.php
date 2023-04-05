@@ -5,21 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SellingOrderDetail extends Model
+class ContractDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'selling_order_details';
+
+    protected $table = 'contract_datails';
     protected $primaryKey='id';
     protected $fillable = [
-       'selling_order_id',
-       'amount',
-       'type'
+       'contract_id',
+       'type',
+       'amount'
     ];
 
      ############################## Begin Relations #############################
-    public function sellingOrder(){
-        return $this->belongsTo('App\Models\SellingOrder', 'selling_order_id', 'id');
+     public function contract(){
+        return $this->belongsTo('App\Models\Contract', 'contract_id', 'id');
     }
 
     ############################## End Relations ##############################

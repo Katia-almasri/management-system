@@ -55,6 +55,28 @@ return [
             'provider' => 'managers',
         ],
 
+        'sellingports' => [
+            'driver' => 'session',
+            'provider' => 'sellingports',
+        ],
+
+        'selling-port-api' => [
+            'driver' => 'passport',
+            'provider' => 'sellingports',
+        ],
+
+        'farms' => [
+            'driver' => 'session',
+            'provider' => 'farms',
+        ],
+
+        'farms-api' => [
+            'driver' => 'passport',
+            'provider' => 'farms',
+        ],
+
+
+
     ],
 
     /*
@@ -83,6 +105,16 @@ return [
         'managers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Manager::class,
+        ],
+
+        'sellingports' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SellingPort::class,
+        ],
+
+        'farms' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Farm::class,
         ],
 
         // 'users' => [

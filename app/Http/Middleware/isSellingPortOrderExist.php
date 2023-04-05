@@ -4,13 +4,14 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\salesPurchasingRequset;
 use App\Traits\validationTrait;
-use App\Models\SellingPort;
+use App\Models\SellingOrder;
 
-class isDeletedSellingPortExist
+class isSellingPortOrderExist
 {
-
     use validationTrait;
+
     /**
      * Handle an incoming request.
      *
@@ -20,10 +21,11 @@ class isDeletedSellingPortExist
      */
     public function handle(Request $request, Closure $next)
     {
-        $sellingPortId = $request->SellingId;
-        $deletedSellingPortExist = SellingPort::onlyTrashed()->find($sellingPortId);
-        if($deletedSellingPortExist!=null)
+        $SellingPortOrderId = $request->SellingPortOrderId;
+        $isExistSellingPortOrder = SellingOrder::find($SellingPortOrderId);
+        if($isExistSellingPortOrder!=null)
             return $next($request);
-        return  $this -> returnError('error', 'منفذ البيع غير محذوف أو غير متواجد أصلاً');
+        return  $this -> returnError('error', 'طلبية منفذ البيع غير متواجدة');
+
     }
 }
