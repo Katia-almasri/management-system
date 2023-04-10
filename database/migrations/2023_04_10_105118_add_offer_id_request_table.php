@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddAcceptToSellingorder extends Migration
+class AddOfferIdRequestTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class AddAcceptToSellingorder extends Migration
      */
     public function up()
     {
-        Schema::table('selling_orders', function (Blueprint $table) {
-            //
-            $table->boolean('accept');
+        //
+        Schema::table('sales_purchasing_requests', function (Blueprint $table) {
+            $table->unsignedBigInteger('offer_id')->after('selling_port_id')->nullable();
+            $table->foreign('offer_id')->references('id')->on('purchase_offers')->onDelete('cascade');
         });
     }
 
@@ -26,8 +27,6 @@ class AddAcceptToSellingorder extends Migration
      */
     public function down()
     {
-        Schema::table('selling_orders', function (Blueprint $table) {
-            //
-        });
+        //
     }
 }

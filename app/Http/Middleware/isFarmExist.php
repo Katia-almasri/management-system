@@ -24,6 +24,6 @@ class isFarmExist
         $isExistFarm = Farm::find($farmId);
         if($isExistFarm!=null)
             return $next($request);
-        return  $this -> returnError('error', 'المزرعة غير متواجدة');
+        return  $this -> returnError('error', 'المزرعة غير متوفرة');
     }
 }

@@ -7,14 +7,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\SellingPortController;
 use App\Http\Controllers\ContractController;
 
-Route::post('register',[SellingPortController::class, 'register']);
-Route::post('login',[SellingPortController::class, 'Login'])->name('Login');
+Route::post('register-selling-port',[SellingPortController::class, 'registerSellingPort']);
+Route::post('login-selling-port',[SellingPortController::class, 'LoginSellingPort'])->name('Login');
 
 Route::group( ['middleware' => ['auth:selling-port-api'] ],function(){
-        Route::get('display-request',[SellingPortController::class, 'displaySellingPortRequest']);
-        Route::post('add-request-to-company',[SellingPortController::class, 'addRequestFromCompany']);
+        Route::get('display-request',[SellingPortController::class, 'displayMySellingPortRequest']);
+        Route::post('add-request-to-company',[SellingPortController::class, 'addRequestToCompany']);
         //إضافة طلب عقد
-        Route::post('add-request-contract',[ContractController::class, 'addRequestContract']);
+        // Route::post('add-request-contract',[ContractController::class, 'addRequestContract']);
+        Route::delete('delete-my-request/{SellingPortOrderId}',[SellingPortController::class, 'deleteSellingPortOrder'])
+        ->middleware('is-selling-port-order-delete');
+
 
 });
 

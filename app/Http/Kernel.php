@@ -69,6 +69,8 @@ class Kernel extends HttpKernel
         'is-mechanism-coordinator' => \App\Http\Middleware\isMechanismCoordinator::class,
         'is-truck-exist' => \App\Http\Middleware\isTruckExist::class,
         'is-driver-exist' => \App\Http\Middleware\isDriverExist::class,
+        'is-deleted-farm-exist' => \App\Http\Middleware\isDeletedFarmExist::class,
+
         'is-deleted-truck-exist' => \App\Http\Middleware\isDeletedTruckExist::class,
         'is-deleted-driver-exist' => \App\Http\Middleware\isDeletedDriverExist::class,
         'is-trip-exist' => \App\Http\Middleware\isTripExist::class,
@@ -77,9 +79,18 @@ class Kernel extends HttpKernel
         'is-selling-port-exist' => \App\Http\Middleware\isSellingPortExist::class,
         'is-deleted-selling-port-exist' => \App\Http\Middleware\isDeletedSellingPortExist::class,
         'is-farm-exist' => \App\Http\Middleware\isFarmExist::class,
-        'is-deleted-farm-exist' => \App\Http\Middleware\isDeletedFarmExist::class,
-        'approved' => \App\Http\Middleware\CheckApproved::class,
         'is-selling-port-order' => \App\Http\Middleware\isSellingPortOrderExist::class,
+        'is-selling-port-order-delete' => \App\Http\Middleware\isSellingPortOrderDelete::class,
+        'is-request-accept' => \App\Http\Middleware\isAcceptFromCeo::class,
+        'is-production-manager' => \App\Http\Middleware\isProductionManager::class,
+        'is-deleted-offer' => \App\Http\Middleware\isDeletedOffer::class,
+
+
+
+
+
+
+
 
 
 

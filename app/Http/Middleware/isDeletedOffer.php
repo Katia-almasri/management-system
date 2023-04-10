@@ -5,11 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
-use App\Models\Driver;
+use App\Models\PurchaseOffer;
 
-class isDeletedDriverExist
+class isDeletedOffer
 {
-
     use validationTrait;
     /**
      * Handle an incoming request.
@@ -20,10 +19,10 @@ class isDeletedDriverExist
      */
     public function handle(Request $request, Closure $next)
     {
-        $driverId = $request->driverId;
-        $driverExist = Driver::onlyTrashed()->find($driverId);
-        if($driverExist!=null)
+        $offerId = $request->offerId;
+        $deletedOffer = PurchaseOffer::where([['id',$offerId],['farm_id',$request->user()->id]])->first();
+        if($deletedOffer!=null)
             return $next($request);
-        return  $this -> returnError('error', 'السائق غير متوفر');
+        return  $this -> returnError('error', 'الطلب غير متوفر');
     }
 }

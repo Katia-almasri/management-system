@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DetailPurchaseOffer extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-
-    protected $table = 'detail_purchase_offers';
+    protected $table = 'purchase_offers_detail';
     protected $primaryKey='id';
     protected $fillable = [
        'purchase_offers_id',
-       'weight',
        'type',
        'amount'
     ];

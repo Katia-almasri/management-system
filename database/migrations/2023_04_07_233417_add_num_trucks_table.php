@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DeleteManagerIdFromSellingOrders extends Migration
+class AddNumTrucksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class DeleteManagerIdFromSellingOrders extends Migration
      */
     public function up()
     {
-        Schema::table('selling_orders', function (Blueprint $table) {
+        //Truck number
+        Schema::table('trucks', function (Blueprint $table) {
             //
-
-            $table->dropConstrainedForeignId('manager_id');
+            $table->integer('truck_number');
+            $table->string('governorate_name');
         });
     }
 
@@ -27,9 +28,6 @@ class DeleteManagerIdFromSellingOrders extends Migration
      */
     public function down()
     {
-        Schema::table('selling_orders', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('manager_id');
-            $table->dropColumn('manager_id');
-        });
+        //
     }
 }

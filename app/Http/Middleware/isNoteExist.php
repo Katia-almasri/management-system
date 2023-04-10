@@ -24,6 +24,6 @@ class isNoteExist
         $isExistNote = Note::find($noteId);
         if($isExistNote!=null)
             return $next($request);
-        return  $this -> returnError('error', 'الملاحظة غير متواجدة');
+        return  $this -> returnError('error', 'الملاحظة غير متوفرة');
     }
 }

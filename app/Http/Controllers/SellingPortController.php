@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
 use App\Models\SellingPort;
-use App\Models\SellingOrder;
 use App\Models\Contract;
 use App\Models\ContractDetail;
-use App\Models\SellingOrderDetail;
 use App\Models\salesPurchasingRequset;
 use App\Models\salesPurchasingRequsetDetail;
 
@@ -25,19 +23,19 @@ class SellingPortController extends Controller
     use validationTrait;
     protected SalesPurchasingRequestServices $SalesPurchasingRequestService;
 
-    public function __construct()
-    {
+    public function __construct(){
         $this->SalesPurchasingRequestService  = new SalesPurchasingRequestServices();
     }
 
-    public function register(Request $request)
-    {
+    public function registerSellingPort(Request $request){
         $validator = Validator::make($request->all(),
         [
             "username"=>"required:min:3|max:255|unique:selling_ports,username",
             "password" => "required|min:8|max:15",
             "location"=>"required|max:255",
-            "mobile_number"=>"required"
+            "mobile_number"=>"required",
+            "name"=>"required",
+            "type"=>"required",
         ]);
         if ($validator->fails()) {
             return response()->json(['status'=>false,
@@ -47,6 +45,8 @@ class SellingPortController extends Controller
 
         $sellingPort = new SellingPort();
         $sellingPort->username = $request->username;
+        $sellingPort->name = $request->name;
+        $sellingPort->type = $request->type;
         $sellingPort->owner = $request->owner;
         $sellingPort->password =bcrypt($request->password);
         $sellingPort->location = $request->location;
@@ -56,7 +56,7 @@ class SellingPortController extends Controller
     }
 
 
-    public function Login(Request $request) {
+    public function LoginSellingPort(Request $request) {
         $validator = Validator::make($request->all(), [
             'username' => 'required',
             'password' => 'required',
@@ -92,52 +92,59 @@ class SellingPortController extends Controller
     }
 
     public function displaySellingOrder(Request $request){
-        $SellingOrder = SellingOrder::with('sellingOrderDetails','sellingPort')->get();
+        $SellingOrder = salesPurchasingRequset::with('salesPurchasingRequsetDetail','sellingPort')
+        ->where('farm_id',NULL)->orderBy('id', 'DESC')->get();
         return response()->json($SellingOrder, 200);
     }
 
-    public function SoftDeleteSellingPort(Request $request, $SellingId){
-        SellingPort::find($SellingId)->delete();
+    public function SoftDeleteSellingPort(Request $request, $sellingPortId){
+        SellingPort::find($sellingPortId)->delete();
        return  response()->json(["status"=>true, "message"=>"تم حذف منفذ البيع"]);
    }
 
-   public function restoreSellingPort(Request $request, $SellingId)
-   {
+   public function restoreSellingPort(Request $request, $SellingId){
         SellingPort::withTrashed()->find($SellingId)->restore();
        return  response()->json(["status"=>true, "message"=>"تم استرجاع منفذ البيع المحذوف"]);
    }
 
-   public function SellingPortTrashed(Request $request)
-   {
-       $SellingPortTrashed = SellingPort::onlyTrashed()->get(array('id','name','type','owner','mobile_number','location','deleted_at'));
+   public function SellingPortTrashed(Request $request){
+       $SellingPortTrashed = SellingPort::onlyTrashed()
+       ->get(array('id','name','type','owner','mobile_number','location','deleted_at'));
        return response()->json($SellingPortTrashed, 200);
    }
 
-    public function displaySellingPortRequest(Request $request){
-        $SellingPortRequest = SellingOrder::with('sellingOrderDetails')
-        ->where('SellingPort_id',$request->user()->id)->orderBy('id', 'DESC')->get();
+    public function displayMySellingPortRequest(Request $request){
+        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
+        ->where('selling_port_id',$request->user()->id)->orderBy('id', 'DESC')->get();
         return response()->json($SellingPortRequest, 200);
     }
 
+    public function deleteSellingPortOrder(Request $request , $SellingPortOrderId){
+        $findRequest = salesPurchasingRequset::find($SellingPortOrderId)->delete();
+       return  response()->json(["status"=>true, "message"=>"تم حذف طلب بنجاح"]);
+    }
+/////////////////////////////
+    public function addRequestToCompany(SalesPurchasingRequest $request){
 
+        $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
 
-    public function addRequestFromCompany(Request $request){
+        $SalesPurchasingRequest = new salesPurchasingRequset();
+        $SalesPurchasingRequest->total_amount = $totalAmount['result'];
+        $SalesPurchasingRequest->request_type = 0;
+        $SalesPurchasingRequest->selling_port_id = $request->user()->id;
+        $SalesPurchasingRequest->save();
+        //NOW THE DETAILS
+        foreach($request->details as $_detail){
+            $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
+            $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
+            $salesPurchasingRequsetDetail->amount = $_detail['amount'];
+            $salesPurchasingRequsetDetail->type = $_detail['type'];
+            $salesPurchasingRequsetDetail->save();
+        }
 
-          $RequestFromCompany = new SellingOrder();
-          $RequestFromCompany->sellingPort_id = $request->user()->id;
-          $RequestFromCompany->accept = 0;
-          $RequestFromCompany->save();
-          //NOW THE DETAILS
-          foreach($request->details as $_detail){
-              $OrderDetails = new SellingOrderDetail();
-              $OrderDetails->selling_order_id = $RequestFromCompany->id;
-              $OrderDetails->amount = $_detail['amount'];
-              $OrderDetails->type = $_detail['type'];
-              $OrderDetails->save();
-          }
-
-      return  response()->json(["status"=>true, "message"=>"تم إضافة الطلب بنجاح"]);
+    return  response()->json(["status"=>true, "message"=>"تم إضافة الطلب بنجاح"]);
 }
+
 
 
 public function displaySellingPortRegisterRequest(Request $request){
@@ -145,41 +152,40 @@ public function displaySellingPortRegisterRequest(Request $request){
     return response()->json($requestRegister, 200);
 }
 
-public function commandAcceptForSellingPort(Request $request, $SellingId){
-    $findRequest = sellingPort::where([['admin',0],['id' , '=' , $SellingId]])
+public function commandAcceptForSellingPort(Request $request, $sellingPortId){
+    $findRequest = sellingPort::where([['id' , '=' , $sellingPortId]])
     ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
-    return response()->json(["status"=>true, "message"=>"confirm request for selling port successfully"]);
+    return response()->json(["status"=>true, "message"=>"تمت الموافقة على حساب منفذ البيع بنجاح"]);
 }
 
 public function commandAcceptForSellingPortOrder(Request $request, $SellingPortOrderId){
-    $findRequestOrder = SellingOrder::where([['id' , '=' , $SellingPortOrderId]])
-    ->update(['accept_by_sales_manager'=>1]);
-    $findOrder = SellingOrder::where([['id' , '=' , $SellingPortOrderId]]);
-    $findDetailOrder = SellingOrderDetail::where('selling_order_id',$SellingPortOrderId)->get();
-
-
-
-    $SalesPurchasingRequest = new salesPurchasingRequset();
-    $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
-    $SalesPurchasingRequest->ceo_id = Manager::where('managing_level', 'ceo')->get()->last()->id;
-    //totalaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    $SalesPurchasingRequest->total_amount = 11;
-    $SalesPurchasingRequest->request_type = 0; //purchasing from farm_id
-    $SalesPurchasingRequest->selling_port_id = $findOrder->pluck('sellingPort_id')->first();
-    $SalesPurchasingRequest->farm_id = 3;
-    $SalesPurchasingRequest->save();
-    //NOW THE DETAILS
-    foreach($findDetailOrder as $_detail){
-        $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
-        $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
-        $salesPurchasingRequsetDetail->amount = $_detail['amount'];
-        $salesPurchasingRequsetDetail->type = $_detail['type'];
-        $salesPurchasingRequsetDetail->save();
-        }
+    $find = salesPurchasingRequset::find($SellingPortOrderId);
+   $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
+    ->update(array('reason_refuse' => Null));
+    $find->purchasing_manager_id  = $request->user()->id;
+    $find->save();
+    salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
+    ->update(['accept_by_sales'=>1]);
     return response()->json(["status"=>true, "message"=>"تمت الموافقة على طلب الشراء من قبل مدير المشتريات وارساله إلى المدير التنفيذي"]);
 }
 
+
+
+public function refuseOrderDetail(Request $request, $SellingPortOrderId){
+    $validator = Validator::make($request->all(), [
+        'reason_refuse' => 'required'
+    ]);
+
+    if($validator->fails()){
+        return response()->json(['error' => $validator->errors()->all()]);
+    }
+
+    $findOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
+    ->update(array('reason_refuse' => $request->reason_refuse));
+    $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
+    ->update(['accept_by_sales'=>0]);
+
+    return response()->json(["status"=>true, "message"=>"تم رفض الطلبية وتعبئة سبب الرفض"]);
 }
 
-
-
+}

@@ -4,9 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Traits\validationTrait;
 
-class CheckApproved
+class isProductionManager
 {
+    use validationTrait;
     /**
      * Handle an incoming request.
      *
@@ -16,10 +18,8 @@ class CheckApproved
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->user()->approved_at) {
-            return  response()->json(["status"=>true, "message"=>"انتظار موافقة المدير"]);
-        }
-
-        return $next($request);
+         if($request->user()->hasRole('Production_Manager'))
+            return $next($request);
+         return  $this -> returnError('error', 'you don`t have the role ');
     }
 }

@@ -21,6 +21,6 @@ class isSalesManager
     {
          if($request->user()->hasRole('Purchasing-and-Sales-manager'))
             return $next($request);
-         return  $this -> returnError('error', 'you don`t have the role');
+         return  $this -> returnError('error', 'you don`t have the role ');
     }
 }

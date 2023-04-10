@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\DynamicPDFController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,11 @@ Route::get('/', function () {
 });
 
 
-Route::get('contract/{ContractId}',[ContractController::class, 'NameSalesManager']);
+Route::get('contract',[ContractController::class, 'index']);
+
+Route::get('dynamic_pdf',[DynamicPDFController::class, 'index'] );
+
+Route::get('dynamic_pdf/pdf', [DynamicPDFController::class, 'pdf']);
+
 
 

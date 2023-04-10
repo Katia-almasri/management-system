@@ -24,14 +24,12 @@ class SellingPort extends Authenticatable
        'username',
        'password',
        'admin',
-       'approved_at'
+       'approved_at',
+       'name',
+       'type'
     ];
 
      ############################## Begin Relations #############################
-    public function sellingOrder(){
-        return $this->hasMany('App\Models\SellingOrder', 'sellingPort_id', 'id');
-    }
-
     public function salesPurchasingRequests(){
         return $this->hasMany('App\Models\salesPurchasingRequset', 'selling_port_id', 'id');
     }

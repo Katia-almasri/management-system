@@ -6,12 +6,11 @@ use Closure;
 use Illuminate\Http\Request;
 use App\Models\salesPurchasingRequset;
 use App\Traits\validationTrait;
+use App\Models\SellingOrder;
 
-
-class isSellingPortOrderExist
+class isSellingPortOrderDelete
 {
     use validationTrait;
-
     /**
      * Handle an incoming request.
      *
@@ -22,10 +21,11 @@ class isSellingPortOrderExist
     public function handle(Request $request, Closure $next)
     {
         $SellingPortOrderId = $request->SellingPortOrderId;
-        $isExistSellingPortOrder = salesPurchasingRequset::find($SellingPortOrderId);
-        if($isExistSellingPortOrder!=null)
+        $isExistSellingPortOrder = salesPurchasingRequset::
+        where([['id',$SellingPortOrderId],['selling_port_id',$request->user()->id],
+        ['accept_by_ceo',Null],['accept_by_sales',Null]])->first();
+        if($isExistSellingPortOrder!=null )
             return $next($request);
-        return  $this -> returnError('error', 'طلبية منفذ البيع غير متواجدة');
-
+        return  $this -> returnError('error', ' طلبية منفذ البيع غير متواجدة أو تمت الموافقة من قبل المسؤولين');
     }
 }

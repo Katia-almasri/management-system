@@ -30,6 +30,9 @@ return [
             'truck'=>'r,d,u,c',
             'drivers'=>'r,d,u,c'
         ],
+        'Production_Manager' => [
+
+        ],
     ],
 
     'permissions_map' => [

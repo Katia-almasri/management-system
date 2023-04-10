@@ -32,10 +32,6 @@ class Manager extends Authenticatable
         return $this->hasMany('App\Models\purchaseOrder', 'manager_id', 'id');
     }
 
-    public function sellingOrder(){
-        return $this->hasMany('App\Models\SellingOrder', 'manager_id', 'id');
-    }
-
     public function salesPurchasingRequset1(){
         return $this->hasMany('App\Models\salesPurchasingRequset', 'purchasing_manager_id', 'id');
     }

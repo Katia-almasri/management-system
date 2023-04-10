@@ -20,7 +20,7 @@ class isSellingPortExist
      */
     public function handle(Request $request, Closure $next)
     {
-        $sellingPortId = $request->SellingId;
+        $sellingPortId = $request->sellingPortId;
         $isExistSellingPort = SellingPort::find($sellingPortId);
         if($isExistSellingPort!=null)
             return $next($request);

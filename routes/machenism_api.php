@@ -24,10 +24,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
             /////////////تعديل حالة شاحنة
             Route::post('update-state/{TruckId}',[TruckContoller::class, 'UpdateTruckState']);
             //حذف شاحنة
-            Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck']);  
+            Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck']);
 
         });
-        
         //استرجاع شاحنة محذوفة
         Route::post('restore-truck/{TruckId}',[TruckContoller::class, 'restoreTruck'])->middleware('is-deleted-truck-exist');
         //عرض الشاحنات المحذوفة
@@ -36,22 +35,19 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
         Route::group( ['middleware' => 'is-driver-exist'] ,function(){
             //حذف سائق
             Route::delete('soft-delete-driver/{DriverId}',[DriverController::class, 'SoftDeleteDriver']);
+
             //تعديل حالة سائق
             Route::post('update-state-driver/{DriverId}',[DriverController::class, 'UpdateDriverState']);
-
-
         });
-       
+        //استرجاع سائق محذوف
+        Route::post('restore-driver/{DriverId}',[DriverController::class, 'restoreDriver'])->middleware('is-deleted-driver-exist');
+
         ///////////////اضافة سائق/////////////////////
         Route::post('add-driver',[DriverController::class, 'AddDriver']);
         ///////////////عرض سائق///////////////////
         Route::get('display-driver',[DriverController::class, 'displayDriver']);
-        //استرجاع سائق محذوف
-        Route::post('restore-driver/{driverId}',[DriverController::class, 'restoreDriver'])->middleware('is-deleted-driver-exist');
         //عرض السائقين المحذوفة
         Route::get('display-driver-trashed',[DriverController::class, 'DriverTrashed']);
-
-
         //استعراض الطلبات بعد أمر مدير المشتريات والمبيعات
         Route::get('display-request',[SalesPurchasingRequestController::class, 'displaySalesPurchasingRequestFromMachenism']);
 

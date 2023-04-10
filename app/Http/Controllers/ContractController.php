@@ -60,6 +60,9 @@ public function AcceptContractRequest(Request $request,$contractId){
     $contractFind = Contract::where('id',$contractId)->update(['accept'=>1]);
     return response()->json(["status"=>true, "message"=>"تمت الموافقة"]);
 }
+
+
+
 }
 
 

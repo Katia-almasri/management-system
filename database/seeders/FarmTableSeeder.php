@@ -16,15 +16,21 @@ class FarmTableSeeder extends Seeder
     { Farm::create([
             'owner'=>'محمود',
             'location'=>'مليحة',
-            'mobile_number'=>12323484788
+            'mobile_number'=>12323484788,
+            'name' => 'مزرعة دواجن',
+            'username' => 'مزرعة دواجن',
+            'password' => 'password'
         ]);
-       
 
-        
+
+
         Farm::create([
             'owner'=>'مرعي',
             'location'=>'جرمانا',
-            'mobile_number'=>2344323443
+            'mobile_number'=>2344323443,
+            'name' => '1مزرعة دواجن',
+            'username' => '1مزرعة دواجن',
+            'password' => 'password'
         ]);
     }
 }

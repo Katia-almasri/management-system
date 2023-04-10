@@ -70,6 +70,11 @@ class RouteServiceProvider extends ServiceProvider
              ->namespace($this->namespace)
              ->group(base_path('routes/farms_api.php'));
 
+             Route::prefix('production-api')
+             ->middleware('api')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/prodaction_api.php'));
+
 
             Route::middleware('web')
                 ->namespace($this->namespace)

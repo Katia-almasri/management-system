@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDetailToDetailsOrder extends Migration
+class AddNullableRequestTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class AddDetailToDetailsOrder extends Migration
      */
     public function up()
     {
-        Schema::table('selling_order_details', function (Blueprint $table) {
-            $table->String('type');
-            $table->integer('amount');
-            $table->dropColumn('details');
+        //
+        Schema::table('sales_purchasing_requests', function (Blueprint $table) {
+            //
+            $table->unsignedBigInteger('ceo_id')->nullable()->change();
+            $table->unsignedBigInteger('purchasing_manager_id')->nullable()->change();
         });
     }
 
@@ -27,8 +28,6 @@ class AddDetailToDetailsOrder extends Migration
      */
     public function down()
     {
-        Schema::table('selling_order_details', function (Blueprint $table) {
-            //
-        });
+        //
     }
 }

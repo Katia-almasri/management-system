@@ -21,13 +21,13 @@ class isTruckExist
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
 
-    
+
     public function handle(Request $request, Closure $next)
     {
         $truckId = $request->TruckId;
         $truckExist = Truck::find($truckId);
         if($truckExist!=null)
             return $next($request);
-        return  $this -> returnError('error', 'the truck does not exist');
+        return  $this -> returnError('error', 'الشاحنة غير متوفرة');
     }
 }

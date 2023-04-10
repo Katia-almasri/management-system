@@ -7,6 +7,8 @@ use App\Traits\validationTrait;
 use Validator;
 use App\Models\Farm;
 use App\Models\PurchaseOffer;
+use App\Models\DetailPurchaseOffer;
+
 use Auth;
 use Carbon\Carbon;
 
@@ -46,7 +48,7 @@ class FarmController extends Controller
    public function registerFarm(Request $request){
        $validator = Validator::make($request->all(),
        [
-           "username"=>"required:min:3|max:255",
+        "username"=>"required:min:3|max:255|unique:farms,username",
            "password" => "required|min:8|max:15",
            "location"=>"required|max:255",
            "mobile_number"=>"required",
@@ -60,6 +62,7 @@ class FarmController extends Controller
 
        $farm = new Farm();
        $farm->username = $request->username;
+       $farm->name = $request->name;
        $farm->owner = $request->owner;
        $farm->password =bcrypt($request->password);
        $farm->location = $request->location;
@@ -108,6 +111,36 @@ public function commandAcceptForFarm(Request $request, $farmId){
 public function displayFarmRegisterRequest(Request $request){
     $requestRegister = Farm::where('approved_at','=',Null)->get(array('id','name','owner','mobile_number','location'));
     return response()->json($requestRegister, 200);
+}
+
+public function addOffer(Request $request){
+    $offer = new PurchaseOffer();
+    $offer->farm_id  = $request->user()->id;
+    $offer->save();
+    //NOW THE DETAILS
+    $totalAmount = 0;
+    foreach($request->details as $_detail){
+        $detailPurchaseOffer = new DetailPurchaseOffer();
+        $detailPurchaseOffer->purchase_offers_id = $offer->id;
+        $detailPurchaseOffer->amount = $_detail['amount'];
+        $detailPurchaseOffer->type = $_detail['type'];
+        $detailPurchaseOffer->save();
+
+        $totalAmount += $_detail['amount'];
+    }
+    $findOffer = PurchaseOffer::find($offer->id)->update(['total_amount'=>$totalAmount]);
+
+    return  response()->json(["status"=>true, "message"=>"تم إضافة العرض بنجاح"]);
+    }
+
+public function displayMyOffers(Request $request){
+    $displayOffer = PurchaseOffer::with('detailpurchaseOrders')->where('farm_id',$request->user()->id)->orderBy('id', 'DESC')->get();
+    return response()->json($displayOffer, 200);
+}
+public function deleteOffer(Request $request, $offerId){
+    PurchaseOffer::find($offerId)->delete();
+    DetailPurchaseOffer::where('purchase_offers_id',$offerId)->delete();
+   return  response()->json(["status"=>true, "message"=>"تم حذف العرض بنجاح"]);
 }
 
 

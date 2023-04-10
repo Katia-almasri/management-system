@@ -16,13 +16,13 @@ class DatabaseSeeder extends Seeder
         $this->call(LaratrustSeeder::class);
         $this->call(RoleUserTableSeeder::class);
         $this->call(ManagerTableSeeder::class);
-        $this->call(FarmTableSeeder::class);
-        $this->call(SellingPointTableSeeder::class);
-        $this->call(TruckTableSeeder::class);
-        $this->call(DriverTableSeeder::class);
-        $this->call(SalesPurchasingRequestsTableSeeder::class);
-        $this->call(TripsTableSeeder::class);
-        
-        
+        // $this->call(FarmTableSeeder::class);
+        // $this->call(SellingPointTableSeeder::class);
+        // $this->call(TruckTableSeeder::class);
+        // $this->call(DriverTableSeeder::class);
+        // $this->call(SalesPurchasingRequestsTableSeeder::class);
+        // $this->call(TripsTableSeeder::class);
+
+
     }
 }

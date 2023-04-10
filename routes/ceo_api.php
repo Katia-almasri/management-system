@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CEOController;
+use App\Http\Controllers\SalesPurchasingRequestController;
 
 Route::post('login',[CEOController::class, 'CEOLogin'])->name('CEOLogin');
 Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],function(){
@@ -10,6 +11,8 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     Route::get('logout',[CEOController::class, 'logout']);
     Route::get('ceck-dashboard',[CEOController::class, 'CEODashboard']);
     Route::get('ceck-ceo-role',[CEOController::class, 'checkCEORole']);
+    Route::post('accept-request/{RequestId}',[SalesPurchasingRequestController::class, 'acceptSalesPurchasingRequestFromCeo']);
+
 
 });
 

@@ -15,13 +15,13 @@ class NoteController extends Controller
     use validationTrait;
 
     public function AddNoteForPuductionManager(NoteRequest $request){
-       
+
                 $note = new Note();
                 $note->purchasing_manager_id = $request->user()->id;
                 $note->detail = $request->detail;
-                $note->production_manager_id = Manager::where('managing_level','production_manager')->get()->last()->id;
+                $note->production_manager_id = Manager::where('managing_level','Production_Manager')->get()->last()->id;
                 $note->save();
-            return  response()->json(["status"=>true, "message"=>"note created successfully"]);
+            return  response()->json(["status"=>true, "message"=>"تمت اضافة ملاحظة لمدير الانتاج بنجاح"]);
     }
 
     public function displayNote(Request $request){
@@ -31,8 +31,10 @@ class NoteController extends Controller
 
     public function deleteNote(Request $request, $noteId){
         $fineNote = Note::find($noteId)->delete();
-        return  response()->json(["status"=>true, "message"=>"note deleted successfully"]);
+        return  response()->json(["status"=>true, "message"=>"تم حذف ملاحظة بنجاح"]);
     }
+
+
 }
 
 

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
  <head>
   <title>Laravel - How to Generate Dynamic PDF from HTML using DomPDF</title>
@@ -27,23 +26,26 @@
     </div>
    </div>
    <br />
-<html dir = "rtl", lang="ar">
-    <head>
-        <meta charset="utf-8"><title>aa</title>
-    </head>
-    <body>
-        <h1>عقد بيع لمنفذ بيع</h1>
-        <p>محرر بتاريخ :  </p>
-        <p>تم إبرام عقد بين :</p>
-        <p>الطرف الأول:</p>
-        <p></p>
-
-
-<p></p>
-Thank You,
-<br/>
-
-<br/>
-
-    </body>
+   <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+     <thead>
+      <tr>
+       <th>Name</th>
+       <th>Address</th>
+       <th>City</th>
+       <th>Postal Code</th>
+       <th>Country</th>
+      </tr>
+     </thead>
+     <tbody>
+     @foreach($customer_data as $customer)
+      <tr>
+       <td>{{ $customer->username }}</td>
+      </tr>
+     @endforeach
+     </tbody>
+    </table>
+   </div>
+  </div>
+ </body>
 </html>

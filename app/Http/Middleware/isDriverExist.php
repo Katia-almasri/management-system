@@ -10,7 +10,7 @@ use App\Models\Driver;
 class isDriverExist
 {
     use validationTrait;
-    
+
     /**
      * Handle an incoming request.
      *
@@ -24,6 +24,6 @@ class isDriverExist
         $drieverExist = Driver::find($drieverId);
         if($drieverExist!=null)
             return $next($request);
-        return  $this -> returnError('error', 'the driver does not exist');
+        return  $this -> returnError('error', 'السائق غير متوفر');
     }
 }

@@ -17,14 +17,14 @@ class DriverTableSeeder extends Seeder
         Driver::create([
             'name'=>'سعيد',
             'state'=>'دوام',
-            'mashenism_coordinator_id'=>3
+
         ]);
 
-        
+
         Driver::create([
             'name'=>'علي',
             'state'=>'دوام',
-            'mashenism_coordinator_id'=>3
+
         ]);
     }
 }

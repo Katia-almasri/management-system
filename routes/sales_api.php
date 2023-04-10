@@ -21,14 +21,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
         //////////////add request/////////////
         Route::Post('add-requset-sales-purchasing',[SalesPurchasingRequestController::class, 'AddRequsetSalesPurchasing']);
-        //عرض طلبات المبيع والشراء
-        Route::get('display-requset-sales-purchasing',[SalesPurchasingRequestController::class, 'displaySalesPurchasingRequest']);
-
-        Route::group( ['middleware' => 'is-sales-purchase-exist'] ,function(){
-            Route::get('display-detail-requset-sales-purchasing/{RequestId}',[SalesPurchasingRequestController::class, 'displayDetailsSalesPurchasingRequest']);
-            /////////////أمر لمنسق حركة الاليات/////////////////////////
-            Route::Post('command-for-mechanism/{RequestId}',[SalesPurchasingRequestController::class, 'commandForMechanismCoordinator']);
-        });
+        /////////////أمر لمنسق حركة الاليات/////////////////////////
+        Route::Post('command-for-mechanism/{RequestId}',[SalesPurchasingRequestController::class, 'commandForMechanismCoordinator'])
+        ->middleware('is-request-accept');
 
 
         //////////////اضافة ملاحظة لمدير الانتاج//////////////////////
@@ -40,9 +35,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
 
         Route::group( ['middleware' => 'is-selling-port-exist'] ,function(){
             //حذف منفذ بيع
-            Route::delete('soft-delete-selling-port/{SellingId}',[SellingPortController::class, 'SoftDeleteSellingPort']);
+            Route::delete('soft-delete-selling-port/{sellingPortId}',[SellingPortController::class, 'SoftDeleteSellingPort']);
             //تأكيد طلب تسجيل حساب منفذ بيع
-            Route::post('confirm-request-register/{SellingId}',[SellingPortController::class, 'commandAcceptForSellingPort']);
+            Route::post('confirm-request-register/{sellingPortId}',[SellingPortController::class, 'commandAcceptForSellingPort']);
         });
 
         //استرجاع منفذ بيع محذوفة
@@ -52,9 +47,13 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
         //عرض طلبات تسجيل منفذ بيع
         Route::get('display-request-selling-port',[SellingPortController::class, 'displaySellingPortRegisterRequest']);
         Route::group( ['middleware' => 'is-selling-port-order'] ,function(){
-            //تأكيد طلب طلبية شراء من قبل منفذ البيع
+            //تأكيد طلب طلبية شراء من قبل مدير المشتريات
             Route::post('confirm-request-order/{SellingPortOrderId}',[SellingPortController::class, 'commandAcceptForSellingPortOrder']);
+            //رفض طلب طلبية منفذ بيع
+            Route::post('refuse-request-order/{SellingPortOrderId}',[SellingPortController::class, 'refuseOrderDetail']);
+
         });
+
 
         ///////////******************////////////*********** */ */
         Route::post('aa/{ContractId}',[ContractController::class, 'addDetailToContract']);
@@ -66,9 +65,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
             Route::post('confirm-request-farm-register/{FarmId}',[FarmController::class, 'commandAcceptForFarm']);
 
         });
-
         //استرجاع مزرعة محذوفة
         Route::post('restore-farm/{FarmId}',[FarmController::class, 'restoreFarm'])->middleware('is-deleted-farm-exist');
+
         //عرض مزرعة المحذوفة
         Route::get('display-farm-trashed',[FarmController::class, 'displayFarmTrashed']);
         //عرض طلبات تسجيل حساب مزرعة
@@ -77,6 +76,10 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
 
         Route::get('display-contracts',[ContractController::class, 'getContracts']);
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
+        //تأكيد طلب من العروض
+        Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
+
+
 
     });
 

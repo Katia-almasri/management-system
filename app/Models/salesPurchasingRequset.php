@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class salesPurchasingRequset extends Model
 {
     use HasFactory;
@@ -19,7 +20,8 @@ class salesPurchasingRequset extends Model
        'request_type',
        'farm_id',
        'selling_port_id',
-       'command'
+       'command',
+       'offer_id'
     ];
 
      ############################## Begin Relations #############################
@@ -46,6 +48,10 @@ class salesPurchasingRequset extends Model
 
     public function trips(){
         return $this->hasMany('App\Models\Trip', 'sales_purchasing_requsets_id', 'id');
+    }
+
+    public function offer(){
+        return $this->belongsTo('App\Models\PurchaseOffer', 'offer_id', 'id');
     }
     ############################## End Relations ##############################
 }

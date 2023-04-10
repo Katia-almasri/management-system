@@ -15,17 +15,21 @@ class TruckTableSeeder extends Seeder
     public function run()
     {
         Truck::create([
-            'mashenism_coordinator_id'=>3,
+
             'name'=>' مارسيدس ',
             'model'=>'benz',
-            'storage_capacity'=> 2000
+            'storage_capacity'=> 2000,
+            'truck_number' =>123456,
+            'governorate_name' => 'دمشق'
         ]);
 
         Truck::create([
-            'mashenism_coordinator_id'=>3,
+
             'name'=>'سوزوكي ',
             'model'=>'سوزوكي',
-            'storage_capacity'=> 100
+            'storage_capacity'=> 100,
+            'truck_number' =>12345,
+            'governorate_name' => 'دمشق'
         ]);
     }
 }

@@ -22,7 +22,7 @@ class isDeletedTruckExist
     public function handle(Request $request, Closure $next)
     {
         $truckId = $request->TruckId;
-        $truckExist = Truck::withTrashed()->find($truckId);
+        $truckExist = Truck::onlyTrashed()->find($truckId);
         if($truckExist!=null)
             return $next($request);
         return  $this -> returnError('error', 'the truck does not exist');

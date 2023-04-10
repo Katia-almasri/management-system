@@ -6,11 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use App\Models\salesPurchasingRequset;
+use App\Models\Driver;
+use App\Models\Truck;
 
 class isTripExist
 {
 
-    use validationTrait;    
+    use validationTrait;
     /**
      * Handle an incoming request.
      *
@@ -20,10 +22,31 @@ class isTripExist
      */
     public function handle(Request $request, Closure $next)
     {
-        $tripId = $request->requestId;
-        $tripExist = salesPurchasingRequset::find($tripId);
-        if($tripExist!=null)
-            return $next($request);
-        return  $this -> returnError('error', 'the trip does not exist');
+        $requestId = $request->requestId;
+        $requestExist = salesPurchasingRequset::find($requestId);
+        $driverExist = Driver::find($request->driver_id);
+        $truckExist = Truck::find($request->truck_id);
+
+        if($requestExist!=null){
+            if($driverExist != null){
+                $stateDriver = $driverExist->state;
+                if($stateDriver == "متاح"){
+                    if($truckExist != null){
+                        $statetruck = $truckExist->state;
+                    if($statetruck == "متاحة")
+                        return $next($request);
+                    else
+                    return  $this -> returnError('error', ' الشاحنة غير متاحة');
+                }
+                else
+                return  $this -> returnError('error', ' الشاحنة غير متوفرة');
+            }
+                else
+                return  $this -> returnError('error', ' السائق غير متاح');
+        }
+        else
+                return  $this -> returnError('error', ' السائق غير متوفر');
     }
+    return  $this -> returnError('error', 'الطلبية غير متوفرة');
+}
 }
