@@ -10,7 +10,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ContractController;
 
-Route::group( ['middleware' => ['auth:managers-api'] ],function(){
+Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
     Route::group( ['middleware' => 'is-sales-manager'] ,function(){
         //////Farm///////////
@@ -77,10 +77,22 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
         Route::get('display-contracts',[ContractController::class, 'getContracts']);
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
         //تأكيد طلب من العروض
-        Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
+        Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist');
 
+        
+        //إشعارات طلبات تسجيل المزارع و عدد الإشعارات
+        Route::get('get-register-farm-request',[SalesPurchasingRequestController::class, 'getResgisterFarmRequestsNotifs']);
+        // إشعارات طلبات تسجيل منافذ البيع و عدد الإشعارات
+        Route::get('get-register-selling-port-request',[SalesPurchasingRequestController::class, 'getResgisterSellingPortRequestsNotifs']);
+        // إشعارات عروض المزارع و عدد الإشعارات
+        Route::get('get-add-offers-notifs',[SalesPurchasingRequestController::class, 'getAddOffersNotifs']);
+        
+        // إشعارات طلبات منافذ البيع و عدد الإشعارات
+        Route::get('get-request-to-company-notifs',[SalesPurchasingRequestController::class, 'getRequestToCompanyNotifs']);
 
-
+        
+        
+        
     });
 
 

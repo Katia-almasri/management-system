@@ -26,7 +26,7 @@ class Farm extends Authenticatable
        'password'
     ];
 
-     ############################## Begin Relations #############################
+    ############################## Begin Relations #############################
 
     public function purchaseOffer(){
         return $this->hasMany('App\Models\PurchaseOffer', 'farm_id', 'id');
@@ -34,6 +34,19 @@ class Farm extends Authenticatable
 
     public function salesPurchasingRequests(){
         return $this->hasMany('App\Models\salesPurchasingRequset', 'farm_id', 'id');
+    }
+
+    public function registerFarmRequestNotif(){
+        return $this->hasOne('App\Models\RegisterFarmRequestNotif', 'from', 'id');
+    }
+
+
+    public function AddOfferNotif(){
+        return $this->hasOne('App\Models\AddOfferNotif', 'from', 'id');
+    }
+
+    public function AddSalesPurchasingNotif(){
+        return $this->hasOne('App\Models\Farm', 'farm_id', 'id');
     }
 
     ############################## End Relations ##############################

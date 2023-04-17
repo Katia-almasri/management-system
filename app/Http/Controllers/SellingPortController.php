@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RegisterSellingPortRequestNotif;
+use App\Models\RequestToCompanyNotif;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
@@ -10,6 +12,7 @@ use App\Models\Contract;
 use App\Models\ContractDetail;
 use App\Models\salesPurchasingRequset;
 use App\Models\salesPurchasingRequsetDetail;
+use App\systemServices\notificationServices;
 
 use App\Models\Manager  ;
 
@@ -21,10 +24,11 @@ use App\systemServices\SalesPurchasingRequestServices;
 class SellingPortController extends Controller
 {
     use validationTrait;
-    protected SalesPurchasingRequestServices $SalesPurchasingRequestService;
-
+    protected $SalesPurchasingRequestService;
+    protected $notificationService;
     public function __construct(){
         $this->SalesPurchasingRequestService  = new SalesPurchasingRequestServices();
+        $this->notificationService = new notificationServices();
     }
 
     public function registerSellingPort(Request $request){
@@ -52,6 +56,22 @@ class SellingPortController extends Controller
         $sellingPort->location = $request->location;
         $sellingPort->mobile_number = $request->mobile_number;
         $sellingPort->save();
+
+        //MAKE NEW NOTIFICATION RECORD
+        $RegisterSellingPortRequestNotif = new RegisterSellingPortRequestNotif();
+        $RegisterSellingPortRequestNotif->from = $sellingPort->id;
+        $RegisterSellingPortRequestNotif->is_read = 0;
+        $RegisterSellingPortRequestNotif->owner = $sellingPort->owner;
+        $RegisterSellingPortRequestNotif->name = $sellingPort->name;
+        $RegisterSellingPortRequestNotif->save();
+
+        //SEND NOTIFICATION REGISTER REQUEST TO SALES MANAGER USING PUSHER
+        $data['from'] = $sellingPort->id;
+        $data['is_read'] = 0;
+        $data['owner'] = $sellingPort->owner;
+        $data['name'] = $sellingPort->name;
+        $this->notificationService->registerSellingPortRequestNotification($data);
+        ////////////////// SEND THE NOTIFICATION /////////////////////////
         return  response()->json(["status"=>true, "message"=>"انتظار موافقة المدير"]);
     }
 
@@ -74,7 +94,7 @@ class SellingPortController extends Controller
             ->where([['id','=',auth()->guard('sellingports')->user()->id]])->get();
             if($user[0]->approved_at!=Null){
             $success =  $user[0];
-            $success['token'] =  $user[0]->createToken('api-token')->accessToken;
+            $success['token'] =  $user[0]->createToken('api-token', ['sellingports'])->accessToken;
             return response()->json($success, 200);
             }
             else{
@@ -142,6 +162,20 @@ class SellingPortController extends Controller
             $salesPurchasingRequsetDetail->save();
         }
 
+         //MAKE NEW NOTIFICATION RECORD       
+       $RequestToCompanyNotif = new RequestToCompanyNotif();
+       $RequestToCompanyNotif->from = $request->user()->id;
+       $RequestToCompanyNotif->is_read = 0;
+       $RequestToCompanyNotif->total_amount = $totalAmount['result'];
+       $RequestToCompanyNotif->save();
+
+       //SEND NOTIFICATION REGISTER REQUEST TO SALES MANAGER USING PUSHER
+       $data['from'] =$request->user()->id;
+       $data['is_read'] = 0;
+       $data['total_amount'] = $totalAmount['result'];
+       $this->notificationService->addRequestToCompany($data);
+       ////////////////// SEND THE NOTIFICATION /////////////////////////
+
     return  response()->json(["status"=>true, "message"=>"تم إضافة الطلب بنجاح"]);
 }
 
@@ -155,17 +189,24 @@ public function displaySellingPortRegisterRequest(Request $request){
 public function commandAcceptForSellingPort(Request $request, $sellingPortId){
     $findRequest = sellingPort::where([['id' , '=' , $sellingPortId]])
     ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
+    
+     //UPDATE THE is_read IN REGISTER SELLNING PORT REQUEST TO read
+     $RegisterFarmRequestNotif = RegisterSellingPortRequestNotif::where('from', '=', $sellingPortId)->update(['is_read'=> 1]);
     return response()->json(["status"=>true, "message"=>"تمت الموافقة على حساب منفذ البيع بنجاح"]);
 }
 
 public function commandAcceptForSellingPortOrder(Request $request, $SellingPortOrderId){
     $find = salesPurchasingRequset::find($SellingPortOrderId);
-   $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
+    $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
     ->update(array('reason_refuse' => Null));
     $find->purchasing_manager_id  = $request->user()->id;
     $find->save();
     salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
     ->update(['accept_by_sales'=>1]);
+
+    //UPDATE THE is_read IN REQUEST OFFER  TO read
+    $RequestToCompanyNotif = RequestToCompanyNotif::where('from', '=', $find->selling_port_id)->update(['is_read'=> 1]);
+
     return response()->json(["status"=>true, "message"=>"تمت الموافقة على طلب الشراء من قبل مدير المشتريات وارساله إلى المدير التنفيذي"]);
 }
 
@@ -185,6 +226,11 @@ public function refuseOrderDetail(Request $request, $SellingPortOrderId){
     $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $SellingPortOrderId]])
     ->update(['accept_by_sales'=>0]);
 
+    //UPDATE THE is_read IN REQUEST OFFER  TO read
+
+    $find = salesPurchasingRequset::find($SellingPortOrderId);
+    $RequestToCompanyNotif = RequestToCompanyNotif::where('from', '=', $find->selling_port_id)->update(['is_read'=> 1]);
+    
     return response()->json(["status"=>true, "message"=>"تم رفض الطلبية وتعبئة سبب الرفض"]);
 }
 

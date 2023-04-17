@@ -48,5 +48,13 @@ class ManagerTableSeeder extends Seeder
             'password'=>Hash::make('password'),
         ]);
 
+        Manager::create([
+            'managing_level'=>'libra-commander',
+            'first_name'=>'salem',
+            'last_name'=>'salem',
+            'username'=>'salem salem',
+            'password'=>Hash::make('password'),
+        ]);
+
     }
 }

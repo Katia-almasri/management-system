@@ -33,6 +33,12 @@ class RoleUserTableSeeder extends Seeder
             'user_id'=>3,
             'user_type'=>'App\Models\Manager'
         ]);
+        //آمر القبان
+        Role_User::create([
+            'role_id'=>5,
+            'user_id'=>6,
+            'user_type'=>'App\Models\Manager'
+        ]);
        
     }
 }

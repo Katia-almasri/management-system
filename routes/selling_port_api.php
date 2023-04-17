@@ -10,7 +10,7 @@ use App\Http\Controllers\ContractController;
 Route::post('register-selling-port',[SellingPortController::class, 'registerSellingPort']);
 Route::post('login-selling-port',[SellingPortController::class, 'LoginSellingPort'])->name('Login');
 
-Route::group( ['middleware' => ['auth:selling-port-api'] ],function(){
+Route::group( ['middleware' => ['auth:selling-port-api', 'check-scope-selling-port', 'scopes:sellingports'] ],function(){
         Route::get('display-request',[SellingPortController::class, 'displayMySellingPortRequest']);
         Route::post('add-request-to-company',[SellingPortController::class, 'addRequestToCompany']);
         //إضافة طلب عقد

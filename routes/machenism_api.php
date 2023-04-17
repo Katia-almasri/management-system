@@ -12,7 +12,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\Controller;
 
-Route::group( ['middleware' => ['auth:managers-api'] ],function(){
+Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
     Route::group( ['middleware' => 'is-mechanism-coordinator'] ,function(){
         ///////////////اضافة شاحنة/////////////////////

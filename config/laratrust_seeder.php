@@ -33,6 +33,11 @@ return [
         'Production_Manager' => [
 
         ],
+        
+        'libra-commander' => [
+            'Receipt statement'=>'r,d,u,c',
+            'statement after weight'=>'r,d,u,c'
+        ],
     ],
 
     'permissions_map' => [
