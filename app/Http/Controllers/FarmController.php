@@ -89,7 +89,7 @@ class FarmController extends Controller
         ->where([['id','=',auth()->guard('farms')->user()->id]])->get();
         if($user[0]->approved_at!=Null){
         $success =  $user[0];
-        $success['token'] =  $user[0]->createToken('api-token')->accessToken;
+        $success['token'] =  $user[0]->createToken('api-token', ['farms'])->accessToken;
         return response()->json($success, 200);
         }
         else{
@@ -97,7 +97,7 @@ class FarmController extends Controller
         }
 
     }else{
-        return response()->json(['error' => ['UserName and Password are Wrong.']], 200);
+        return response()->json(['error' => ['UserName and Password are Wrong!!.']], 200);
     }
 }
 

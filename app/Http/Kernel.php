@@ -70,7 +70,9 @@ class Kernel extends HttpKernel
         'is-truck-exist' => \App\Http\Middleware\isTruckExist::class,
         'is-driver-exist' => \App\Http\Middleware\isDriverExist::class,
         'is-deleted-farm-exist' => \App\Http\Middleware\isDeletedFarmExist::class,
-
+        'check-reciept-id' => \App\Http\Middleware\checkRecieptId::class,
+        'check-reciept-weighted' => \App\Http\Middleware\isRecieptWeighted::class,
+        'is-libra-commander-exist' => \App\Http\Middleware\isLibraCommander::class,
         'is-deleted-truck-exist' => \App\Http\Middleware\isDeletedTruckExist::class,
         'is-deleted-driver-exist' => \App\Http\Middleware\isDeletedDriverExist::class,
         'is-trip-exist' => \App\Http\Middleware\isTripExist::class,
@@ -84,6 +86,16 @@ class Kernel extends HttpKernel
         'is-request-accept' => \App\Http\Middleware\isAcceptFromCeo::class,
         'is-production-manager' => \App\Http\Middleware\isProductionManager::class,
         'is-deleted-offer' => \App\Http\Middleware\isDeletedOffer::class,
+        'check-scope-selling-port' => \App\Http\Middleware\checkScopeSellingPort::class,
+        'check-scope-managers' => \App\Http\Middleware\checkScopeManagers::class,
+        'check-scope-farms' => \App\Http\Middleware\checkScopeFarms::class,
+        'is-request-exist' => \App\Http\Middleware\isRequestExist::class,
+        'is-accounting-manager' => \App\Http\Middleware\isAccountingManager::class,
+
+
+
+
+
 
 
 

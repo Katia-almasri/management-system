@@ -20,7 +20,7 @@ class isDeletedDriverExist
      */
     public function handle(Request $request, Closure $next)
     {
-        $driverId = $request->driverId;
+        $driverId = $request->DriverId;
         $driverExist = Driver::onlyTrashed()->find($driverId);
         if($driverExist!=null)
             return $next($request);

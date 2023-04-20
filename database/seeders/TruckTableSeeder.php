@@ -20,7 +20,9 @@ class TruckTableSeeder extends Seeder
             'model'=>'benz',
             'storage_capacity'=> 2000,
             'truck_number' =>123456,
-            'governorate_name' => 'دمشق'
+            'governorate_name' => 'دمشق',
+            'mashenism_coordinator_id' => 3,
+            'state' => 'متاحة'
         ]);
 
         Truck::create([
@@ -29,7 +31,9 @@ class TruckTableSeeder extends Seeder
             'model'=>'سوزوكي',
             'storage_capacity'=> 100,
             'truck_number' =>12345,
-            'governorate_name' => 'دمشق'
+            'governorate_name' => 'دمشق',
+            'mashenism_coordinator_id' => 3,
+            'state' => 'متاحة'
         ]);
     }
 }

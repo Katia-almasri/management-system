@@ -34,7 +34,7 @@ class Controller extends BaseController
 
             $user = Manager::select('*')->find(auth()->guard('managers')->user()->id);
             $success =  $user;
-            $success['token'] =  $user->createToken('api-token')->accessToken;
+            $success['token'] =  $user->createToken('api-token', ['managers'])->accessToken;
 
             return response()->json($success, 200);
         }else{

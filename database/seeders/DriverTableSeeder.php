@@ -16,7 +16,8 @@ class DriverTableSeeder extends Seeder
     {
         Driver::create([
             'name'=>'سعيد',
-            'state'=>'دوام',
+            'state'=>'متاح',
+            'mashenism_coordinator_id' => 3
 
         ]);
 
@@ -24,7 +25,7 @@ class DriverTableSeeder extends Seeder
         Driver::create([
             'name'=>'علي',
             'state'=>'دوام',
-
+            'mashenism_coordinator_id' => 3
         ]);
     }
 }

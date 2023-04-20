@@ -27,12 +27,24 @@ class RoleUserTableSeeder extends Seeder
         ]);
 
 
-        
+
         Role_User::create([
             'role_id'=>4,
             'user_id'=>3,
             'user_type'=>'App\Models\Manager'
         ]);
-       
+        //آمر القبان
+        Role_User::create([
+            'role_id'=>5,
+            'user_id'=>5,
+            'user_type'=>'App\Models\Manager'
+        ]);
+        //مدير محاسبة
+        Role_User::create([
+            'role_id'=>7,
+            'user_id'=>6,
+            'user_type'=>'App\Models\Manager'
+        ]);
+
     }
 }

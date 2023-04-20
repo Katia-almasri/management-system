@@ -10,7 +10,7 @@ use App\Http\Controllers\ContractController;
 Route::post('register-farm',[FarmController::class, 'registerFarm']);
 Route::post('login-farm',[FarmController::class, 'loginFarm']);
 
-Route::group( ['middleware' => ['auth:farms-api'] ],function(){
+Route::group( ['middleware' => ['auth:farms-api', 'check-scope-farms', 'scopes:farms'] ],function(){
     Route::post('add-offer',[FarmController::class, 'addOffer']);
 
     Route::get('display-my-offer',[FarmController::class, 'displayMyOffers']);

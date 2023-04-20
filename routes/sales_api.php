@@ -10,7 +10,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ContractController;
 
-Route::group( ['middleware' => ['auth:managers-api'] ],function(){
+Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
     Route::group( ['middleware' => 'is-sales-manager'] ,function(){
         //////Farm///////////
@@ -78,6 +78,16 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
         //تأكيد طلب من العروض
         Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
+        //تقارير لطلبات الشراء
+        Route::get('daily-report',[SalesPurchasingRequestController::class, 'DailyReportSalesRequests']);
+        Route::get('monthly-report',[SalesPurchasingRequestController::class, 'MonthlyReportSalesRequests']);
+        Route::get('yearly-report',[SalesPurchasingRequestController::class, 'yearlyReportSalesRequests']);
+
+        //تقارير للعروض
+
+        Route::get('daily-offer-report',[SalesPurchasingRequestController::class, 'DailyReportoffer']);
+        Route::get('monthly-offer-report',[SalesPurchasingRequestController::class, 'MonthlyReportOffer']);
+        Route::get('yearly-offer-report',[SalesPurchasingRequestController::class, 'yearlyReportOffer']);
 
 
 
