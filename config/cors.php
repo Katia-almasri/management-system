@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['sales_api/*', 'machenism_api/*', 'selling_port_api/*', 'farms_api/*', 'ceo_api/*', 'prodaction_api/*', 'libra_commander_api/*', 'api/*', 'sanctum/csrf-cookie'],
+    'paths' => [''],
 
     'allowed_methods' => ['*'],
 
@@ -29,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
