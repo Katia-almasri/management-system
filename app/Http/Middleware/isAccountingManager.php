@@ -5,12 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
-use App\Models\Driver;
 
-class isDeletedDriverExist
+class isAccountingManager
 {
-
-    use validationTrait;
     /**
      * Handle an incoming request.
      *
@@ -18,12 +15,12 @@ class isDeletedDriverExist
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
+    use validationTrait;
     public function handle(Request $request, Closure $next)
     {
-        $driverId = $request->DriverId;
-        $driverExist = Driver::onlyTrashed()->find($driverId);
-        if($driverExist!=null)
+
+     if($request->user()->hasRole('Accounting-Manager'))
             return $next($request);
-        return  $this -> returnError('error', 'السائق غير متوفر');
+         return  $this -> returnError('error', 'you don`t have the role');
     }
 }

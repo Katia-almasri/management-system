@@ -90,10 +90,9 @@ class Kernel extends HttpKernel
         'check-scope-managers' => \App\Http\Middleware\checkScopeManagers::class,
         'check-scope-farms' => \App\Http\Middleware\checkScopeFarms::class,
         'check-offer-exist' => \App\Http\Middleware\isOfferExist::class,
-        
-        
-        
-        
+        'is-request-exist' => \App\Http\Middleware\isRequestExist::class,
+        'is-accounting-manager' => \App\Http\Middleware\isAccountingManager::class,
+
 
 
 

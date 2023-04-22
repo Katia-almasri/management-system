@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\SellingPort;
+use Illuminate\Support\Facades\Hash;
 
 class SellingPointTableSeeder extends Seeder
 {
@@ -21,7 +22,8 @@ class SellingPointTableSeeder extends Seeder
             'name' => 'فندق الشام',
             'type' => 'مطعم',
             'username' =>'فندق الشام',
-            'password' => 'password'
+            'password'=>Hash::make('password'),
+            'approved_at' => '2023-04-01 01:53:04'
         ]);
 
 
@@ -32,7 +34,8 @@ class SellingPointTableSeeder extends Seeder
             'name' => 'محلات المصري',
             'type' => 'مطعم',
             'username' =>'محلات المصري',
-            'password' => 'password'
+            'password'=>Hash::make('password'),
+            'approved_at' => '2023-04-01 01:53:04'
         ]);
     }
 }

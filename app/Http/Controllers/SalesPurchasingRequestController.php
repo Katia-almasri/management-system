@@ -6,6 +6,7 @@ use App\Models\AddOfferNotif;
 use App\Models\AddSalesPurchasingNotif;
 use App\Models\RegisterSellingPortRequestNotif;
 use App\Models\RequestToCompanyNotif;
+Use \Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
@@ -39,7 +40,7 @@ class SalesPurchasingRequestController extends Controller
         $this->purchaseOfferService = new purchaseOfferServices();
         $this->notificationService = new notificationServices();
     }
-
+    //اضافة طلب شراء أو مبيع
     public function AddRequsetSalesPurchasing(SalesPurchasingRequest $request){
 
               $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
@@ -115,7 +116,7 @@ class SalesPurchasingRequestController extends Controller
         ->where([['command',1],['accept_by_ceo',1]])->get();
         return response()->json($SalesPurchasingRequset, 200);
     }
-
+    //الموافقة على طلب من قبل المدير التنفذي
     public function acceptSalesPurchasingRequestFromCeo(Request $request, $RequestId){
         $find = salesPurchasingRequset::find($RequestId);
         $find->ceo_id = $request->user()->id;
@@ -123,7 +124,22 @@ class SalesPurchasingRequestController extends Controller
         salesPurchasingRequset::where('id',$RequestId)->update(['accept_by_ceo' => 1]);
         return response()->json(["status"=>true, "message"=>"تمت الموافقة على الطلب بنجاح"]);
     }
+    //رفض طلب من قبل المدير التنفيذي مع امكانية ادخال سبب الرفض
+    public function refuseSalesPurchasingRequestFromCeo(Request $request, $RequestId){
+        $findOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        ->update(array('reason_refuse_by_ceo' => $request->reason_refuse_by_ceo));
+        $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        ->update(['accept_by_ceo'=>0]);
 
+        return response()->json(["status"=>true, "message"=>"تم رفض الطلبية "]);
+    }
+
+    public function displaySalesPurchasingRequestFromCeo(Request $request){
+        $displayRequests = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
+        ->where('accept_by_sales',1)->get();
+        return response()->json($displayRequests, 200);
+    }
+    //تأكيد طلب من عروض المزارع
     public function requestFromOffer(SalesPurchasingRequest $request , $offerId){
         $offerDetail = $this->purchaseOfferService->compareOfferDetailsToRequestDetails($request->details, $offerId);
         if($offerDetail['status']==false)
@@ -186,6 +202,84 @@ class SalesPurchasingRequestController extends Controller
                                  'countRequestToCompanyNotif'=> $countRequestToCompanyNotif]);
     }
 
+    public function DailyReportSalesRequests(Request $request){
+        $t = Carbon::today()->format('Y-m-d H:i:s.u e');
+        $daily = DB::table('sales_purchasing_requests')
+        ->join('sales-purchasing-requset-details', 'sales_purchasing_requests.id', '=', 'sales-purchasing-requset-details.requset_id')
+        ->where ('sales_purchasing_requests.request_type','=',0)
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereDate('sales-purchasing-requset-details.created_at', $t)->groupBy('type')
+        ->get();
+        return response()->json($daily, 200);
+    }
+
+    public function MonthlyReportSalesRequests(Request $request){
+        $currentMonth = date('m');
+        $Monthly = DB::table('sales_purchasing_requests')
+        ->join('sales-purchasing-requset-details', 'sales_purchasing_requests.id', '=', 'sales-purchasing-requset-details.requset_id')
+        ->where ('sales_purchasing_requests.request_type','=',0)
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereMonth('sales-purchasing-requset-details.created_at',  Carbon::now()->month)->groupBy('type')
+        ->whereBetween('sales-purchasing-requset-details.created_at', [
+            Carbon::now()->startOfYear(),
+            Carbon::now()->endOfYear(),
+        ])
+        ->get();
+
+        return response()->json($Monthly, 200);
+    }
+
+    public function yearlyReportSalesRequests(Request $request){
+        $currentyear = date('y');
+        $yearly = DB::table('sales_purchasing_requests')
+        ->join('sales-purchasing-requset-details', 'sales_purchasing_requests.id', '=', 'sales-purchasing-requset-details.requset_id')
+        ->where ('sales_purchasing_requests.request_type','=',0)
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereBetween('sales_purchasing_requests.created_at', [
+            Carbon::now()->startOfYear(),
+            Carbon::now()->endOfYear(),
+        ])->groupBy('type')->get();
+
+        return response()->json($yearly, 200);
+    }
+
+    public function DailyReportoffer(Request $request){
+        $t = Carbon::today()->format('Y-m-d H:i:s.u e');
+        $dailyOffer = DB::table('purchase_offers')
+        ->join('purchase_offers_detail', 'purchase_offers.id', '=', 'purchase_offers_detail.purchase_offers_id')
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereDate('purchase_offers_detail.created_at', $t)->groupBy('type')
+        ->get();
+        return response()->json($dailyOffer, 200);
+    }
+
+    public function MonthlyReportOffer(Request $request){
+        $currentMonth = date('m');
+        $MonthlyOffer = DB::table('purchase_offers')
+        ->join('purchase_offers_detail', 'purchase_offers.id', '=', 'purchase_offers_detail.purchase_offers_id')
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereMonth('purchase_offers_detail.created_at',  Carbon::now()->month)->groupBy('type')
+        ->whereBetween('purchase_offers_detail.created_at', [
+            Carbon::now()->startOfYear(),
+            Carbon::now()->endOfYear(),
+        ])
+        ->get();
+
+        return response()->json($MonthlyOffer, 200);
+    }
+
+    public function yearlyReportOffer(Request $request){
+        $currentyear = date('y');
+        $yearly = DB::table('purchase_offers')
+        ->join('purchase_offers_detail', 'purchase_offers.id', '=', 'purchase_offers_detail.purchase_offers_id')
+        ->select('type', DB::raw('SUM(amount) as amount'))
+        ->whereBetween('purchase_offers_detail.created_at', [
+            Carbon::now()->startOfYear(),
+            Carbon::now()->endOfYear(),
+        ])->groupBy('type')->get();
+
+        return response()->json($yearly, 200);
+    }
 }
 
 

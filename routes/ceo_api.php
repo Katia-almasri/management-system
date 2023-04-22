@@ -11,7 +11,13 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     Route::get('logout',[CEOController::class, 'logout']);
     Route::get('ceck-dashboard',[CEOController::class, 'CEODashboard']);
     Route::get('ceck-ceo-role',[CEOController::class, 'checkCEORole']);
+    Route::group( ['middleware' => 'is-request-exist'] ,function(){
+
     Route::post('accept-request/{RequestId}',[SalesPurchasingRequestController::class, 'acceptSalesPurchasingRequestFromCeo']);
+    Route::post('refuse-request/{RequestId}',[SalesPurchasingRequestController::class, 'refuseSalesPurchasingRequestFromCeo']);
+
+    });
+    Route::get('display-request',[SalesPurchasingRequestController::class, 'displaySalesPurchasingRequestFromCeo']);
 
 
 });

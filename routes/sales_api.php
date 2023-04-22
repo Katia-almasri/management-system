@@ -90,9 +90,19 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         // إشعارات طلبات منافذ البيع و عدد الإشعارات
         Route::get('get-request-to-company-notifs',[SalesPurchasingRequestController::class, 'getRequestToCompanyNotifs']);
 
-        
-        
-        
+        Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
+        //تقارير لطلبات الشراء
+        Route::get('daily-report',[SalesPurchasingRequestController::class, 'DailyReportSalesRequests']);
+        Route::get('monthly-report',[SalesPurchasingRequestController::class, 'MonthlyReportSalesRequests']);
+        Route::get('yearly-report',[SalesPurchasingRequestController::class, 'yearlyReportSalesRequests']);
+
+        //تقارير للعروض
+
+        Route::get('daily-offer-report',[SalesPurchasingRequestController::class, 'DailyReportoffer']);
+        Route::get('monthly-offer-report',[SalesPurchasingRequestController::class, 'MonthlyReportOffer']);
+        Route::get('yearly-offer-report',[SalesPurchasingRequestController::class, 'yearlyReportOffer']);
+
+
     });
 
 

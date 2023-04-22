@@ -13,9 +13,7 @@ use App\Models\ContractDetail;
 use App\Models\salesPurchasingRequset;
 use App\Models\salesPurchasingRequsetDetail;
 use App\systemServices\notificationServices;
-
 use App\Models\Manager  ;
-
 use Auth;
 use Carbon\Carbon;
 use App\Http\Requests\SalesPurchasingRequest;
@@ -26,11 +24,13 @@ class SellingPortController extends Controller
     use validationTrait;
     protected $SalesPurchasingRequestService;
     protected $notificationService;
+
     public function __construct(){
         $this->SalesPurchasingRequestService  = new SalesPurchasingRequestServices();
         $this->notificationService = new notificationServices();
     }
 
+    //تسجيل حساب منفذ بيع
     public function registerSellingPort(Request $request){
         $validator = Validator::make($request->all(),
         [
@@ -46,7 +46,6 @@ class SellingPortController extends Controller
             'message'=>$validator->errors()->all()
         ]);
         }
-
         $sellingPort = new SellingPort();
         $sellingPort->username = $request->username;
         $sellingPort->name = $request->name;
@@ -75,7 +74,7 @@ class SellingPortController extends Controller
         return  response()->json(["status"=>true, "message"=>"انتظار موافقة المدير"]);
     }
 
-
+    //تسجيل دخول لمنفذ بيع
     public function LoginSellingPort(Request $request) {
         $validator = Validator::make($request->all(), [
             'username' => 'required',
@@ -106,44 +105,52 @@ class SellingPortController extends Controller
         }
     }
 
+    //عرض منافذ البيع
     public function displaySellingPort(Request $request){
         $SellingPort = SellingPort::get(array('id','name','type','owner','mobile_number','location'));
         return response()->json($SellingPort, 200);
     }
 
+    //عرض طلبات منافذ البيع
     public function displaySellingOrder(Request $request){
         $SellingOrder = salesPurchasingRequset::with('salesPurchasingRequsetDetail','sellingPort')
         ->where('farm_id',NULL)->orderBy('id', 'DESC')->get();
         return response()->json($SellingOrder, 200);
     }
 
+    //حذف منفذ بيع
     public function SoftDeleteSellingPort(Request $request, $sellingPortId){
         SellingPort::find($sellingPortId)->delete();
        return  response()->json(["status"=>true, "message"=>"تم حذف منفذ البيع"]);
    }
 
+   //استرجاع منفذ بيع
    public function restoreSellingPort(Request $request, $SellingId){
         SellingPort::withTrashed()->find($SellingId)->restore();
        return  response()->json(["status"=>true, "message"=>"تم استرجاع منفذ البيع المحذوف"]);
    }
 
+   //عرض منافذ البيع المحذوفة
    public function SellingPortTrashed(Request $request){
        $SellingPortTrashed = SellingPort::onlyTrashed()
        ->get(array('id','name','type','owner','mobile_number','location','deleted_at'));
        return response()->json($SellingPortTrashed, 200);
    }
 
+   //عرض طلبات منفذي
     public function displayMySellingPortRequest(Request $request){
         $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
         ->where('selling_port_id',$request->user()->id)->orderBy('id', 'DESC')->get();
         return response()->json($SellingPortRequest, 200);
     }
 
+    //حذف طلب من طلباتي كمنفذ بيع
     public function deleteSellingPortOrder(Request $request , $SellingPortOrderId){
         $findRequest = salesPurchasingRequset::find($SellingPortOrderId)->delete();
        return  response()->json(["status"=>true, "message"=>"تم حذف طلب بنجاح"]);
     }
-/////////////////////////////
+
+    //اضافة طلب كمنفذ بيع
     public function addRequestToCompany(SalesPurchasingRequest $request){
 
         $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);

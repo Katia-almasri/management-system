@@ -30,14 +30,16 @@ return [
             'truck'=>'r,d,u,c',
             'drivers'=>'r,d,u,c'
         ],
-        'Production_Manager' => [
-
-        ],
-        
+       
         'libra-commander' => [
             'Receipt statement'=>'r,d,u,c',
             'statement after weight'=>'r,d,u,c'
         ],
+
+        'Accounting-Manager' => [
+            'Financial reports'=>'r'
+        ],
+
     ],
 
     'permissions_map' => [
