@@ -40,7 +40,7 @@ class RoleUserTableSeeder extends Seeder
         ]);
         //مدير محاسبة
         Role_User::create([
-            'role_id'=>7,
+            'role_id'=>6,
             'user_id'=>6,
             'user_type'=>'App\Models\Manager'
         ]);
