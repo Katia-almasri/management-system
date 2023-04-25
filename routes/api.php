@@ -10,5 +10,17 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
    // authenticated staff routes here
     Route::get('logout',[Controller::class, 'logout']);
 
+    //  drop down مواد للشراء
+    Route::get('get-row-materials',[Controller::class, 'getRowMaterial']);
+
+    // drop down منتجات للبيع
+    Route::get('get-products',[Controller::class, 'getProducts']);
+
+    //drop down أنواع منافذ البيع
+    Route::get('get-selling-port-types',[Controller::class, 'getٍٍٍSellingPortType']);
+    
+
+    
+
 
 });
