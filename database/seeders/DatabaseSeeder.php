@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
         $this->call(PurchaseOffers::class);
         $this->call(PurchaseOffersDetail::class);
         $this->call(TripsTableSeeder::class);
+        //today
+        $this->call(RowMaterialTableSeeder::class);
+        $this->call(productTableSeeder::class);
+        $this->call(sellingortypeTableSeeder::class);
 
     }
 }

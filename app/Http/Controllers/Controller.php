@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\product;
+use App\Models\RowMaterial;
+use App\Models\sellingortype;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -47,6 +50,21 @@ class Controller extends BaseController
          return response()->json([
            'message' => 'logged out successfully'
          ]);
+    }
+
+    public function getRowMaterial(Request $request){
+        $rowMaterials = RowMaterial::get();
+        return response()->json($rowMaterials);
+    }
+
+    public function getProducts(Request $request){
+        $products = product::get();
+        return response()->json($products);
+    }
+
+    public function getٍٍٍSellingPortType(Request $request){
+        $sellingPortTypes = sellingortype::get();
+        return response()->json($sellingPortTypes);
     }
 
 
