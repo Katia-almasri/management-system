@@ -17,7 +17,7 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     Route::get('get-products',[Controller::class, 'getProducts']);
 
     //drop down أنواع منافذ البيع
-    Route::get('get-selling-port-types',[Controller::class, 'getٍٍٍSellingPortType']);
+    Route::get('get-selling-port-types',[Controller::class, 'getSellingPortType']);
     
 
     

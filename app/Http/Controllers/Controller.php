@@ -62,7 +62,7 @@ class Controller extends BaseController
         return response()->json($products);
     }
 
-    public function getٍٍٍSellingPortType(Request $request){
+    public function getSellingPortType(Request $request){
         $sellingPortTypes = sellingortype::get();
         return response()->json($sellingPortTypes);
     }
