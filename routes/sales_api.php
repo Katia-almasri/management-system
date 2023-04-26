@@ -39,7 +39,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
             //تأكيد طلب تسجيل حساب منفذ بيع
             Route::post('confirm-request-register/{sellingPortId}',[SellingPortController::class, 'commandAcceptForSellingPort']);
         });
+        
+        Route::get('display-non-accept',[SalesPurchasingRequestController::class, 'displayNonAcceptByCEO']);
 
+        Route::get('display-accept',[SalesPurchasingRequestController::class, 'displayAcceptByCEO']);
+        
         //استرجاع منفذ بيع محذوفة
         Route::post('restore-selling-port/{SellingId}',[SellingPortController::class, 'restoreSellingPort'])->middleware('is-deleted-selling-port-exist');
         //عرض منافذ البيع المحذوفة
@@ -77,7 +81,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-contracts',[ContractController::class, 'getContracts']);
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
         //تأكيد طلب من العروض
-        Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist');
+        Route::post('confirm_offer/{offerId}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist');
 
         
         //إشعارات طلبات تسجيل المزارع و عدد الإشعارات

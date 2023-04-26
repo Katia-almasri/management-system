@@ -12,7 +12,7 @@ class isOfferExist
     use validationTrait;
     public function handle(Request $request, Closure $next)
     {
-        $offer = PurchaseOffer::find($request->offer_id);
+        $offer = PurchaseOffer::find($request->offerId);
         if($offer!=null)
             return $next($request);
         return  $this -> returnError('error', 'هذا العرض غير موجود');

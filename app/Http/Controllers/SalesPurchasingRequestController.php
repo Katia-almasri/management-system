@@ -280,6 +280,19 @@ class SalesPurchasingRequestController extends Controller
 
         return response()->json($yearly, 200);
     }
+
+    public function displayNonAcceptByCEO(Request $request){
+        $requests = salesPurchasingRequset::with('sellingPort', 'farm', 'salesPurchasingRequsetDetail')
+                                            ->where('accept_by_ceo', null)
+                                            ->orWhere('accept_by_ceo', 0)->orderBy('id', 'DESC')->get();
+        return response()->json($requests, 200);
+    }
+
+    public function displayAcceptByCEO(Request $request){
+        $requests = salesPurchasingRequset::with('sellingPort', 'farm', 'salesPurchasingRequsetDetail')
+                                            ->where('accept_by_ceo', '=', 1)->orderBy('id', 'DESC')->get();
+        return response()->json($requests, 200);
+    }
 }
 
 

@@ -107,7 +107,8 @@ class SellingPortController extends Controller
 
     //عرض منافذ البيع
     public function displaySellingPort(Request $request){
-        $SellingPort = SellingPort::get(array('id','name','type','owner','mobile_number','location'));
+        $SellingPort = SellingPort::where('approved_at', '!=', null)
+                                    ->get(array('id','name','type','owner','mobile_number','location'));
         return response()->json($SellingPort, 200);
     }
 
@@ -157,7 +158,7 @@ class SellingPortController extends Controller
 
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->total_amount = $totalAmount['result'];
-        $SalesPurchasingRequest->request_type = 0;
+        $SalesPurchasingRequest->request_type = 1;
         $SalesPurchasingRequest->selling_port_id = $request->user()->id;
         $SalesPurchasingRequest->save();
         //NOW THE DETAILS

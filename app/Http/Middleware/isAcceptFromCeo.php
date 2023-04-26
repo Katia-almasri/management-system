@@ -21,15 +21,17 @@ class isAcceptFromCeo
     {
         $RequestId = $request->RequestId;
         $requestAccept = salesPurchasingRequset::find($RequestId);
-        if($requestAccept!=null)
+        if($requestAccept!=null){
             if($requestAccept->accept_by_ceo==1 && $requestAccept->accept_by_sales==1)
-                return $next($request);
-        if($requestAccept->accept_by_ceo==0 && $requestAccept->accept_by_sales==1)
-            return  $this -> returnError('error', 'الطلب في انتظار موافقة المدير التنفيذي');
-        if($requestAccept->accept_by_ceo==1 && $requestAccept->accept_by_sales==0)
-            return  $this -> returnError('error', 'الطلب في انتظار موافقة مدير المشتريات والمبيعات');
-        if($requestAccept->accept_by_ceo==0 && $requestAccept->accept_by_sales==0)
-            return  $this -> returnError('error', ' الطلب في انتظار موافقة مدير المشتريات والمبيعات وموافقة المدير التنفيذي');
+            return $next($request);
+            if($requestAccept->accept_by_ceo==0 && $requestAccept->accept_by_sales==1)
+                return  $this -> returnError('error', 'الطلب في انتظار موافقة المدير التنفيذي');
+            if($requestAccept->accept_by_ceo==1 && $requestAccept->accept_by_sales==0)
+                return  $this -> returnError('error', 'الطلب في انتظار موافقة مدير المشتريات والمبيعات');
+            if($requestAccept->accept_by_ceo==0 && $requestAccept->accept_by_sales==0)
+                return  $this -> returnError('error', ' الطلب في انتظار موافقة مدير المشتريات والمبيعات وموافقة المدير التنفيذي');
+
+        }
         return  $this -> returnError('error', 'طلب الشراء أو المبيع غير متواجد');
     }
 }

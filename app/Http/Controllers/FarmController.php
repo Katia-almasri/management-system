@@ -27,13 +27,14 @@ class FarmController extends Controller
         $this->notificationService = new notificationServices();
     }
     public function displayFarms(Request $request){
-        $Farm = Farm::get(array('id','name','owner','mobile_number','location'));
+        $Farm = Farm::where('approved_at', '!=', null)
+                    ->get(array('id','name','owner','mobile_number','location'));
         return response()->json($Farm, 200);
     }
 
     public function displayPurchaseOffers(Request $request){
-        $PurchaseOffer = PurchaseOffer::with('detailpurchaseOrders','farm')
-        ->get();
+        $PurchaseOffer = PurchaseOffer::with('detailpurchaseOrders','farm')->orderBy('id', 'DESC')->get();
+    
         return response()->json($PurchaseOffer, 200);
     }
 
