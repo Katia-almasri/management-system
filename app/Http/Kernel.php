@@ -72,6 +72,7 @@ class Kernel extends HttpKernel
         'is-deleted-farm-exist' => \App\Http\Middleware\isDeletedFarmExist::class,
         'check-reciept-id' => \App\Http\Middleware\checkRecieptId::class,
         'check-reciept-weighted' => \App\Http\Middleware\isRecieptWeighted::class,
+        'check-reciept-not-weighted' => \App\Http\Middleware\isRecieptNotWeighted::class,
         'is-libra-commander-exist' => \App\Http\Middleware\isLibraCommander::class,
         'is-deleted-truck-exist' => \App\Http\Middleware\isDeletedTruckExist::class,
         'is-deleted-driver-exist' => \App\Http\Middleware\isDeletedDriverExist::class,

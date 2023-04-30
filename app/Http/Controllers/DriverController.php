@@ -18,6 +18,8 @@ class DriverController extends Controller
     public function AddDriver(DriverRequest $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'address' => 'required',
+            'mobile_number' => 'required|numeric',
         ]);
 
         if($validator->fails()){
@@ -26,6 +28,8 @@ class DriverController extends Controller
         $driver = new Driver();
         $driver->mashenism_coordinator_id = $request->user()->id;
         $driver->name = $request->name;
+        $driver->address = $request->address;
+        $driver->mobile_number = $request->mobile_number;
         $driver->state = 'متاح';
         $driver->save();
         return  response()->json(["status"=>true, "message"=>"تم اضافة سائق بنجاح"]);

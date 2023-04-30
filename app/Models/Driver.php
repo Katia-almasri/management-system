@@ -16,7 +16,9 @@ class Driver extends Model
     protected $fillable = [
        'mashenism_coordinator_id',
        'name',
-       'state'
+       'state',
+       'address',
+       'mobile_number'
     ];
 
      ############################## Begin Relations #############################
