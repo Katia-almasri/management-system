@@ -87,6 +87,12 @@ class RouteServiceProvider extends ServiceProvider
              ->namespace($this->namespace)
              ->group(base_path('routes/accounting_api.php'));
 
+             //مشرف الذبح
+             Route::prefix('slaughter-supervisor-api')
+             ->middleware('api')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/slaughter_supervisor_api.php'));
+
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));

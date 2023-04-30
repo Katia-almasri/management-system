@@ -92,6 +92,12 @@ class Kernel extends HttpKernel
         'check-offer-exist' => \App\Http\Middleware\isOfferExist::class,
         'is-request-exist' => \App\Http\Middleware\isRequestExist::class,
         'is-accounting-manager' => \App\Http\Middleware\isAccountingManager::class,
+        'is-approved-material' => \App\Http\Middleware\isApprovedMaterial::class,
+        'is-slaughter-supervisor' => \App\Http\Middleware\isSlaughterSupervisor::class,
+        'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
+
+
+
 
 
 

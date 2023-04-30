@@ -30,7 +30,7 @@ return [
             'truck'=>'r,d,u,c',
             'drivers'=>'r,d,u,c'
         ],
-       
+
         'libra-commander' => [
             'Receipt statement'=>'r,d,u,c',
             'statement after weight'=>'r,d,u,c'
@@ -38,6 +38,16 @@ return [
 
         'Accounting-Manager' => [
             'Financial reports'=>'r'
+        ],
+
+        'Production_Manager' => [
+            'commander'=>'r',
+            'note' =>'r',
+            'warehouse' => 'r'
+        ],
+
+        'slaughter_supervisor' => [
+            'commander'=>'r'
         ],
 
     ],

@@ -44,6 +44,16 @@ class RoleUserTableSeeder extends Seeder
             'user_id'=>6,
             'user_type'=>'App\Models\Manager'
         ]);
+        Role_User::create([
+            'role_id'=>7,
+            'user_id'=>4,
+            'user_type'=>'App\Models\Manager'
+        ]);
+        Role_User::create([
+            'role_id'=>8,
+            'user_id'=>7,
+            'user_type'=>'App\Models\Manager'
+        ]);
 
     }
 }

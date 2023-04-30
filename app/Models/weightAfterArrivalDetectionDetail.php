@@ -17,8 +17,9 @@ class weightAfterArrivalDetectionDetail extends Model
        'dead_chicken',
        'tot_weight_after_arrival',
        'weight_loss',
-       'net_weight_after_arrival'
-       
+       'net_weight_after_arrival',
+       'current_weight'
+
     ];
 
     ######################## Begin Relations ##########################
@@ -28,6 +29,9 @@ class weightAfterArrivalDetectionDetail extends Model
 
     public function PoultryReceiptDetectionsDetails(){
         return $this->belongsTo('App\Models\PoultryReceiptDetectionsDetails', 'details_id', 'id');
+    }
+    public function inputProductions(){
+        return $this->hasMany('App\Models\InputProduction', 'weight_detail_id', 'id');
     }
     ######################### End Relations ############################
 
