@@ -17,7 +17,7 @@ class DriverController extends Controller
     //اضافة سائق
     public function AddDriver(DriverRequest $request){
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => 'required|unique:drivers,name',
             'address' => 'required',
             'mobile_number' => 'required|numeric',
         ]);
