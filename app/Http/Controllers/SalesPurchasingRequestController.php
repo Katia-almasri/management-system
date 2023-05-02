@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\addStartCommandNotif;
 use App\Models\AddOfferNotif;
 use App\Models\AddSalesPurchasingNotif;
 use App\Models\PoultryReceiptDetection;
@@ -112,6 +113,7 @@ class SalesPurchasingRequestController extends Controller
         $data['type'] = 'أمر لمنسق حركة الآليات';
         $data['command_id'] = $RequestId;
         $this->notificationService->addStartCommandNotif($data);
+
         ////////////////// SEND THE NOTIFICATION /////////////////////////
         return response()->json(["status"=>true, "message"=>"تم اعطاء الامر لمنسق حركة الاليات"]);
     }
