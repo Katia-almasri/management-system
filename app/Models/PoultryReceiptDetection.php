@@ -17,7 +17,8 @@ class PoultryReceiptDetection extends Model
        'tot_weight',
        'empty',
        'net_weight',
-       'num_cages'
+       'num_cages',
+       'is_seen_by_sales_manager'
        
     ];
 

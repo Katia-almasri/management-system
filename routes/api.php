@@ -19,8 +19,8 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     //drop down أنواع منافذ البيع
     Route::get('get-selling-port-types',[Controller::class, 'getSellingPortType']);
     
-
-    
+    //استعراض وزن الشحنة بعد الوصول لكشف معين
+    Route::get('get-weight-after-arrivel-detection/{recieptId}', [Controller::class, 'getWeightAfterArrival'])->middleware(['is-user-has-permission-to-read-poultry-detection','check-reciept-id', 'check-reciept-weighted']);
 
 
 });

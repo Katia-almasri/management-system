@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AddOfferNotif;
 use App\Models\AddSalesPurchasingNotif;
+use App\Models\PoultryReceiptDetection;
 use App\Models\RegisterSellingPortRequestNotif;
 use App\Models\RequestToCompanyNotif;
 Use \Carbon\Carbon;
@@ -106,14 +107,22 @@ class SalesPurchasingRequestController extends Controller
     public function commandForMechanismCoordinator(Request $request, $RequestId){
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo',1],['accept_by_sales',1],['id' , '=' , $RequestId]])
         ->update(['command' => 1]);
-        
+
+        //إرسال إشعار لمنسق حركة الآليات حول الأمر  
+        $data['type'] = 'أمر لمنسق حركة الآليات';
+        $data['command_id'] = $RequestId;
+        $this->notificationService->addStartCommandNotif($data);
+        ////////////////// SEND THE NOTIFICATION /////////////////////////
         return response()->json(["status"=>true, "message"=>"تم اعطاء الامر لمنسق حركة الاليات"]);
     }
 
     //استعراض الطلبات من قبل منسق حركة الاليات بعد الامر
     public function displaySalesPurchasingRequestFromMachenism(Request $request){
         $SalesPurchasingRequset = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
-        ->where([['command',1],['accept_by_ceo',1]])->get();
+                                    ->where([['command',1],['accept_by_ceo',1], ['is_seen_by_mechanism_coordinator', 0]])->orderBy('created_at', 'DESC')->get();
+
+         $updateIsSeenStatus = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
+                                    ->where([['command',1],['accept_by_ceo',1], ['is_seen_by_mechanism_coordinator', 0]])->update(['is_seen_by_mechanism_coordinator'=>1]);
         return response()->json($SalesPurchasingRequset, 200);
     }
     //الموافقة على طلب من قبل المدير التنفذي
@@ -188,6 +197,19 @@ class SalesPurchasingRequestController extends Controller
                                  'countRegisterSellingPortRequestNotif'=> $countRegisterSellingPortRequestNotif]);
     } 
     
+    
+    //عدد أوامر الانطلاق يراها منسق حركة الآليات
+    public function countStartCommandsNotifs(Request $request){
+        $countStartCommandsNotif = salesPurchasingRequset::where('is_seen_by_mechanism_coordinator', '=', 0)->count();
+        return response()->json(['countStartCommandsNotif' => $countStartCommandsNotif]);
+    } 
+
+    // يراها مدير المشتريات والمبيعات عدد الشحنات الواصلة والتي تم وزنها
+    public function countPoultryRecieptDetectionsNotifs(Request $request){
+        $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', 0], ['is_weighted_after_arrive', 1]])->count();
+        return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
+    } 
+
     public function getAddOffersNotifs(Request $request){
         $AddOfferNotif = AddOfferNotif::where('is_read', '=', 0)->get();
         $countAddOfferNotif = $AddOfferNotif->count();

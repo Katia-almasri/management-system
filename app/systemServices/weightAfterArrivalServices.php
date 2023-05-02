@@ -168,7 +168,7 @@ class weightAfterArrivalServices
             $weightAfterArrivalDetectionDetail->tot_weight_after_arrival = $DetailsDetection['tot_weight_after_arrival'];
             $weightAfterArrivalDetectionDetail->weight_loss = $weight_loss;
             $weightAfterArrivalDetectionDetail->net_weight_after_arrival = $net_weight_after_arrival;
-            //$weightAfterArrivalDetectionDetail->current_weight = $net_weight_after_arrival;
+            $weightAfterArrivalDetectionDetail->current_weight = $net_weight_after_arrival;
             $weightAfterArrivalDetectionDetail->save();
             $counter += 1;
         }

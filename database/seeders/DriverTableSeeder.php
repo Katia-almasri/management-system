@@ -18,7 +18,7 @@ class DriverTableSeeder extends Seeder
             'name'=>'سعيد',
             'state'=>'متاح',
             'address'=>'جرمانا-ساحة الرئيس',
-            'mobile_number'=>0912334343,
+            'mobile_number'=>'0912334343',
             'mashenism_coordinator_id' => 3
 
         ]);
@@ -28,7 +28,7 @@ class DriverTableSeeder extends Seeder
             'name'=>'علي',
             'state'=>'دوام',
             'address'=>'جرمانا-ساحة الرئيس',
-            'mobile_number'=>0912334343,
+            'mobile_number'=>'0912334343',
             'mashenism_coordinator_id' => 3
         ]);
     }

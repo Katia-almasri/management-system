@@ -21,7 +21,8 @@ class salesPurchasingRequset extends Model
        'farm_id',
        'selling_port_id',
        'command',
-       'offer_id'
+       'offer_id',
+       'is_seen_by_mechanism_coordinator'
     ];
 
      ############################## Begin Relations #############################

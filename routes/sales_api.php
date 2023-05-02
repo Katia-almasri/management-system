@@ -31,7 +31,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////عرض الملاحظات///////////////////
         Route::get('display-notes',[NoteController::class, 'displayNote']);
         ///////////حذف ملاحظة/////////////////////////////
-        Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNote'])->middleware('is-note-exist');
+        Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteBySales'])->middleware('is-note-exist');
 
         Route::group( ['middleware' => 'is-selling-port-exist'] ,function(){
             //حذف منفذ بيع
@@ -93,6 +93,9 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         
         // إشعارات طلبات منافذ البيع و عدد الإشعارات
         Route::get('get-request-to-company-notifs',[SalesPurchasingRequestController::class, 'getRequestToCompanyNotifs']);
+        //عدد الشحنات الواصلة والتي تم وزنها
+        Route::get('get-poultry-reciept-count-notifs',[SalesPurchasingRequestController::class, 'countPoultryRecieptDetectionsNotifs']);
+        
 
         Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
         //تقارير لطلبات الشراء

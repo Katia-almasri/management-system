@@ -10,7 +10,7 @@ use App\Http\Controllers\ProductionController;
 Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
     Route::group( ['middleware' => 'is-production-manager'] ,function(){
-        Route::get('display-notes',[NoteController::class, 'displayNote']);
+        
         Route::get('display-commander',[ProductionController::class, 'displayLibraCommanderOutPut']);
         Route::post('approved-detail/{detailCommandId}',[ProductionController::class, 'approveCommanderDetail'])
         ->middleware('is-approved-material');
@@ -22,10 +22,12 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::delete('delete-type-output/{typeId}',[ProductionController::class, 'deleteFromProdctionOutPut'])
         ->middleware('is-deleted-type');
 
-
-
-
-
+        //ملاحظام لمدير المشتريات والمبيعات
+        Route::Post('add-note',[NoteController::class, 'AddNoteForSalesManager']);
+        /////////////عرض الملاحظات///////////////////
+        Route::get('display-notes',[NoteController::class, 'displayNote']);
+        ///////////حذف ملاحظة/////////////////////////////
+        Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
 
     });
 

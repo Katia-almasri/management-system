@@ -13,7 +13,8 @@ class Note extends Model
     protected $fillable = [
        'production_manager_id',
        'purchasing_manager_id',
-       'detail'
+       'detail',
+       'sender'
     ];
 
      ############################## Begin Relations #############################

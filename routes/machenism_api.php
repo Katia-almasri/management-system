@@ -57,6 +57,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //عرض كل الرحلات
         Route::get('display-trips',[TripController::class, 'displayTrip']);
 
+        //عداد إشعار استعراض الأوامر
+        
+        Route::get('count-start-commands-notifs',[SalesPurchasingRequestController::class, 'countStartCommandsNotifs']);
+
     });
 
 
