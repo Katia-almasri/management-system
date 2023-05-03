@@ -45,7 +45,7 @@ class PoultryRecieptDetectionDetailsTableSeeder extends Seeder
         ]);
 
         PoultryReceiptDetectionsDetails::create([
-            'receipt_id'=>1,
+            'receipt_id'=>2,
             'row_material_id'=>1,
             'num_cages'=>3,
             'tot_weight'=>4200,
@@ -55,7 +55,7 @@ class PoultryRecieptDetectionDetailsTableSeeder extends Seeder
         ]);
 
         PoultryReceiptDetectionsDetails::create([
-            'receipt_id'=>1,
+            'receipt_id'=>2,
             'row_material_id'=>2,
             'num_cages'=>3,
             'tot_weight'=>4718,
@@ -65,7 +65,7 @@ class PoultryRecieptDetectionDetailsTableSeeder extends Seeder
         ]);
 
         PoultryReceiptDetectionsDetails::create([
-            'receipt_id'=>1,
+            'receipt_id'=>2,
             'row_material_id'=>3,
             'num_cages'=>3,
             'tot_weight'=>4690,
