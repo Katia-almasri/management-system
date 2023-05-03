@@ -202,7 +202,7 @@ class SalesPurchasingRequestController extends Controller
     
     //عدد أوامر الانطلاق يراها منسق حركة الآليات
     public function countStartCommandsNotifs(Request $request){
-        $countStartCommandsNotif = salesPurchasingRequset::where('is_seen_by_mechanism_coordinator', '=', 0)->count();
+        $countStartCommandsNotif = salesPurchasingRequset::where(['command'=> 1, 'is_seen_by_mechanism_coordinator'=> 0])->count();
         return response()->json(['countStartCommandsNotif' => $countStartCommandsNotif]);
     } 
 
