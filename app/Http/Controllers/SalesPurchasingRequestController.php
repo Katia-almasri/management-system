@@ -106,12 +106,14 @@ class SalesPurchasingRequestController extends Controller
 
 
     public function commandForMechanismCoordinator(Request $request, $RequestId){
-        $findRecuest = salesPurchasingRequset::where([['accept_by_ceo',1],['accept_by_sales',1],['id' , '=' , $RequestId]])
+        $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1],['accept_by_sales', '=', 1],['id', '=', $RequestId]])
         ->update(['command' => 1]);
 
         //إرسال إشعار لمنسق حركة الآليات حول الأمر  
-        $data['type'] = 'أمر لمنسق حركة الآليات';
+        $data['title'] = 'أمر جديد لمنسق حركة الآليات';
+        $data['details'] = $RequestId.' تم إعطاْ أمر جديد للشحنة';
         $data['command_id'] = $RequestId;
+        $data['route'] = 'http://127.0.0.1:8000//sales-api//command-for-mechanism//2';
         $this->notificationService->addStartCommandNotif($data);
 
         ////////////////// SEND THE NOTIFICATION /////////////////////////
@@ -121,10 +123,10 @@ class SalesPurchasingRequestController extends Controller
     //استعراض الطلبات من قبل منسق حركة الاليات بعد الامر
     public function displaySalesPurchasingRequestFromMachenism(Request $request){
         $SalesPurchasingRequset = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
-                                    ->where([['command',1],['accept_by_ceo',1], ['is_seen_by_mechanism_coordinator', 0]])->orderBy('created_at', 'DESC')->get();
+                                    ->where([['command', '=', 1],['accept_by_ceo', '=', 1], ['is_seen_by_mechanism_coordinator','=', 0]])->orderBy('created_at', 'DESC')->get();
 
          $updateIsSeenStatus = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
-                                    ->where([['command',1],['accept_by_ceo',1], ['is_seen_by_mechanism_coordinator', 0]])->update(['is_seen_by_mechanism_coordinator'=>1]);
+                                    ->where([['command', '=', 1],['accept_by_ceo', '=', 1], ['is_seen_by_mechanism_coordinator', '=', 0]])->update(['is_seen_by_mechanism_coordinator'=>1]);
         return response()->json($SalesPurchasingRequset, 200);
     }
     //الموافقة على طلب من قبل المدير التنفذي
@@ -137,9 +139,9 @@ class SalesPurchasingRequestController extends Controller
     }
     //رفض طلب من قبل المدير التنفيذي مع امكانية ادخال سبب الرفض
     public function refuseSalesPurchasingRequestFromCeo(Request $request, $RequestId){
-        $findOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        $findOrder = salesPurchasingRequset::where([['id'=> $RequestId]])
         ->update(array('reason_refuse_by_ceo' => $request->reason_refuse_by_ceo));
-        $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        $findRequestOrder = salesPurchasingRequset::where([['id', '=', $RequestId]])
         ->update(['accept_by_ceo'=>0]);
 
         return response()->json(["status"=>true, "message"=>"تم رفض الطلبية "]);
@@ -202,13 +204,13 @@ class SalesPurchasingRequestController extends Controller
     
     //عدد أوامر الانطلاق يراها منسق حركة الآليات
     public function countStartCommandsNotifs(Request $request){
-        $countStartCommandsNotif = salesPurchasingRequset::where(['command'=> 1, 'is_seen_by_mechanism_coordinator'=> 0])->count();
+        $countStartCommandsNotif = salesPurchasingRequset::where([['command', '=', 1], ['is_seen_by_mechanism_coordinator','=', 0]])->count();
         return response()->json(['countStartCommandsNotif' => $countStartCommandsNotif]);
     } 
 
     // يراها مدير المشتريات والمبيعات عدد الشحنات الواصلة والتي تم وزنها
     public function countPoultryRecieptDetectionsNotifs(Request $request){
-        $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', 0], ['is_weighted_after_arrive', 1]])->count();
+        $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', '=', 0], ['is_weighted_after_arrive', '=',1]])->count();
         return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
     } 
 

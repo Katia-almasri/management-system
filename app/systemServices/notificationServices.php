@@ -52,6 +52,8 @@ class notificationServices
 
     public function addStartCommandNotif($data){
         $pusher = $this->makePusherConnection();
+        $data['date'] = date("Y-m-d", strtotime(Carbon::now()));
+        $data['time'] = date("h:i A", strtotime(Carbon::now()));
         $pusher->trigger('add-start-command-notification', 'App\\Events\\addStartCommandNotif', $data);
 
     }
