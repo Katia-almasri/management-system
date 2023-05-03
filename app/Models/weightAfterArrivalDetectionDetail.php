@@ -18,7 +18,8 @@ class weightAfterArrivalDetectionDetail extends Model
        'tot_weight_after_arrival',
        'weight_loss',
        'net_weight_after_arrival',
-       'current_weight'
+       'current_weight',
+       'approved_at'
 
     ];
 

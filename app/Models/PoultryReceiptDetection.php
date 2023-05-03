@@ -14,11 +14,13 @@ class PoultryReceiptDetection extends Model
     protected $fillable = [
        'farm_id',
        'libra_commander_id',
+       'is_weighted_after_arrive',
        'tot_weight',
        'empty',
        'net_weight',
        'num_cages',
-       'is_seen_by_sales_manager'
+       'is_seen_by_sales_manager',
+       
        
     ];
 
