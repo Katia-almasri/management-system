@@ -15,7 +15,7 @@ class weightAfterArrivalServices
 {
 
     protected $num_birds = 10;
-    protected $cage_weight = 40.0;
+    protected $cage_weight = 6.0;
 
     public function storeWeightAfterArrivalRequest(WeightAfterArrivalRequest $request, $recieptId)
     {
@@ -26,6 +26,7 @@ class weightAfterArrivalServices
         $dead_chicken = 0;
         $tot_weight_after_arrival = 0.0;
         $counter = 0;
+        $empty = 0.0;
 
         try {
             DB::beginTransaction();
@@ -33,6 +34,7 @@ class weightAfterArrivalServices
                 $weightAfterArrivalDetailsResult = $this->processWeightAfterArrivalDetails($_detail['detection_details'], $recieptId, $counter);
                 $counter += 1;
                 if ($weightAfterArrivalDetailsResult['status'] == true) {
+                    $empty += $weightAfterArrivalDetailsResult['message']['empty'];
                     $dead_chicken += $weightAfterArrivalDetailsResult['message']['dead_chicken'];
                     $tot_weight_after_arrival += $weightAfterArrivalDetailsResult['message']['tot_weight_after_arrival'];
                 } else
@@ -47,7 +49,7 @@ class weightAfterArrivalServices
                 "dead_chicken" => $dead_chicken,
                 "tot_weight_after_arrival" => $tot_weight_after_arrival,
                 "weight_loss" => $weight_loss,
-                "empty" => $weightAfterArrivalDetailsResult['message']['empty']
+                "empty" => $empty
             ];
             //1. STORE THE WEIGHT AFTER ARRIVAL
             $finalResult = $this->storeWeightAfterArrival($polutryDetectionData);

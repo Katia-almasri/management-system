@@ -14,7 +14,7 @@ class poultryDetectionRequestServices
 {
 
     protected $num_birds = 10;
-    protected $cage_weight = 40.0;
+    protected $cage_weight = 6.0;
 
     public function storePoultryDetectionRequest(PoultryRecieptDetectionRequest $request)
     {

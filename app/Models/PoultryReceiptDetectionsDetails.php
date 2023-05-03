@@ -17,7 +17,7 @@ class PoultryReceiptDetectionsDetails extends Model
        'num_cages',
        'tot_weight',
        'num_birds',
-       'approved_at'
+       'net_weight'
     ];
 
     ######################## Begin Relations ################################
