@@ -20,4 +20,6 @@ class Notification extends Model
        'details',
        'is_seen',
     ];
+
+
 }
