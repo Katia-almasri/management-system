@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 
 Route::post('login',[Controller::class, 'Login'])->name('Login');
+Route::get('get',[Controller::class, 'get']);
+
 Route::group( ['middleware' => ['auth:managers-api'] ],function(){
    // authenticated staff routes here
     Route::get('logout',[Controller::class, 'logout']);

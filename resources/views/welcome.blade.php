@@ -24,7 +24,14 @@
         crossorigin="anonymous"></script>
 
 <script>
+    var flag = false;
     $(document).ready(function(){
+
+        $.get('api/get').success(function(response) {
+    alert(response);
+  });
+
+  
         Pusher.logToConsole = true;
         var pusher = new Pusher("64b41f1f5c8fa4f8080c", {
         cluster: "ap2",
@@ -32,9 +39,19 @@
   });
   var channel = pusher.subscribe("add-start-command-notification");
 
-  channel.bind("App\\Events\\addStartCommandNotif", (data) => {
-    alert(data.type+", "+data.command_id);
+    if(flag==false){
+        channel.bind("App\\Events\\addStartCommandNotif", (data) => {
+    alert(data);
 });
+
+    }
+
+// var chatRoom = pusher.subscribe('messages');
+// chatRoom.bind('pusher:subscription_succeeded', retrieveHistory);
+
+
+ 
+
     });
 
   </script>
