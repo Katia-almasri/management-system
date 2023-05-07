@@ -21,5 +21,4 @@ class Notification extends Model
        'is_seen',
     ];
 
-
 }
