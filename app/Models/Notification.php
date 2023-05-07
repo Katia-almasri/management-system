@@ -20,4 +20,12 @@ class Notification extends Model
        'details',
        'is_seen',
     ];
+
+    #################### Accessors & mutators #########################
+    public  function getAllNotifications()
+    {
+        return Notification::where([['channel', '=', 'add-start-command-notification'],
+        ['is_seen', '=', 0]
+         ])->get();
+    }
 }
