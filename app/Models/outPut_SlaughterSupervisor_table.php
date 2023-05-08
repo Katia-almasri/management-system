@@ -11,7 +11,7 @@ class outPut_SlaughterSupervisor_table extends Model
     protected $table = 'output_slaughtersupervisors';
     protected $primaryKey='id';
     protected $fillable = [
-       'waste value',
+       'waste_value',
        'production_date',
     ];
 

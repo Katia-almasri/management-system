@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\PoultryReceiptDetectionsDetails;
+class PoultryReceiptDetectionsDetailsSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        PoultryReceiptDetectionsDetails::create([
+            'receipt_id'=>1,
+            'row_material_id'=>1,
+            'num_cages' => 3,
+            'tot_weight' => 4200,
+            'num_birds' => 30,
+            'net_weight' => 4080,
+        ]);
+
+        PoultryReceiptDetectionsDetails::create([
+            'receipt_id'=>2,
+            'row_material_id'=>2,
+            'num_cages' => 3,
+            'tot_weight' => 4718,
+            'num_birds' => 30,
+            'net_weight' => 4598,
+        ]);
+    }
+}

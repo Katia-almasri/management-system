@@ -96,18 +96,15 @@ class Kernel extends HttpKernel
         'is-approved-material' => \App\Http\Middleware\isApprovedMaterial::class,
         'is-slaughter-supervisor' => \App\Http\Middleware\isSlaughterSupervisor::class,
         'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
-
-
-
-
-
-
-
-
-
-
-
-
+        'is-current-weight-and-id' => \App\Http\Middleware\isCurrentWeightAndId::class,
+        'is-exist-input-slaughters' => \App\Http\Middleware\isExistIdInInputSlaughters::class,
+        'is-exist-type-id-input-slaughters' => \App\Http\Middleware\isExistTypeIdInInputSlaughters::class,
+        'is-exist-input-production' => \App\Http\Middleware\isExistInputProduction::class,
+        'is-already-direct-to' => \App\Http\Middleware\isAlreadyDirectTo::class,
+        'is-cutting-supervisor' => \App\Http\Middleware\isCuttingSupervisor::class,
+        'is-exist-type-id-input-cutting' => \App\Http\Middleware\isExistTypeIdInputCutting::class,
+        'is-exist-input-cutting' => \App\Http\Middleware\isExistInputCutting::class,
+        'is-manufacturing-supervisor' => \App\Http\Middleware\isManufacturingSupervisor::class,
 
 
 

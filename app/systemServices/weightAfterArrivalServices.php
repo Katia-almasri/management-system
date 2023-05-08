@@ -75,7 +75,7 @@ class weightAfterArrivalServices
         $num_cages = 0;
         $tot_material_weight = 0.0;
         $dead_chicken = 0;
-        
+
         foreach ($detection_details as $_detail) {
             $num_cages += 1;
             $tot_material_weight += $_detail['cage_weight'];
@@ -97,7 +97,7 @@ class weightAfterArrivalServices
         if ($poultryRecieptDetection[0]->PoultryReceiptDetectionDetails[$counter]->num_cages * $this->num_birds < $dead_chicken) {
             return (["status" => false, "message" => "خطأ في الإدخال"]);
         }
-        
+
         $empty = $num_cages * $this->cage_weight;
         $net_weight_after_arrival = $tot_material_weight - $empty;
         $weight_loss = $poultryRecieptDetection[0]->PoultryReceiptDetectionDetails[$counter]->net_weight - $net_weight_after_arrival;
@@ -168,7 +168,7 @@ class weightAfterArrivalServices
             $weightAfterArrivalDetectionDetail->tot_weight_after_arrival = $DetailsDetection['tot_weight_after_arrival'];
             $weightAfterArrivalDetectionDetail->weight_loss = $weight_loss;
             $weightAfterArrivalDetectionDetail->net_weight_after_arrival = $net_weight_after_arrival;
-            //$weightAfterArrivalDetectionDetail->current_weight = $net_weight_after_arrival;
+            $weightAfterArrivalDetectionDetail->current_weight = $net_weight_after_arrival;
             $weightAfterArrivalDetectionDetail->save();
             $counter += 1;
         }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTypeChickensTable extends Migration
+class AddSection extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateTypeChickensTable extends Migration
      */
     public function up()
     {
-        Schema::create('type_chickens', function (Blueprint $table) {
-            $table->id();
-            $table->string('type');
-            $table->integer('total_amount');
-            $table->timestamps();
+        //
+        Schema::table('output_production_types', function (Blueprint $table) {
+            $table->enum('by_section', ['قسم التقطيع', 'قسم التصنيع', 'قسم الذبح'])->nullable()->after('type');
         });
     }
 
@@ -28,6 +26,6 @@ class CreateTypeChickensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('type_chickens');
+        //
     }
 }

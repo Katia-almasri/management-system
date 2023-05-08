@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInputProductionsTable extends Migration
+class AddTypeIdInputCutting1 extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateInputProductionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('input_productions', function (Blueprint $table) {
-            $table->id();
-            $table->integer('weight');
-
-
-            $table->timestamps();
+        //
+        Schema::table('input_cuttings', function (Blueprint $table) {
+            $table->integer('type_id')->after('output_slaughter_det_Id');
 
         });
-
     }
 
     /**
@@ -31,6 +27,6 @@ class CreateInputProductionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('input_productions');
+        //
     }
 }
