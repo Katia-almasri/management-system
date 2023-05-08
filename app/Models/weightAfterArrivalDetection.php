@@ -17,7 +17,8 @@ class weightAfterArrivalDetection extends Model
        'dead_chicken',
        'tot_weight_after_arrival',
        'weight_loss',
-       'net_weight_after_arrival'
+       'net_weight_after_arrival',
+       'empty_weight'
        
     ];
 

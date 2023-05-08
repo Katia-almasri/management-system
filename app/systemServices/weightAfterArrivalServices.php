@@ -211,5 +211,25 @@ class weightAfterArrivalServices
                                    ->update(['is_weighted_after_arrive'=> 1]);
     }
 
+    public function weightAfterArrive(WeightAfterArrivalRequest $request, $recieptId){
 
+        $poultryRecieptDetection = PoultryReceiptDetection::with('PoultryReceiptDetectionDetails')
+        ->where('id', '=', $recieptId)->get();
+        
+        $weightAfterArrivalDetection = new weightAfterArrivalDetection();
+        $weightAfterArrivalDetection->libra_commander_id = $request->user()->id;
+        $weightAfterArrivalDetection->polutry_detection_id = $recieptId;
+        $weightAfterArrivalDetection->dead_chicken = 0;
+        $weightAfterArrivalDetection->empty_weight = $request['empty_weight'];
+        $weightAfterArrivalDetection->tot_weight_after_arrival = $request['tot_weight'];
+        $weightAfterArrivalDetection->net_weight_after_arrival = $request['tot_weight'] - $request['empty_weight'];
+        $weightAfterArrivalDetection->weight_loss = $poultryRecieptDetection[0]->tot_weight - $weightAfterArrivalDetection->net_weight_after_arrival;
+        $weightAfterArrivalDetection->save();
+        return ([
+            "status" => true,
+            "message" => "تم إضافة وزن بعد الشحنة بعد الوصول بنجاح",
+            "detectionId" => $weightAfterArrivalDetection->id
+        ]);
+
+    }
 }

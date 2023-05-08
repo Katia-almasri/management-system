@@ -46,7 +46,9 @@ class LibraController extends Controller
     public function addWeightAfterArrivalDetection(WeightAfterArrivalRequest $request, $recieptId)
     {
         try {
-            $finalResult = $this->weightAfterArrivalService->storeWeightAfterArrivalRequest($request, $recieptId);
+            //وزن السحنة بعد الوصول فقط(وزن كلي و ووزن فارغ)
+            $finalResult = $this->weightAfterArrivalService->weightAfterArrive($request, $recieptId);
+            $recieptWeighted = PoultryReceiptDetection::where('id', $recieptId)->update(['is_weighted_after_arrive'=>1]);
             if ($finalResult['status'] == true){
                  //إرسال إشعار للمدير التنفيذي بوصول الشحنة ووزنها
                 $data['type'] = 'وزن الشحنة بعد وصولها';

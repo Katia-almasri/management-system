@@ -14,7 +14,7 @@ class poultryDetectionRequestServices
 {
 
     protected $num_birds = 10;
-    protected $cage_weight = 6.0;
+    protected $cage_weight = 8.5;
 
     public function storePoultryDetectionRequest(PoultryRecieptDetectionRequest $request)
     {
@@ -76,8 +76,8 @@ class poultryDetectionRequestServices
         $tot_material_weight = 0.0;
         $num_cages = 0;
         foreach ($detection_details as $_detail) {
-            $tot_material_weight += $_detail['cage_weight'];
-            $num_cages += 1;
+            $tot_material_weight += $_detail['group_weight'];
+            $num_cages += $_detail['num_cages'];
         }
         return (["tot_material_weight" => $tot_material_weight, "num_cages" => $num_cages]);
     }
@@ -121,7 +121,9 @@ class poultryDetectionRequestServices
             $PoultryReceiptDetectionsDetails->row_material_id = $_detail['row_material_id'];
             $PoultryReceiptDetectionsDetails->num_cages = $num_cages;
             $PoultryReceiptDetectionsDetails->tot_weight = $tot_material_weight;
+            // here
             $PoultryReceiptDetectionsDetails->num_birds = $this->num_birds * $num_cages;
+            //here
             $PoultryReceiptDetectionsDetails->net_weight = $tot_material_weight - ($num_cages * $this->cage_weight);
             $PoultryReceiptDetectionsDetails->save();
         }
