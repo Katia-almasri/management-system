@@ -21,6 +21,6 @@ class InputCutting extends Model
 
 
     public function output_detail_SlaughterSupervisor(){
-        return $this->BelongsTo('App\Models\outPut_SlaughterSupervisor_detail', 'output_slaughter_det_Id', 'id');
+        return $this->BelongsTo('App\Models\DirectToOutputSlaughter', 'direct_to_output_slaughters_id', 'id');
     }
 }

@@ -33,7 +33,8 @@ class CuttingController extends Controller
 
     public function displayInputCuttingTotalWeight(Request $request){
         $typeInput = DB::table('input_cuttings')
-        ->join('output_slaughtersupervisors_details', 'input_cuttings.output_slaughter_det_Id', '=', 'output_slaughtersupervisors_details.id')
+        ->join('direct_to_output_slaughters', 'input_cuttings.direct_to_output_slaughters_id', '=', 'direct_to_output_slaughters.id')
+        ->join('output_slaughtersupervisors_details', 'direct_to_output_slaughters.output_det_s_id', '=', 'output_slaughtersupervisors_details.id')
         ->join('output_production_types', 'output_slaughtersupervisors_details.type_id', '=', 'output_production_types.id')
         ->select('output_slaughtersupervisors_details.type_id','output_production_types.type', DB::raw('SUM(input_cuttings.weight) as weight'))
         ->where([['cutting_done',0],['output_date',null]])->groupBy('type_id','output_production_types.type')->get();
@@ -64,5 +65,10 @@ class CuttingController extends Controller
     return response()->json(["status"=>true, "message"=>"تم اضافة خرج"]);
 
 
-}}
+}
+public function displayOutputCutting(Request $request){
+    $output = output_cutting::with('detail_output_cutiing')->orderBy('id', 'DESC')->get();
+    return response()->json($output, 200);
+}
+}
 

@@ -105,6 +105,8 @@ class Kernel extends HttpKernel
         'is-exist-type-id-input-cutting' => \App\Http\Middleware\isExistTypeIdInputCutting::class,
         'is-exist-input-cutting' => \App\Http\Middleware\isExistInputCutting::class,
         'is-manufacturing-supervisor' => \App\Http\Middleware\isManufacturingSupervisor::class,
+        'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
+        'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
 
 
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddOutputManufacturingId extends Migration
+class EditAttOutputdet extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class AddOutputManufacturingId extends Migration
      */
     public function up()
     {
-        Schema::table('input_manufacturings', function (Blueprint $table) {
-            $table->unsignedBigInteger('output_manufacturing_id')->after('manufacturings_done')->nullable();
-            $table->foreign('output_manufacturing_id')->references('id')->on('output_manufacturings')->onDelete('cascade');
+        //
+        Schema::table('output_slaughtersupervisors_details', function (Blueprint $table) {
+            $table->dropColumn('direct_to');
+            $table->integer('CurrentWeight');
         });
-
     }
 
     /**

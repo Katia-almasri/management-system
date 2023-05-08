@@ -19,8 +19,6 @@ class CreateCreateCuttingsTable extends Migration
             $table->timestamp('income_date')->nullable();
             $table->timestamp('output_date')->nullable();
             $table->boolean('cutting_done')->nullable()->comment('صفر تتم العملية و واحد تم انهاء التقطيع');
-            $table->unsignedBigInteger('output_slaughter_det_Id')->nullable();
-            $table->foreign('output_slaughter_det_Id')->references('id')->on('output_slaughtersupervisors_details')->onDelete('cascade');
             $table->timestamps();
         });
     }

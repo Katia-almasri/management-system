@@ -25,10 +25,5 @@ class outPut_SlaughterSupervisor_detail extends Model
         return $this->belongsTo('App\Models\outPut_SlaughterSupervisor_table', 'output_id', 'id');
     }
 
-    public function inputCutting(){
-        return $this->hasOne('App\Models\InputCutting', 'output_slaughter_det_Id', 'id');
-    }
-    public function InputManufacturing(){
-        return $this->hasOne('App\Models\InputManufacturing', 'output_slaughter_det_Id', 'id');
-    }
+
 }

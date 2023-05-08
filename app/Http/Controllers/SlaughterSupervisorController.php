@@ -49,6 +49,7 @@ class SlaughterSupervisorController extends Controller
             foreach($request->details as $_detail){
                 $outputDetail = new outPut_SlaughterSupervisor_detail();
                 $outputDetail->weight = $_detail['weight'];
+                $outputDetail->CurrentWeight = $_detail['weight'];
                 $outputDetail->type_id = $_detail['type_id'];
                 $outputDetail->output_id = $output->id;
                 $daysToAdd = outPut_SlaughterSupervisorType_table::where('id',$_detail['type_id'])

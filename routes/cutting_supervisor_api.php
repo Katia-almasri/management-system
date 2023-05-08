@@ -15,6 +15,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-total-input',[CuttingController::class, 'displayInputCuttingTotalWeight']);
         Route::post('add-output-cutting/{type_id}',[CuttingController::class, 'addOutputCutting'])
         ->middleware('is-exist-type-id-input-cutting');
+        Route::get('display-output-cutting',[CuttingController::class, 'displayOutputCutting']);
 
     });
 
