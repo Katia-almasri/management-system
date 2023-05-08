@@ -49,4 +49,19 @@ class notificationServices
         $pusher->trigger('add-sales-purchase-to-ceo-notification', 'App\\Events\\addSalesPurchaseToCeoNotification', $data);
 
     }
+
+    public function addStartCommandNotif($data){
+        $pusher = $this->makePusherConnection();
+        $data['date'] = date("Y-m-d", strtotime(Carbon::now()));
+        $data['time'] = date("h:i A", strtotime(Carbon::now()));
+        $pusher->trigger('add-start-command-notification', 'App\\Events\\addStartCommandNotif', $data);
+
+    }
+
+    public function addWeightRecieptAfterArriveNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('add-reciept-after-arrive-notification', 'App\\Events\\addWeightRecieptAfterArriveNotif', $data);
+
+    }
+
 }

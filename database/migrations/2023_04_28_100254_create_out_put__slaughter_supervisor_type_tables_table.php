@@ -16,7 +16,6 @@ class CreateOutPutSlaughterSupervisorTypeTablesTable extends Migration
         Schema::create('output_production_types', function (Blueprint $table) {
                 $table->id();
                 $table->string('type');
-                $table->integer('number_day_validity');
                 $table->timestamps();
         });
     }

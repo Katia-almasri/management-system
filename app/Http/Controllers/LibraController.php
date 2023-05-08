@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\systemServices\notificationServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\PoultryRecieptDetectionRequest;
 use App\Http\Requests\WeightAfterArrivalRequest;
@@ -17,11 +18,13 @@ class LibraController extends Controller
 
     protected $poultryDetectionRequestService;
     protected $weightAfterArrivalService;
+    protected $notificationService;
 
     public function __construct()
     {
         $this->poultryDetectionRequestService = new poultryDetectionRequestServices();
         $this->weightAfterArrivalService = new weightAfterArrivalServices();
+        $this->notificationService = new notificationServices();
 
     }
 
@@ -43,9 +46,19 @@ class LibraController extends Controller
     public function addWeightAfterArrivalDetection(WeightAfterArrivalRequest $request, $recieptId)
     {
         try {
-            $finalResult = $this->weightAfterArrivalService->storeWeightAfterArrivalRequest($request, $recieptId);
-            if ($finalResult['status'] == true)
-                return ["status" => true, "message" => "تم وزن الشحنة بعد وصولها بنجاح"];
+            //وزن السحنة بعد الوصول فقط(وزن كلي و ووزن فارغ)
+            $finalResult = $this->weightAfterArrivalService->weightAfterArrive($request, $recieptId);
+            $recieptWeighted = PoultryReceiptDetection::where('id', $recieptId)->update(['is_weighted_after_arrive'=>1]);
+            if ($finalResult['status'] == true){
+                 //إرسال إشعار للمدير التنفيذي بوصول الشحنة ووزنها
+                $data['type'] = 'وزن الشحنة بعد وصولها';
+                $data['reciept_id'] = $recieptId;
+                $this->notificationService->addWeightRecieptAfterArriveNotif($data);
+                // ////////////////// SEND THE NOTIFICATION /////////////////////////
+
+
+                return ["status" => true, "message" => "  تم وزن الشحنة بعد وصولها بنجاح وارسالها لقسم الذبح"];
+            }
             else
                 throw new \ErrorException($finalResult['message']);
 
@@ -54,26 +67,27 @@ class LibraController extends Controller
         }
     }
 
-    public function getReciepts(Request $request){
-        $PoultryReceiptDetections = PoultryReceiptDetection::get();
+    public function getReciepts(Request $request)
+    {
+        $PoultryReceiptDetections = PoultryReceiptDetection::with([
+            'farm',
+            'PoultryReceiptDetectionDetails' => function ($q) {
+                $q->with('rowMaterial');
+            }
+        ])->get();
         return response()->json($PoultryReceiptDetections);
     }
 
-    public function getRecieptInfo(Request $request, $recieptId){
-        $poultryRecieptDetection = PoultryReceiptDetection::with(['PoultryReceiptDetectionDetails'=> function($q){
-            $q->with('rowMaterial');
-        }])->where('id', '=', $recieptId)->get();                       
+    public function getRecieptInfo(Request $request, $recieptId)
+    {
+        $poultryRecieptDetection = PoultryReceiptDetection::with([
+            'farm',
+            'PoultryReceiptDetectionDetails' => function ($q) {
+                $q->with('rowMaterial');
+            }
+        ])->where('id', '=', $recieptId)->get();
         return response()->json($poultryRecieptDetection);
     }
 
-    public function getWeightAfterArrival(Request $request, $recieptId){
-        $weightAfterArrivalDetection = PoultryReceiptDetection::where('id', $recieptId)
-                                       ->with(['PoultryReceiptDetectionDetails',
-                                               'weightAfterArrivalDetection'=>function ($q){
-                                                    $q->with('weightAfterArrivalDetectionDetail');
-                                        }])
-                                        ->get();
-        return response()->json($weightAfterArrivalDetection);   
-    }
 
 }

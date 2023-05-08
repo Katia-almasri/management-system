@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
-use App\Models\weightAfterArrivalDetectionDetail;
+use App\Models\weightAfterArrivalDetection;
 use App\Models\InputProduction;
 use App\Models\typeChicken;
 use App\Models\input_slaughter_table;
@@ -27,44 +27,63 @@ class ProductionController extends Controller
     use validationTrait;
 
     public function displayLibraCommanderOutPut(Request $request){
-        $commander = weightAfterArrivalDetectionDetail::where('approved_at' , null)
-        ->with(['PoultryReceiptDetectionsDetails' => function($query){
-            $query->with('rowMaterial');
-        }])->get();
-        return response()->json($commander, 200);
+        // $commander = weightAfterArrivalDetection::where('approved_at' , null)
+        // ->with(['poltryDetection' => function($query){
+        //     $query->with(['PoultryReceiptDetectionDetails'=> function($query1){
+        //         $query1->with('rowMaterial');
+        //     }]);
+        // }])->get();
+
+        $outputDetLibra = DB::table(
+            'weight_after_arrival_detections'
+        )
+        ->where('approved_at' , null)->join(
+            'poultry_receipt_detections',
+            'weight_after_arrival_detections.polutry_detection_id', '=', 'poultry_receipt_detections.id'
+        )->join(
+            'poultry_receipt_detections_details',
+            'poultry_receipt_detections_details.receipt_id', '=', 'poultry_receipt_detections.id'
+        )->join(
+            'row_materials',
+            'poultry_receipt_detections_details.row_material_id', '=', 'row_materials.id'
+        )
+        ->select(['poultry_receipt_detections_details.id','poultry_receipt_detections_details.num_cages','poultry_receipt_detections_details.tot_weight',
+        'poultry_receipt_detections_details.num_birds','poultry_receipt_detections_details.net_weight','name'])->get();
+
+        return response()->json($outputDetLibra, 200);
     }
 
-    public function approveCommanderDetail(Request $request){
-        // $validator = Validator::make($request->all(), [
-        //     'weight' => 'required',
-        // ]);
+    // public function approveCommanderDetail(Request $request){
+    //     // $validator = Validator::make($request->all(), [
+    //     //     'weight' => 'required',
+    //     // ]);
 
-        // if($validator->fails()){
-        //     return response()->json(['error' => $validator->errors()->all()]);
-        // }
+    //     // if($validator->fails()){
+    //     //     return response()->json(['error' => $validator->errors()->all()]);
+    //     // }
 
-        foreach($request ->details_id as $_id){
-            $id = $_id['id'];
-            $Type_id = DB::table('after_arrival_detection_details')
-            ->join('poultry_receipt_detections_details', 'after_arrival_detection_details.details_id', '=', 'poultry_receipt_detections_details.id')
-            ->where([['after_arrival_detection_details.id' , '=' , $id],['approved_at' , null]])
-            ->pluck('poultry_receipt_detections_details.row_material_id')->first();
-            $findWeightAfter = weightAfterArrivalDetectionDetail::find($id);
-            $Input = new InputProduction();
-            $Input -> weight = $_id['weight'];
-            $Input -> type_id = $Type_id;
-            $s = $findWeightAfter->current_weight -= $_id['weight'];
-            $findWeightAfterUpdate = weightAfterArrivalDetectionDetail::where('id',$id)
-            ->update(['current_weight'=>$s]);
-            if($findWeightAfter->current_weight == 0)
-                $findWeightAfterUpdate = weightAfterArrivalDetectionDetail::where('id',$id)
-            ->update(['approved_at'=>Carbon::now()->toDateTimeString()]);
-                $Input -> weight_detail_id = $id;
-                $Input -> income_date = Carbon::now()->toDateTimeString();
-                $Input ->save();
-        }
-        return  response()->json(["status"=>true, "message"=>"تم تأكيد استلام المادة من الشحنة"]);
-    }
+    //     foreach($request ->details_id as $_id){
+    //         $id = $_id['id'];
+    //         $Type_id = DB::table('weight_after_arrival_detections')
+    //         ->join('poultry_receipt_detections_details', 'after_arrival_detection_details.details_id', '=', 'poultry_receipt_detections_details.id')
+    //         ->where([['after_arrival_detection_details.id' , '=' , $id],['approved_at' , null]])
+    //         ->pluck('poultry_receipt_detections_details.row_material_id')->first();
+    //         $findWeightAfter = weightAfterArrivalDetectionDetail::find($id);
+    //         $Input = new InputProduction();
+    //         $Input -> weight = $_id['weight'];
+    //         $Input -> type_id = $Type_id;
+    //         $s = $findWeightAfter->current_weight -= $_id['weight'];
+    //         $findWeightAfterUpdate = weightAfterArrivalDetectionDetail::where('id',$id)
+    //         ->update(['current_weight'=>$s]);
+    //         if($findWeightAfter->current_weight == 0)
+    //             $findWeightAfterUpdate = weightAfterArrivalDetectionDetail::where('id',$id)
+    //         ->update(['approved_at'=>Carbon::now()->toDateTimeString()]);
+    //             $Input -> weight_detail_id = $id;
+    //             $Input -> income_date = Carbon::now()->toDateTimeString();
+    //             $Input ->save();
+    //     }
+    //     return  response()->json(["status"=>true, "message"=>"تم تأكيد استلام المادة من الشحنة"]);
+    // }
 
     public function displayInputProduction(Request $request){
         $inputProduction = InputProduction::where([['output_date' , null],['CommandSlaughterSupervisor',null]])->get();

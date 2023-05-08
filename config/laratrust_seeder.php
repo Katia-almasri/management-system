@@ -24,6 +24,7 @@ return [
 
         'Purchasing-and-Sales-manager' => [
             'farms'=>'r,d',
+            'statement after weight'=>'r'
         ],
 
         'Mechanism-Coordinator' => [

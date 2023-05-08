@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PoultryReceiptDetection;
 use App\Models\product;
 use App\Models\RowMaterial;
 use App\Models\sellingortype;
@@ -66,6 +67,29 @@ class Controller extends BaseController
         $sellingPortTypes = sellingortype::get();
         return response()->json($sellingPortTypes);
     }
+
+    public function getWeightAfterArrival(Request $request, $recieptId)
+    {
+        $weightAfterArrivalDetection = PoultryReceiptDetection::where('id', $recieptId)
+            ->with([
+                'PoultryReceiptDetectionDetails' => function ($q) {
+                    $q->with('rowMaterial');
+                },
+                'weightAfterArrivalDetection' => function ($q) {
+                    $q->with('weightAfterArrivalDetectionDetail');
+                }
+            ])
+            ->get();
+        //CHECK THE ROLE USER
+        //IF THE USER IS SALES MANAGER THEN UPDATE is_seen_by_sales_manager (to update the count of notifications)
+        //ELSE DO NOT SO ANYTHING
+
+        if($request->user()->hasRole('Purchasing-and-Sales-manager'))
+            PoultryReceiptDetection::where('id', $recieptId)->update(['is_seen_by_sales_manager'=>1]);
+        
+        return response()->json($weightAfterArrivalDetection);
+    }
+
 
 
 }

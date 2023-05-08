@@ -24,16 +24,21 @@ class WeightAfterArrivalRequest extends FormRequest
     public function rules()
     {
         return [
-            "details.*.detection_details.*.cage_weight" => "required|numeric|gt:0"
+           "tot_weight"=>"required|numeric|gt:0",
+           "empty_weight"=>"required|numeric|gt:0"
         ];
     }
 
     public function messages()
     {
         return [
-           'details.*.detection_details.*.cage_weight.required'=>'يرجى إدخال وزن القفص',
-           'details.*.detection_details.*.cage_weight.numeric'=>'يجب أن يكون وزن القفص رقم',
-           'details.*.detection_details.*.cage_weight.gt'=>'يجب أن يكون وزن القفص رقماً أكبر تماماً من الصفر'
+           'tot_weight.required'=>'يرجى إدخال الوزن الكلي للشحنة',
+           'tot_weight.numeric'=>'يجب أن يكون وزن الشحنة رقم',
+           'tot_weight.gt'=>'يجب أن يكون وزن الشحنة رقماً أكبر تماماً من الصفر',
+
+           'empty_weight.required'=>'يرجى إدخال الوزن الفارغ للشحنة',
+           'empty_weight.numeric'=>'يجب أن يكون الوزن الفارغ رقم',
+           'empty_weight.gt'=>'يجب أن يكون الوزن الفارغ رقماً أكبر تماماً من الصفر',
 
         ];
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSlaughterDone extends Migration
+class AddIsSeenByToSalesPurchasingRequests extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddSlaughterDone extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('input_slaughters', function (Blueprint $table) {
-            $table->boolean('slaughter_done')->nullable()->comment('صفر تتم العملية و واحد تم انهاء الذبح');
-
+        Schema::table('sales_purchasing_requests', function (Blueprint $table) {
+            $table->boolean('is_seen_by_mechanism_coordinator')->default(0);
         });
     }
 
@@ -27,6 +25,8 @@ class AddSlaughterDone extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('sales_purchasing_requests', function (Blueprint $table) {
+            //
+        });
     }
 }

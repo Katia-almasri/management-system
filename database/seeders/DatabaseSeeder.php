@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PurchaseOffers::class);
         $this->call(PurchaseOffersDetail::class);
         $this->call(TripsTableSeeder::class);
-        //today
         $this->call(RowMaterialTableSeeder::class);
         $this->call(productTableSeeder::class);
         $this->call(sellingortypeTableSeeder::class);
@@ -33,6 +32,11 @@ class DatabaseSeeder extends Seeder
         // $this->call(PoultryReceiptDetectionsDetailsSeeder::class);
         // $this->call(WeightAfterArrivalDetectionsSeeder::class);
         // $this->call(WeightAfterArrivalDetectionsDetailsSeeder::class);
+        // $this->call(PoultryRecieptDetectionTableSeeder::class);
+        // $this->call(PoultryRecieptDetectionDetailsTableSeeder::class);
+        // $this->call(WeightAfterArrivalDetectionTableSeeder::class);
+        // $this->call(WeightAfterArrivalDetectionDetailsTableSeeder::class);
+
 
 
 

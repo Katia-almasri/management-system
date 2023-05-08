@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CommandSlaughterSupervisor extends Migration
+class AddIsSeenByToPoultryReceiptDetections extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CommandSlaughterSupervisor extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('input_productions', function (Blueprint $table) {
-            $table->boolean('CommandSlaughterSupervisor')->nullable();
+        Schema::table('poultry_receipt_detections', function (Blueprint $table) {
+            $table->boolean('is_seen_by_sales_manager')->default(0);
         });
     }
 
@@ -26,6 +25,8 @@ class CommandSlaughterSupervisor extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('poultry_receipt_detections', function (Blueprint $table) {
+           
+        });
     }
 }

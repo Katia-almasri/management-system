@@ -15,7 +15,7 @@ class AddDataToDrivers extends Migration
     {
         Schema::table('drivers', function (Blueprint $table) {
             $table->string('address');
-            $table->unsignedBigInteger('mobile_number');
+            $table->string('mobile_number');
         });
     }
 

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\addStartCommandNotif;
 use App\Models\AddOfferNotif;
 use App\Models\AddSalesPurchasingNotif;
+use App\Models\PoultryReceiptDetection;
 use App\Models\RegisterSellingPortRequestNotif;
 use App\Models\RequestToCompanyNotif;
 Use \Carbon\Carbon;
@@ -17,6 +19,7 @@ use App\Models\salesPurchasingRequset;
 use App\Models\salesPurchasingRequsetDetail;
 use App\Models\Trip;
 use App\Models\Truck;
+use App\Models\Notification;
 use App\Models\Manager;
 use App\Models\PurchaseOffer;
 use App\Models\RegisterFarmRequestNotif;
@@ -104,16 +107,39 @@ class SalesPurchasingRequestController extends Controller
 
 
     public function commandForMechanismCoordinator(Request $request, $RequestId){
-        $findRecuest = salesPurchasingRequset::where([['accept_by_ceo',1],['accept_by_sales',1],['id' , '=' , $RequestId]])
+        $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1],['accept_by_sales', '=', 1],['id', '=', $RequestId]])
         ->update(['command' => 1]);
+        //STORE IN THE NOTIFICATION TABLE IN DB
+        $newNotification = new Notification();
+        $newNotification->channel = 'add-start-command-notification';
+        $newNotification->event = 'App\\Events\\addStartCommandNotif';
+        $newNotification->title = 'أمر جديد لمنسق حركة الآليات';
+        $newNotification->route = 'http://127.0.0.1:8000//sales-api//command-for-mechanism//2';
+        $newNotification->act_id = $RequestId;
+        $newNotification->details = $RequestId.' تم إعطاْ أمر جديد للشحنة';
+        $newNotification->is_seen = 0;
+        $newNotification->save();
 
+        //إرسال إشعار لمنسق حركة الآليات حول الأمر
+        $data['title'] = 'أمر جديد لمنسق حركة الآليات';
+        $data['details'] = $RequestId.' تم إعطاْ أمر جديد للشحنة';
+        $data['command_id'] = $RequestId;
+        $data['route'] = 'http://127.0.0.1:8000//sales-api//command-for-mechanism//2';
+
+       // event(new addStartCommandNotif($data));
+        $this->notificationService->addStartCommandNotif($data);
+
+        ////////////////// SEND THE NOTIFICATION /////////////////////////
         return response()->json(["status"=>true, "message"=>"تم اعطاء الامر لمنسق حركة الاليات"]);
     }
 
     //استعراض الطلبات من قبل منسق حركة الاليات بعد الامر
     public function displaySalesPurchasingRequestFromMachenism(Request $request){
         $SalesPurchasingRequset = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
-        ->where([['command',1],['accept_by_ceo',1]])->get();
+                                    ->where([['command', '=', 1],['accept_by_ceo', '=', 1], ['is_seen_by_mechanism_coordinator','=', 0]])->orderBy('created_at', 'DESC')->get();
+
+        $updateIsSeenStatus = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
+                                    ->where([['command', '=', 1],['accept_by_ceo', '=', 1], ['is_seen_by_mechanism_coordinator', '=', 0]])->update(['is_seen_by_mechanism_coordinator'=>1]);
         return response()->json($SalesPurchasingRequset, 200);
     }
     //الموافقة على طلب من قبل المدير التنفذي
@@ -126,9 +152,9 @@ class SalesPurchasingRequestController extends Controller
     }
     //رفض طلب من قبل المدير التنفيذي مع امكانية ادخال سبب الرفض
     public function refuseSalesPurchasingRequestFromCeo(Request $request, $RequestId){
-        $findOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        $findOrder = salesPurchasingRequset::where([['id'=> $RequestId]])
         ->update(array('reason_refuse_by_ceo' => $request->reason_refuse_by_ceo));
-        $findRequestOrder = salesPurchasingRequset::where([['id' , '=' , $RequestId]])
+        $findRequestOrder = salesPurchasingRequset::where([['id', '=', $RequestId]])
         ->update(['accept_by_ceo'=>0]);
 
         return response()->json(["status"=>true, "message"=>"تم رفض الطلبية "]);
@@ -187,6 +213,25 @@ class SalesPurchasingRequestController extends Controller
         return response()->json(['RegisterSellingPortRequestNotif'=> $RegisterSellingPortRequestNotif,
                                  'countRegisterSellingPortRequestNotif'=> $countRegisterSellingPortRequestNotif]);
     }
+
+
+
+    //عدد أوامر الانطلاق يراها منسق حركة الآليات
+    public function countStartCommandsNotifs(Request $request){
+        $notifications = Notification::where([['channel', '=', 'add-start-command-notification'],
+                                            ['is_seen', '=', 0]
+                                             ])->get();
+        $notificationsCount = $notifications->count();
+        // $countStartCommandsNotif = salesPurchasingRequset::where([['command', '=', 1], ['is_seen_by_mechanism_coordinator','=', 0]])->count();
+         return response()->json(['notifications' => $notifications, 'notificationsCount'=>$notificationsCount]);
+    }
+
+    // يراها مدير المشتريات والمبيعات عدد الشحنات الواصلة والتي تم وزنها
+    public function countPoultryRecieptDetectionsNotifs(Request $request){
+        $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', '=', 0], ['is_weighted_after_arrive', '=',1]])->count();
+        return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
+    }
+
 
     public function getAddOffersNotifs(Request $request){
         $AddOfferNotif = AddOfferNotif::where('is_read', '=', 0)->get();

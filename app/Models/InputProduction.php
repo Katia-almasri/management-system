@@ -24,7 +24,7 @@ class InputProduction extends Model
         return $this->belongsTo('App\Models\input_slaughter_table', 'productionId', 'id');
     }
 
-    public function weightAfterArrivalDetectionDetail(){
-        return $this->belongsTo('App\Models\weightAfterArrivalDetectionDetail', 'weight_detail_id', 'id');
+    public function weightAfterArrivalDetection(){
+        return $this->belongsTo('App\Models\weightAfterArrivalDetection', 'weight_after_libra_id', 'id');
     }
 }

@@ -16,9 +16,13 @@ class CreateInputSlaughterTablesTable extends Migration
         Schema::create('input_slaughters', function (Blueprint $table) {
                 $table->id();
                 $table->integer('weight');
-                $table->timestamps();
+                $table->enum('status', ['يتم الذبح', 'تم انهاء الذبح'])->nullable();
+                $table->unsignedBigInteger('weight_after_id');
+                $table->foreign('weight_after_id')->references('id')->on('weight_after_arrival_detections')->onDelete('cascade');
                 $table->timestamp('income_date')->nullable();
                 $table->timestamp('output_date')->nullable();
+                $table->timestamps();
+
         });
     }
 

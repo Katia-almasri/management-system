@@ -107,8 +107,7 @@ class Kernel extends HttpKernel
         'is-manufacturing-supervisor' => \App\Http\Middleware\isManufacturingSupervisor::class,
         'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
         'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
-
-
+        'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
 
 
     ];

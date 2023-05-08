@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class EditAttOutputdet extends Migration
+class AddEmptyWeightToWeightAfterArrivalDetections extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class EditAttOutputdet extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('output_slaughtersupervisors_details', function (Blueprint $table) {
-            $table->dropColumn('direct_to');
-            $table->integer('CurrentWeight');
+        Schema::table('weight_after_arrival_detections', function (Blueprint $table) {
+            $table->float('empty_weight');
         });
     }
 
@@ -27,6 +25,8 @@ class EditAttOutputdet extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('weight_after_arrival_detections', function (Blueprint $table) {
+            //
+        });
     }
 }

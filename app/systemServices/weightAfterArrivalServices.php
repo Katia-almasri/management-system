@@ -7,6 +7,7 @@ use App\Models\PoultryReceiptDetection;
 use App\Models\PoultryReceiptDetectionsDetails;
 use App\Models\weightAfterArrivalDetection;
 use App\Models\weightAfterArrivalDetectionDetail;
+use App\Models\input_slaughter_table;
 use App\Exceptions\Exception;
 use Auth;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class weightAfterArrivalServices
 {
 
     protected $num_birds = 10;
-    protected $cage_weight = 40.0;
+    protected $cage_weight = 6.0;
 
     public function storeWeightAfterArrivalRequest(WeightAfterArrivalRequest $request, $recieptId)
     {
@@ -26,6 +27,7 @@ class weightAfterArrivalServices
         $dead_chicken = 0;
         $tot_weight_after_arrival = 0.0;
         $counter = 0;
+        $empty = 0.0;
 
         try {
             DB::beginTransaction();
@@ -33,6 +35,7 @@ class weightAfterArrivalServices
                 $weightAfterArrivalDetailsResult = $this->processWeightAfterArrivalDetails($_detail['detection_details'], $recieptId, $counter);
                 $counter += 1;
                 if ($weightAfterArrivalDetailsResult['status'] == true) {
+                    $empty += $weightAfterArrivalDetailsResult['message']['empty'];
                     $dead_chicken += $weightAfterArrivalDetailsResult['message']['dead_chicken'];
                     $tot_weight_after_arrival += $weightAfterArrivalDetailsResult['message']['tot_weight_after_arrival'];
                 } else
@@ -47,7 +50,7 @@ class weightAfterArrivalServices
                 "dead_chicken" => $dead_chicken,
                 "tot_weight_after_arrival" => $tot_weight_after_arrival,
                 "weight_loss" => $weight_loss,
-                "empty" => $weightAfterArrivalDetailsResult['message']['empty']
+                "empty" => $empty
             ];
             //1. STORE THE WEIGHT AFTER ARRIVAL
             $finalResult = $this->storeWeightAfterArrival($polutryDetectionData);
@@ -209,5 +212,33 @@ class weightAfterArrivalServices
                                    ->update(['is_weighted_after_arrive'=> 1]);
     }
 
+    public function weightAfterArrive(WeightAfterArrivalRequest $request, $recieptId){
 
+
+        $poultryRecieptDetection = PoultryReceiptDetection::with('PoultryReceiptDetectionDetails')
+        ->where('id', '=', $recieptId)->get();
+
+        $weightAfterArrivalDetection = new weightAfterArrivalDetection();
+        $weightAfterArrivalDetection->libra_commander_id = $request->user()->id;
+        $weightAfterArrivalDetection->polutry_detection_id = $recieptId;
+        $weightAfterArrivalDetection->dead_chicken = 0;
+        $weightAfterArrivalDetection->empty_weight = $request['empty_weight'];
+        $weightAfterArrivalDetection->tot_weight_after_arrival = $request['tot_weight'];
+        $weightAfterArrivalDetection->net_weight_after_arrival = $request['tot_weight'] - $request['empty_weight'];
+        $weightAfterArrivalDetection->weight_loss = $poultryRecieptDetection[0]->tot_weight - $weightAfterArrivalDetection->net_weight_after_arrival;
+        $weightAfterArrivalDetection->save();
+        $inputSlaughters = new input_slaughter_table();
+        $inputSlaughters -> weight = $weightAfterArrivalDetection->net_weight_after_arrival;
+        $inputSlaughters -> weight_after_id = $weightAfterArrivalDetection->id;
+        $inputSlaughters -> income_date = $weightAfterArrivalDetection->created_at;
+        $inputSlaughters ->save();
+
+        return ([
+            "status" => true,
+            "message" => " تم إضافة وزن بعد الشحنة بعد الوصول بنجاح والدخل لقسم الذبح",
+            "detectionId" => $weightAfterArrivalDetection->id
+        ]);
+
+    }
 }
+

@@ -18,7 +18,7 @@ class output_cutting_detail extends Model
     ];
 
     public function outputTypes(){
-        return $this->belongsTo('App\Models\outPut_SlaughterSupervisorType_table', 'type_id', 'id');
+        return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
     }
 
     public function detail_output_cutting(){
