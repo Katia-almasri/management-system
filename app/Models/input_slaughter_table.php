@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class input_slaughter_table extends Model
 {
@@ -33,6 +34,21 @@ class input_slaughter_table extends Model
 
     public function output_slaughter(){
         return $this->belongsTo('App\Models\outPut_SlaughterSupervisor_table', 'output_id', 'id');
+    }
+
+    ############################# Begin Accessors ##############################endregion
+    public function getCreatedAtAttribute($date)
+    {
+        if($date!=null)
+            return Carbon::parse($date)->format('Y-m-d H:i');
+        return $date;
+    }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        if($date!=null)
+            return Carbon::parse($date)->format('Y-m-d H:i');
+        return $date;
     }
 
 }

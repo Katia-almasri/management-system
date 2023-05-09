@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Laratrust\Traits\LaratrustUserTrait;
+use Carbon\Carbon;
 
 class Manager extends Authenticatable
 {
@@ -57,5 +58,19 @@ class Manager extends Authenticatable
 
     ############################## End Relations ##############################
 
+     ############################# Begin Accessors ##############################endregion
+     public function getCreatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
+
+     public function getUpdatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
 
 }

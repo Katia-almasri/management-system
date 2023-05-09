@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class DetailPurchaseOffer extends Model
 {
@@ -25,4 +26,19 @@ class DetailPurchaseOffer extends Model
     }
 
     ############################## End Relations ##############################
+
+     ############################# Begin Accessors ##############################endregion
+     public function getCreatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
+
+     public function getUpdatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
 }

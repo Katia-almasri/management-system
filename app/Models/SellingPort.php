@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class SellingPort extends Authenticatable
 {
@@ -52,4 +53,19 @@ class SellingPort extends Authenticatable
 
 
     ############################## End Relations ##############################
+
+    ############################# Begin Accessors ##############################endregion
+    public function getCreatedAtAttribute($date)
+    {
+        if($date!=null)
+            return Carbon::parse($date)->format('Y-m-d H:i');
+        return $date;
+    }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        if($date!=null)
+            return Carbon::parse($date)->format('Y-m-d H:i');
+        return $date;
+    }
 }

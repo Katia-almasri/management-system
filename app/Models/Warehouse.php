@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Warehouse extends Model
 {
@@ -25,6 +26,21 @@ class Warehouse extends Model
 
         public function detonatorFriges(){
             return $this->hasMany('App\Models\DetonatorFrige', 'warehouse_id', 'id');
+        }
+
+        ############################# Begin Accessors ##############################endregion
+        public function getCreatedAtAttribute($date)
+        {
+            if($date!=null)
+                return Carbon::parse($date)->format('Y-m-d H:i');
+            return $date;
+        }
+
+        public function getUpdatedAtAttribute($date)
+        {
+            if($date!=null)
+                return Carbon::parse($date)->format('Y-m-d H:i');
+            return $date;
         }
     
 }

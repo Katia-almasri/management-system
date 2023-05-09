@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class PurchaseOffer extends Model
 {
@@ -30,4 +31,19 @@ class PurchaseOffer extends Model
         return $this->belongsTo('App\Models\Farm', 'farm_id', 'id');
     }
     ############################## End Relations ##############################
+
+     ############################# Begin Accessors ##############################endregion
+     public function getCreatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
+
+     public function getUpdatedAtAttribute($date)
+     {
+         if($date!=null)
+             return Carbon::parse($date)->format('Y-m-d H:i');
+         return $date;
+     }
 }
