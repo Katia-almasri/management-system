@@ -335,6 +335,14 @@ class SalesPurchasingRequestController extends Controller
                                             ->where('accept_by_ceo', '=', 1)->orderBy('id', 'DESC')->get();
         return response()->json($requests, 200);
     }
+
+    public function getAllSalesPurchasingRequests(Request $request)
+    {
+        $requests = salesPurchasingRequset::with('sellingPort', 'farm', 'salesPurchasingRequsetDetail')
+        ->orderBy('created_at', 'DESC')->get();
+        return response()->json($requests, 200);
+
+    }
 }
 
 

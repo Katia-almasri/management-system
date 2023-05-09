@@ -19,6 +19,9 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////Selling Port////////////////
         Route::get('get-selling-port',[SellingPortController::class, 'displaySellingPort']);
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
+        /////////////// استعراض جميع الطلبات المنشأة من قبل مدير المشتريات ////////////////////
+        Route::get('get-selling-purchasing-requests',[SalesPurchasingRequestController::class, 'getAllSalesPurchasingRequests']);
+        
         //////////////add request/////////////
         Route::Post('add-requset-sales-purchasing',[SalesPurchasingRequestController::class, 'AddRequsetSalesPurchasing']);
         /////////////أمر لمنسق حركة الاليات/////////////////////////
