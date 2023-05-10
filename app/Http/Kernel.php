@@ -108,6 +108,7 @@ class Kernel extends HttpKernel
         'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
         'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
         'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
+        'is-exist-id-to-direct-bahra' => \App\Http\Middleware\isExistIdToDirectBahra::class,
 
 
     ];

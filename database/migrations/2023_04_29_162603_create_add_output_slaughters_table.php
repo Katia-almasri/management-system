@@ -16,9 +16,9 @@ class CreateAddOutputSlaughtersTable extends Migration
         Schema::create('output_slaughterSupervisors_details', function (Blueprint $table) {
             $table->id();
             $table->integer('weight');
-            $table->integer('CurrentWeight');
             $table->unsignedBigInteger('type_id');
             $table->foreign('type_id')->references('id')->on('output_production_types')->onDelete('cascade');
+            $table->boolean('direct_to_bahra')->default(0);
             $table->timestamps();
         });
     }

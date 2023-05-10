@@ -27,28 +27,12 @@ class ProductionController extends Controller
     use validationTrait;
 
     public function displayLibraCommanderOutPut(Request $request){
-        // $commander = weightAfterArrivalDetection::where('approved_at' , null)
-        // ->with(['poltryDetection' => function($query){
-        //     $query->with(['PoultryReceiptDetectionDetails'=> function($query1){
-        //         $query1->with('rowMaterial');
-        //     }]);
+        // $commander =weightAfterArrivalDetection::
+        // with(['poltryDetection.PoultryReceiptDetectionDetails.rowMaterial'=>function($q){
+        //     $q->select('id','name');
         // }])->get();
 
-        $outputDetLibra = DB::table(
-            'weight_after_arrival_detections'
-        )
-        ->where('approved_at' , null)->join(
-            'poultry_receipt_detections',
-            'weight_after_arrival_detections.polutry_detection_id', '=', 'poultry_receipt_detections.id'
-        )->join(
-            'poultry_receipt_detections_details',
-            'poultry_receipt_detections_details.receipt_id', '=', 'poultry_receipt_detections.id'
-        )->join(
-            'row_materials',
-            'poultry_receipt_detections_details.row_material_id', '=', 'row_materials.id'
-        )
-        ->select(['poultry_receipt_detections_details.id','poultry_receipt_detections_details.num_cages','poultry_receipt_detections_details.tot_weight',
-        'poultry_receipt_detections_details.num_birds','poultry_receipt_detections_details.net_weight','name'])->get();
+        $outputDetLibra = weightAfterArrivalDetection::where('approved_at' , null)->get();
 
         return response()->json($outputDetLibra, 200);
     }

@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\outPut_SlaughterSupervisorType_table;
-class PoultryReceiptDetectionsSeeder extends Seeder
+use App\Models\outPut_Type_Production;
+class ProductionTypes extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,34 +13,29 @@ class PoultryReceiptDetectionsSeeder extends Seeder
      */
     public function run()
     {
-        outPut_SlaughterSupervisorType_table::create([
+        outPut_Type_Production::create([
             'type'=>"جاج أحمر مذبوح",
-            'by_section'=>"قسم الذبح",
-            'number_day_validity'=>10
-        ]);
+            'by_section'=>"قسم الذبح"
+            ]);
 
-        outPut_SlaughterSupervisorType_table::create([
+        outPut_Type_Production::create([
             'type'=>"جاج أبيض مذبوح",
-            'by_section'=>"قسم الذبح",
-            'number_day_validity'=>10
+            'by_section'=>"قسم الذبح"
         ]);
 
-        outPut_SlaughterSupervisorType_table::create([
+        outPut_Type_Production::create([
             'type'=>"شرحات",
-            'by_section'=>"قسم التقطيع",
-            'number_day_validity'=>10
+            'by_section'=>"قسم التقطيع"
         ]);
 
-        outPut_SlaughterSupervisorType_table::create([
+        outPut_Type_Production::create([
             'type'=>"وردة",
-            'by_section'=>"قسم التقطيع",
-            'number_day_validity'=>10
+            'by_section'=>"قسم التقطيع"
         ]);
 
-        outPut_SlaughterSupervisorType_table::create([
+        outPut_Type_Production::create([
             'type'=>"جاج متبل",
-            'by_section'=>"قسم التصنيع",
-            'number_day_validity'=>10
+            'by_section'=>"قسم التصنيع"
         ]);
     }
 }
