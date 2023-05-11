@@ -120,7 +120,11 @@ class SalesPurchasingRequestController extends Controller
         $newNotification->is_seen = 0;
         $newNotification->save();
 
+<<<<<<< HEAD
         //إرسال إشعار لمنسق حركة الآليات حول الأمر
+=======
+        //إرسال إشعار لمنسق حركة الآليات حول الأمر  
+>>>>>>> mohammadBranch
         $data['title'] = 'أمر جديد لمنسق حركة الآليات';
         $data['details'] = $RequestId.' تم إعطاْ أمر جديد للشحنة';
         $data['command_id'] = $RequestId;
@@ -212,10 +216,16 @@ class SalesPurchasingRequestController extends Controller
         $countRegisterSellingPortRequestNotif = $RegisterSellingPortRequestNotif->count();
         return response()->json(['RegisterSellingPortRequestNotif'=> $RegisterSellingPortRequestNotif,
                                  'countRegisterSellingPortRequestNotif'=> $countRegisterSellingPortRequestNotif]);
+<<<<<<< HEAD
     }
 
 
 
+=======
+    } 
+    
+    
+>>>>>>> mohammadBranch
     //عدد أوامر الانطلاق يراها منسق حركة الآليات
     public function countStartCommandsNotifs(Request $request){
         $notifications = Notification::where([['channel', '=', 'add-start-command-notification'],
@@ -230,8 +240,12 @@ class SalesPurchasingRequestController extends Controller
     public function countPoultryRecieptDetectionsNotifs(Request $request){
         $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', '=', 0], ['is_weighted_after_arrive', '=',1]])->count();
         return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
+<<<<<<< HEAD
     }
 
+=======
+    } 
+>>>>>>> mohammadBranch
 
     public function getAddOffersNotifs(Request $request){
         $AddOfferNotif = AddOfferNotif::where('is_read', '=', 0)->get();
