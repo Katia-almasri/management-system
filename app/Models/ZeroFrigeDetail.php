@@ -26,9 +26,21 @@ class ZeroFrigeDetail extends Model
         return $this->belongsTo('App\Models\ZeroFrige', 'zero_frige_id', 'id');
     }
 
-    public function zeroFrigeOutputs(){
-        return $this->hasMany('App\Models\ZeroFrigeOutput', 'zero_frige_details_id', 'id');
+    public function ZeroFrigeInputOutput(){
+        return $this->hasMany('App\Models\ZeroFrigeInputOutput', 'input_id', 'id');
     }
 
+    //MORPH RELATIONSHIP BTN DETAILS AND(SLAUGHTER, .., .., SAWA3E8)
+       //الدخل إلى تفاصيل البراد الصفري
+    public function inputable(){
+        return $this->morphTo();
+    }
+
+    public function inputToZeroDetail()
+    {
+        return $this->morphOne('App\Models\LakeOutput', 'outputable');
+    }
+
+
     
-}
+} 

@@ -20,6 +20,7 @@ class WeightAfterArrivalDetectionTableSeeder extends Seeder
             'dead_chicken'=>11,
             'tot_weight_after_arrival'=>5210.00,
             'weight_loss'=>8398.00,
+            'empty_weight'=>50,
             'net_weight_after_arrival'=>8398.00,
 
         ]);
@@ -30,6 +31,7 @@ class WeightAfterArrivalDetectionTableSeeder extends Seeder
             'dead_chicken'=>11,
             'tot_weight_after_arrival'=>5210.00,
             'weight_loss'=>8398.00,
+            'empty_weight'=>50,
             'net_weight_after_arrival'=>8398.00,
 
         ]);

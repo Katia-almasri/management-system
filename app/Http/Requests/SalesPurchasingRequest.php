@@ -24,8 +24,11 @@ class SalesPurchasingRequest extends FormRequest
     public function rules()
     {
         return [
+            "request_type"=>"required",
             "details.*.amount" => "required|numeric",
             "details.*.type" => "required",
+            "farm_id"=> "required_if:request_type,==,0",
+            "selling_port_id"=> "required_if:request_type,==,1",
 
         ];
     }

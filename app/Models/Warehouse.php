@@ -12,19 +12,31 @@ class Warehouse extends Model
     protected $table = 'warehouses';
     protected $primaryKey='id';
     protected $fillable = [
-       'tot_weight',
+       'tot_weight', 
        'tot_amount' ,
        'stockpile',
-       'minimum'      
+       'minimum',
+       'type_id'    
     ];
 
          ############################## Begin Relations #############################
-         public function zeroFriges(){
-            return $this->hasMany('App\Models\ZeroFrige', 'warehouse_id', 'id');
+         public function zeroFrige(){
+            return $this->hasOne('App\Models\ZeroFrige', 'warehouse_id', 'id');
         }
 
-        public function detonatorFriges(){
-            return $this->hasMany('App\Models\DetonatorFrige', 'warehouse_id', 'id');
+        public function detonatorFrige(){
+            return $this->hasOne('App\Models\DetonatorFrige', 'warehouse_id', 'id');
         }
+
+        public function lake(){
+            return $this->hasOne('App\Models\Lake', 'warehouse_id', 'id');
+        }
+
+        public function outPutSlaughterSupervisorType(){
+            return $this->belongsTo('App\Models\outPut_SlaughterSupervisorType_table', 'type_id', 'id');
+        }
+
+
+        
     
 }

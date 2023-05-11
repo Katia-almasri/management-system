@@ -24,4 +24,13 @@ class outPut_SlaughterSupervisor_detail extends Model
     public function detail_output_slaughter(){
         return $this->belongsTo('App\Models\outPut_SlaughterSupervisor_table', 'output_id', 'id');
     }
+
+
+    //MORPH RELATIONSHIP BTN DETAILS AND(SLAUGHTER, .., .., SAWA3E8)
+    /////////////////////////////////////// صفري ////////////////////////////////////////
+    //الدخل إلى تفاصيل  البحرات
+    public function lakeDetail()
+    {
+        return $this->morphOne('App\Models\LakeDetail', 'inputable');
+    }
 }

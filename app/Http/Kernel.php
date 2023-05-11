@@ -96,8 +96,8 @@ class Kernel extends HttpKernel
         'is-approved-material' => \App\Http\Middleware\isApprovedMaterial::class,
         'is-slaughter-supervisor' => \App\Http\Middleware\isSlaughterSupervisor::class,
         'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
-        //today
         'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
+        'is-warehouse-supervisor' => \App\Http\Middleware\isWarehouseSupervisor::class,
         
 
 

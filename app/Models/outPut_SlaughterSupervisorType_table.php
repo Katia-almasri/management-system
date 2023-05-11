@@ -20,6 +20,10 @@ class outPut_SlaughterSupervisorType_table extends Model
         return $this->hasMany('App\Models\outPut_SlaughterSupervisor_detail', 'type_id', 'id');
     }
 
+    public function warehouse(){
+        return $this->hasMany('App\Models\Warehouse', 'type_id', 'id');
+    }
+
     ############################## End Relations ##############################
 
 }

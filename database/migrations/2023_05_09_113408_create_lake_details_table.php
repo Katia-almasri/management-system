@@ -4,20 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDetonatorFrigeDetailsTable extends Migration
+class CreateLakeDetailsTable extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
-     */ 
+     */
     public function up()
     {
-        Schema::create('detonator_frige_details', function (Blueprint $table) {
+        Schema::create('lake_details', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('detonator_frige_id')->nullable();
-            $table->foreign('detonator_frige_id')->references('id')->on('detonator_friges')->onDelete('cascade');
+            $table->unsignedBigInteger('lake_id')->nullable();
+            $table->foreign('lake_id')->references('id')->on('lakes')->onDelete('cascade');
 
             $table->float('weight')->nullable();
             $table->integer('amount')->nullable();
@@ -26,10 +26,8 @@ class CreateDetonatorFrigeDetailsTable extends Migration
             $table->integer('cur_amount')->nullable();
 
             $table->timestamp('date_of_destruction')->nullable();
-            $table->timestamp('expiration_date')->nullable();         
-            
+            $table->timestamp('expiration_date')->nullable();       
             $table->timestamps();
-
         });
     }
 
@@ -40,6 +38,6 @@ class CreateDetonatorFrigeDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detonator_frige_details');
+        Schema::dropIfExists('lake_details');
     }
 }

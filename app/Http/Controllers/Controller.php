@@ -6,6 +6,7 @@ use App\Models\PoultryReceiptDetection;
 use App\Models\product;
 use App\Models\RowMaterial;
 use App\Models\sellingortype;
+use App\Models\Warehouse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -88,6 +89,11 @@ class Controller extends BaseController
             PoultryReceiptDetection::where('id', $recieptId)->update(['is_seen_by_sales_manager'=>1]);
         
         return response()->json($weightAfterArrivalDetection);
+    }
+
+    public function displayWarehouseContent(Request $request){
+        $warehouseContent = Warehouse::with(['zeroFrige', 'lake'])->get();
+        return response()->json($warehouseContent);
     }
 
 

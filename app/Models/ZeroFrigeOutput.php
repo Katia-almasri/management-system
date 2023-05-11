@@ -12,13 +12,13 @@ class ZeroFrigeOutput extends Model
     protected $table = 'zero_frige_outputs';
     protected $primaryKey='id';
     protected $fillable = [
-       'zero_frige_details_id',
        'output_date',
-       'note'
+       'weight',
+       'amount'
     ];
 
      ############################## Begin Relations #############################
-     public function zeroFrigeDetail(){
-        return $this->belongsTo('App\Models\ZeroFrigeDetail', 'zero_frige_details_id', 'id');
+     public function ZeroFrigeInputOutput(){
+        return $this->hasMany('App\Models\ZeroFrigeInputOutput', 'output_id', 'id');
     }
-}
+ }

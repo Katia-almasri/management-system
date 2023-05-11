@@ -51,6 +51,11 @@ return [
             'commander'=>'r'
         ],
 
+        'warehouse_supervisor' => [
+            'warehouse'=>'r,d,u,c'
+
+        ],
+
     ],
 
     'permissions_map' => [

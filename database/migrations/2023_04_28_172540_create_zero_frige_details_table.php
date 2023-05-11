@@ -28,7 +28,7 @@ class CreateZeroFrigeDetailsTable extends Migration
             $table->timestamp('date_of_destruction')->nullable();
             $table->timestamp('expiration_date')->nullable();         
             
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 
