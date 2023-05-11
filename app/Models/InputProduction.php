@@ -20,11 +20,6 @@ class InputProduction extends Model
     ];
 
 
-
-    public function typeChicken(){
-        return $this->belongsTo('App\Models\typeChicken', 'type_id', 'id');
-    }
-
     public function inputSlaughter(){
         return $this->belongsTo('App\Models\input_slaughter_table', 'productionId', 'id');
     }

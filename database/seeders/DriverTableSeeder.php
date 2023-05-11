@@ -29,6 +29,7 @@ class DriverTableSeeder extends Seeder
             'state'=>'دوام',
             'address'=>'جرمانا-ساحة الرئيس',
             'mobile_number'=>'0912334343',
+
             'mashenism_coordinator_id' => 3
         ]);
     }

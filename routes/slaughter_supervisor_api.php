@@ -13,7 +13,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('change-state-input/{inputId}',[SlaughterSupervisorController::class, 'changeStateInput']);
         //عرض دخل الذبح في واجهة الخرج
         Route::get('display-input-total-weight',[SlaughterSupervisorController::class, 'displayInputTotalWeight']);
-        Route::post('add-output/{type_id}',[SlaughterSupervisorController::class, 'addOutputSlaughters']);
+        Route::post('add-output/{type_id}',[SlaughterSupervisorController::class, 'addOutputSlaughters'])->middleware('is-exist-type-id-input-slaughters');
+        Route::post('processing-is-done',[SlaughterSupervisorController::class, 'processing_is_done'])->middleware('is-exist-input-slaughters');
+        Route::get('display-types',[SlaughterSupervisorController::class, 'displayOutputTypes']);
+        Route::get('display-output-slaughter',[SlaughterSupervisorController::class, 'displayOutputSlaughter']);
 
 
 

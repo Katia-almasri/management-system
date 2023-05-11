@@ -33,10 +33,14 @@ class DatabaseSeeder extends Seeder
         $this->call(PoultryRecieptDetectionDetailsTableSeeder::class);
         $this->call(WeightAfterArrivalDetectionTableSeeder::class);
         $this->call(WeightAfterArrivalDetectionDetailsTableSeeder::class);
-        
-        
-        
-        
+
+        // $this->call(PoultryReceiptDetectionsSeeder::class);
+        // $this->call(PoultryReceiptDetectionsDetailsSeeder::class);
+        // $this->call(WeightAfterArrivalDetectionsSeeder::class);
+        // $this->call(WeightAfterArrivalDetectionsDetailsSeeder::class);
+
+
+
 
     }
 }

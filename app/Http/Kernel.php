@@ -98,19 +98,17 @@ class Kernel extends HttpKernel
         'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
         //today
         'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
-        
-
-
-
-
-
-
-
-
-
-
-
-
+        'is-current-weight-and-id' => \App\Http\Middleware\isCurrentWeightAndId::class,
+        'is-exist-input-slaughters' => \App\Http\Middleware\isExistIdInInputSlaughters::class,
+        'is-exist-type-id-input-slaughters' => \App\Http\Middleware\isExistTypeIdInInputSlaughters::class,
+        'is-exist-input-production' => \App\Http\Middleware\isExistInputProduction::class,
+        'is-already-direct-to' => \App\Http\Middleware\isAlreadyDirectTo::class,
+        'is-cutting-supervisor' => \App\Http\Middleware\isCuttingSupervisor::class,
+        'is-exist-type-id-input-cutting' => \App\Http\Middleware\isExistTypeIdInputCutting::class,
+        'is-exist-input-cutting' => \App\Http\Middleware\isExistInputCutting::class,
+        'is-manufacturing-supervisor' => \App\Http\Middleware\isManufacturingSupervisor::class,
+        'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
+        'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
 
 
 

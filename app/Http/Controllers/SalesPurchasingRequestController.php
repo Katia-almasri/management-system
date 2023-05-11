@@ -71,7 +71,7 @@ class SalesPurchasingRequestController extends Controller
                     $salesPurchasingRequsetDetail->save();
                 }
 
-                //MAKE NEW NOTIFICATION RECORD       
+                //MAKE NEW NOTIFICATION RECORD
                 $AddSalesPurchasingNotif = new AddSalesPurchasingNotif();
                 $AddSalesPurchasingNotif->is_read = 0;
                 if($request->request_type == 1){
@@ -82,10 +82,10 @@ class SalesPurchasingRequestController extends Controller
                     $AddSalesPurchasingNotif->type = 'طلب مبيع من مزرعة';
                     $AddSalesPurchasingNotif->farm_id = $request->farm_id;
                 }
-                
+
                 $AddSalesPurchasingNotif->total_amount = $totalAmount['result'];
                 $AddSalesPurchasingNotif->save();
-                
+
                 //SEND NOTIFICATION ADD OFFER TO SALES MANAGER USING PUSHER
                 $data['is_read'] = 0;
                 $data['total_amount'] = $totalAmount['result'];
@@ -97,7 +97,7 @@ class SalesPurchasingRequestController extends Controller
                     $data['type'] = 'طلب مبيع من مزرعة';
                     $data['farm_id'] = $request->farm_id;
                 }
-                
+
                 $this->notificationService->addSalesPurchaseToCEONotif($data);
                 ////////////////// SEND THE NOTIFICATION /////////////////////////
 
@@ -157,7 +157,7 @@ class SalesPurchasingRequestController extends Controller
         $offerDetail = $this->purchaseOfferService->compareOfferDetailsToRequestDetails($request->details, $offerId);
         if($offerDetail['status']==false)
             return  response()->json(["status"=>false, "message"=>$offerDetail['message']]);
-        
+
         //CALCULATE TOTAL AMOUNT OF OFFER
          $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
 
@@ -191,9 +191,9 @@ class SalesPurchasingRequestController extends Controller
         $countRegisterFarmRequestNotif = $RegisterFarmRequestNotif->count();
         return response()->json(['RegisterFarmRequestNotif'=> $RegisterFarmRequestNotif,
                                  'countRegisterFarmRequestNotif'=> $countRegisterFarmRequestNotif]);
-    }  
-    
-    
+    }
+
+
     public function getResgisterSellingPortRequestsNotifs(Request $request){
         $RegisterSellingPortRequestNotif = RegisterSellingPortRequestNotif::where('is_read', '=', 0)->get();
         $countRegisterSellingPortRequestNotif = $RegisterSellingPortRequestNotif->count();
@@ -219,7 +219,7 @@ class SalesPurchasingRequestController extends Controller
         $countAddOfferNotif = $AddOfferNotif->count();
         return response()->json(['AddOfferNotif'=> $AddOfferNotif,
                                  'countAddOfferNotif'=> $countAddOfferNotif]);
-    } 
+    }
 
     public function getRequestToCompanyNotifs(Request $request){
         $RequestToCompanyNotif = RequestToCompanyNotif::where('is_read', '=', 0)->get();

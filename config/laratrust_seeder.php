@@ -51,6 +51,18 @@ return [
             'commander'=>'r'
         ],
 
+        'cutting_supervisor' => [
+            'input'=>'r',
+            'output'=>'c',
+            'command' =>'u'
+        ],
+
+        'Manufacturing_Supervisor' => [
+            'input'=>'r',
+            'output'=>'c',
+            'command' =>'u'
+        ],
+
     ],
 
     'permissions_map' => [

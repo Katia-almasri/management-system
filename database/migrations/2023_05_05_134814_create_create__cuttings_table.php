@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInputProductionsTable extends Migration
+class CreateCreateCuttingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateInputProductionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('input_productions', function (Blueprint $table) {
+        Schema::create('input_cuttings', function (Blueprint $table) {
             $table->id();
             $table->integer('weight');
-
-
+            $table->timestamp('income_date')->nullable();
+            $table->timestamp('output_date')->nullable();
+            $table->boolean('cutting_done')->nullable()->comment('صفر تتم العملية و واحد تم انهاء التقطيع');
             $table->timestamps();
-
         });
-
     }
 
     /**
@@ -31,6 +30,6 @@ class CreateInputProductionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('input_productions');
+        Schema::dropIfExists('create__cuttings');
     }
 }
