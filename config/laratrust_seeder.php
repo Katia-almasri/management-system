@@ -51,9 +51,7 @@ return [
             'commander'=>'r'
         ],
 
-        'warehouse_supervisor' => [
-            'warehouse'=>'r,d,u,c'
-        ],
+       
 
         'cutting_supervisor' => [
             'input'=>'r',
@@ -65,6 +63,10 @@ return [
             'input'=>'r',
             'output'=>'c',
             'command' =>'u'
+        ],
+
+        'warehouse_supervisor' => [
+            'warehouse'=>'r,d,u,c'
         ],
 
     ],

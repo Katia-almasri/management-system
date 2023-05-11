@@ -67,8 +67,8 @@ class RoleUserTableSeeder extends Seeder
         ]);
 
         Role_User::create([
-            'role_id'=>9,
-            'user_id'=>8,
+            'role_id'=>11,
+            'user_id'=>10,
             'user_type'=>'App\Models\Manager'
         ]);
 

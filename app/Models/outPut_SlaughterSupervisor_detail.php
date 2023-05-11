@@ -33,4 +33,10 @@ class outPut_SlaughterSupervisor_detail extends Model
     {
         return $this->morphOne('App\Models\LakeDetail', 'inputable');
     }
+
+    // public function inputlakeDetail(){
+    //     return $this->hasOne('App\Models\LakeDetail', 'output_slaughter_detail_id', 'id');
+    // }
+
+
 }

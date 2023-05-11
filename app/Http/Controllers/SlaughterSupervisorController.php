@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Warehouse;
+use App\systemServices\warehouseServices;
 use Illuminate\Support\Facades\DB;
 Use \Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +19,12 @@ use App\Models\outPut_Type_Production;
 class SlaughterSupervisorController extends Controller
 {
     use validationTrait;
+    protected $warehouseService;
 
+    public function __construct()
+    {
+        $this->warehouseService  = new warehouseServices();
+    }
     public function displayInputSlaughters(request $request){
         $InputSlaughters = input_slaughter_table::where([['output_date',null],['status',null]])->get();
         return response()->json($InputSlaughters, 200);
@@ -38,6 +45,14 @@ class SlaughterSupervisorController extends Controller
     }
 
     public function commandDirectToBahra(Request $request){
+        
+        $outPut_SlaughterSupervisor_detail = outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->get();
+        foreach ($outPut_SlaughterSupervisor_detail as $_outputDetail) {
+            $type_id = $_outputDetail->type_id;
+            //SEARCH IN WAREHOUSE
+            $warehouse = Warehouse::where('type_id', $type_id)->get()->first();
+            $this->warehouseService->storeNewInLake($warehouse->id, $_outputDetail->id);
+        }
         outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->update(['direct_to_bahra'=>1]);
         return response()->json(["status"=>true, "message"=>"تم التوجيه الى البحرات"]);
     }

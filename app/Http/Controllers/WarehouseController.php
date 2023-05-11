@@ -42,7 +42,7 @@ class WarehouseController extends Controller
                     response()->json(["status" => false, "message" => $isTypeExist['type_id']]);
                 }
                 else{
-                    //THIS TYPE IS IN WAREHOUSE: THEN CONTINE
+                    //THIS TYPE IS IN WAREHOUSE: THEN CONTINUE
                     $warehouse_id = $isTypeExist['warehouse_id'];
                     $this->warehouseService->storeNewInLake($warehouse_id, $_detail);
                 }
@@ -98,7 +98,7 @@ class WarehouseController extends Controller
     }
 
     //INPUT FROM WAREHOUSE SECTIONS 
-            //1. FROM LAKE TO ZERO (tommowrow)
+            //1. FROM LAKE TO ZERO 
     public function  inputFromLakeToZeroFrige(Request $request){
         //1. OUTPUT FROM LAKE
         //2. UPDATE VALUES
@@ -126,34 +126,47 @@ class WarehouseController extends Controller
             else if (amount = 0) //take the weight:
                 THE SAME
         }
+        *
         */
-
-        foreach ($request->details as $_detail) {
-            if($_detail['weight'] == 0){
-                $result = $this->warehouseService->outpuFromLake($_detail);
+            try {
+                DB::beginTransaction();
+                foreach ($request->details as $_detail) {
+                    if($_detail['weight'] == 0){
+                        $result = $this->warehouseService->outputAmountFromLake($_detail);
+                        if($result['status']==false)
+                            throw new \ErrorException($result['message']);
+                        //process the amount
+                    }
+                    else if($_detail['amount'] == 0){
+                        //process the weight
+                        $result = $this->warehouseService->outputWeightFromLake($_detail);
+                        if($result['status']==false)
+                            throw new \ErrorException($result['message']);
+                    }
+                }
+                DB::commit();
                 return response()->json($result['message']);
-                //process the amount
-            }
+        }catch (\Exception $exception) {
+            DB::rollback();
+            return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
-        
-       
-        //INPUT TO ZERO
-        //UPDATE VALUES
     }
+
+
     ////////////////////INPUT DETONATOR ////////////////////////
     //INPUT FROM WAREHOUSE SECTIONS
     //////////////////INPUT ZERO //////////////////////////////
     //INPUT FROM WAREHOUSE SECTIONS
 
 
-    //DISPLAY LAKE CONTENT (tommowrow)
+    //DISPLAY LAKE CONTENT
     public function displayLakeDetailsMovement(Request $request, $lakeId){
         $lakeDetails = LakeDetail::with('inputable')
                         ->where('lake_id', $lakeId)->get();
         return response()->json($lakeDetails);
     }
     //DISPLAY DETONATOR CONTENT 
-    //DISPLAY ZERO CONTENT (tommowrow)
+    //DISPLAY ZERO CONTENT 
     public function displayZeroDetailsMovement(Request $request, $zeroId){
         $zeroDetails = ZeroFrigeDetail::with('inputable')
                         ->where('zero_frige_id', $zeroId)->get();

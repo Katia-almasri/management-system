@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
@@ -26,6 +27,12 @@ class ProductionController extends Controller
 {
     use validationTrait;
 
+    protected $warehouseService;
+
+    public function __construct()
+    {
+        $this->warehouseService  = new warehouseServices();
+    }
     public function displayLibraCommanderOutPut(Request $request){
         // $commander =weightAfterArrivalDetection::
         // with(['poltryDetection.PoultryReceiptDetectionDetails.rowMaterial'=>function($q){
@@ -108,6 +115,8 @@ class ProductionController extends Controller
         $type -> type = $request->type;
         $type -> number_day_validity = $request->number_day_validity;
         $type -> save();
+        ///////////ADD THE NEW TYPE IN WAREHOUSE
+        $this->warehouseService->addNewTypeInWarehouse($type->id);
         return  response()->json(["status"=>true, "message"=>"تم إضافة نوع جديد لخرج الانتاج "]);
     }
 

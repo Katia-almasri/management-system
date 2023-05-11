@@ -34,16 +34,6 @@ class warehouseServices{
 
     }
 
-
-    
-    public function searchTypeExistInWarehouse($type_id, $weight){
-        $isTypeExist = Warehouse::where('type_id', $type_id)->get();
-        if($isTypeExist == null){
-            
-        }
-        
-    }
-
     public function insertNewElementInLake($warehouseId){
         $lake = new Lake();
         $lake->warehouse_id = $warehouseId;
@@ -109,7 +99,7 @@ class warehouseServices{
         return $outputSlaughterData;
     }
 
-    public function outpuFromLake($_detail){
+    public function outputAmountFromLake($_detail){
         $lake_id = $_detail['lake_id'];
 
         $lake = Lake::find($lake_id);
@@ -146,7 +136,7 @@ class warehouseServices{
         }
          
         if($tot_amount!=0){
-            return (["status"=>false, "message"=>$tot_amount]);  
+            return (["status"=>false, "message"=>"هناك خطأ ما"]);  
              
         }
         else{
@@ -163,8 +153,67 @@ class warehouseServices{
              * now the input from lake to zero
              */
             $this->inputFromLakeToZero($lakeOutput, $warehouse->id);
-            return (["status"=>true, "message"=>"ok"]);
+            return (["status"=>true, "message"=>"تم الإدخال بنجاح"]);
         }  
+    }
+
+    public function outputWeightFromLake($_detail){
+        $lake_id = $_detail['lake_id'];
+
+        $lake = Lake::find($lake_id);
+        if($lake->weight!=null && $lake->weight < $_detail['weight'])
+            return (["status"=>false, "message"=>"لا يوجد وزن كافي في المخزن"]);
+
+        $flag = false;
+        $elementsInLakeDetails = LakeDetail::where('lake_id', $lake_id)->orderBy('created_at', 'DESC')->get();
+        $tot_weight = $_detail['weight'];
+        foreach ($elementsInLakeDetails as $_lake_detail) {
+            if($tot_weight != 0){
+                if($_detail['weight'] >= $_lake_detail['cur_weight']){
+                    $tot_weight -= $_lake_detail['cur_weight'];
+                    $_lake_detail->update(['cur_weight'=>0]);
+
+                    //INSERT THIS ROW IN NEW INPUT_OUTPUT_LAKE TABLE
+                    $this->insertNewRowInInputOutputLakeTable($_lake_detail['id'], $_lake_detail['weight'], null);
+
+                    //UPDATE OUTBUT DATE IN LAKE DETAIL TABLE
+                    $_lake_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
+                }
+                else{
+                    
+                    $_lake_detail->update(['cur_weight'=>$_lake_detail['cur_weight'] - $tot_weight]);
+                    $tot_weight = 0;
+                    $flag = true;
+                    break;
+                }   
+            }
+            else{
+                $flag = true;
+                break;
+            }            
+        }
+         
+        if($tot_weight!=0){
+            return (["status"=>false, "message"=>"هناك خطأ ما"]);  
+             
+        }
+        else{
+            //ENOUGH AMOUNT
+            $lakeOutput = $this->insertNewRowInOutputLakeTable($_detail['weight'], null);
+            $this->setOutputIdToInputOutputLakeTable($lakeOutput->id);
+            //UPDATE THE AMOUNT IN LAKE
+            $lake->update(['weight'=> $lake['weight']- $_detail['weight']]);
+            //UPDATE THE AMOUNT IN WAREHOUSE  
+            $warehouse = Warehouse::find($lake->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse['tot_weight'] - $_detail['weight']]);
+            //USE $lakeOutput WHEN INSERT INPUT IN ZERO FRIGE:
+            /**
+             * now the input from lake to zero
+             */
+            $this->inputFromLakeToZero($lakeOutput, $warehouse->id);
+            return (["status"=>true, "message"=>"تم الإدخال بنجاح"]);
+        }  
+
     }
 
     public function inputFromLakeToZero($lakeOutput, $warehouseId){
@@ -220,6 +269,17 @@ class warehouseServices{
         foreach ($inputOutputLakeElements as $_inputOutput) {
             $_inputOutput->update(['output_id'=>$lakeOutputId]);
         }
+        return true;
+    }
+
+    public function addNewTypeInWarehouse($type_id){
+        $warehouse = new Warehouse();
+        $warehouse->type_id = $type_id;
+        $warehouse->save();
+
+        $this->insertNewElementInDetonator($warehouse->id);
+        $this->insertNewElementInLake($warehouse->id);
+        $this->insertNewElementInZero($warehouse->id);
         return true;
     }
 

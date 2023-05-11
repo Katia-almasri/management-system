@@ -18,7 +18,8 @@ class LakeDetail extends Model
        'cur_weight',
        'cur_amount',
        'date_of_destruction',
-       'expiration_date'
+       'expiration_date',
+       'output_slaughter_detail_id'
     ];
 
     ############################## Begin Relations #############################
@@ -34,6 +35,10 @@ class LakeDetail extends Model
     //الدخل إلى تفاصيل البحرات
     public function inputable(){
         return $this->morphTo();
+    }
+
+    public function outputSlaughterDetail(){
+        return $this->belongsTo('App\Models\outPut_SlaughterSupervisor_detail', 'output_slaughter_detail_id', 'id');
     }
 
 }
