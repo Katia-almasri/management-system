@@ -96,13 +96,9 @@ class Kernel extends HttpKernel
         'is-approved-material' => \App\Http\Middleware\isApprovedMaterial::class,
         'is-slaughter-supervisor' => \App\Http\Middleware\isSlaughterSupervisor::class,
         'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
-<<<<<<< HEAD
-        'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
         'is-warehouse-supervisor' => \App\Http\Middleware\isWarehouseSupervisor::class,
-=======
         //today
         'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
->>>>>>> mohammadBranch
         'is-current-weight-and-id' => \App\Http\Middleware\isCurrentWeightAndId::class,
         'is-exist-input-slaughters' => \App\Http\Middleware\isExistIdInInputSlaughters::class,
         'is-exist-type-id-input-slaughters' => \App\Http\Middleware\isExistTypeIdInInputSlaughters::class,
@@ -114,13 +110,6 @@ class Kernel extends HttpKernel
         'is-manufacturing-supervisor' => \App\Http\Middleware\isManufacturingSupervisor::class,
         'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
         'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
-<<<<<<< HEAD
         'is-exist-id-to-direct-bahra' => \App\Http\Middleware\isExistIdToDirectBahra::class,
-=======
-
-
->>>>>>> mohammadBranch
-
-
     ];
 }
