@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class outPut_SlaughterSupervisor_table extends Model
 {
     use HasFactory;
     protected $table = 'output_slaughtersupervisors';
     protected $primaryKey='id';
     protected $fillable = [
-       'waste value',
+       'waste_value',
        'production_date',
     ];
 

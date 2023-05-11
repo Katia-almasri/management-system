@@ -15,7 +15,7 @@ class AddOutputId extends Migration
     {
         //
         Schema::table('input_slaughters', function (Blueprint $table) {
-            $table->unsignedBigInteger('output_id');
+            $table->unsignedBigInteger('output_id')->after('output_date');
                 $table->foreign('output_id')->references('id')->on('output_slaughtersupervisors')->onDelete('cascade');
         });
     }

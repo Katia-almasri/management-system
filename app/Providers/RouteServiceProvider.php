@@ -99,6 +99,19 @@ class RouteServiceProvider extends ServiceProvider
               ->namespace($this->namespace)
               ->group(base_path('routes/warehouse_api.php'));
 
+              //مشرف التقطيع
+             Route::prefix('cutting-supervisor-api')
+             ->middleware('api')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/cutting_supervisor_api.php'));
+
+             //مشرف التصنيع
+             Route::prefix('manufacturing-supervisor-api')
+             ->middleware('api')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/manufacturing_api.php'));
+
+
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));

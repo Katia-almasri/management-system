@@ -53,7 +53,18 @@ return [
 
         'warehouse_supervisor' => [
             'warehouse'=>'r,d,u,c'
+        ],
 
+        'cutting_supervisor' => [
+            'input'=>'r',
+            'output'=>'c',
+            'command' =>'u'
+        ],
+
+        'Manufacturing_Supervisor' => [
+            'input'=>'r',
+            'output'=>'c',
+            'command' =>'u'
         ],
 
     ],

@@ -14,7 +14,7 @@ class AddApprovedAtWieghtAfter extends Migration
     public function up()
     {
         //
-        Schema::table('after_arrival_detection_details', function (Blueprint $table) {
+        Schema::table('weight_after_arrival_detections', function (Blueprint $table) {
             $table->timestamp('approved_at')->nullable()->after('net_weight_after_arrival');
         });
     }

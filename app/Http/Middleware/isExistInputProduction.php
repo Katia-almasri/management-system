@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\Traits\validationTrait;
+use App\Models\InputProduction;
+
+class isExistInputProduction
+{
+    use validationTrait;
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function handle(Request $request, Closure $next)
+    {
+        $counter1 = 0;
+        $counter2 = 0;
+        foreach($request->ids as $_id){
+            $InputProductionId = $_id['id'];
+            $InputExistId = InputProduction::find($InputProductionId);
+            if($InputExistId!=null){
+                if(!is_null($InputExistId->CommandSlaughterSupervisor) ){
+                    $counter1 ++;
+                }
+            }
+            else{
+                return  $this -> returnError('error', 'الدخل غير موجود');
+                $counter2 ++;
+            }
+
+        }
+        if($counter1 != 0 )
+            return  $this -> returnError('error', 'تم اعطاء الامر مسبقا');
+        if($counter1 == 0 && $counter2 == 0)
+            return $next($request);
+
+    }
+
+}

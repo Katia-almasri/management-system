@@ -11,7 +11,7 @@ use Auth;
 use App\Models\input_slaughter_table;
 use App\Models\outPut_SlaughterSupervisor_table;
 use App\Models\outPut_SlaughterSupervisor_detail;
-use App\Models\outPut_SlaughterSupervisorType_table;
+use App\Models\outPut_Type_Production;
 
 
 class SlaughterSupervisorController extends Controller
@@ -19,59 +19,59 @@ class SlaughterSupervisorController extends Controller
     use validationTrait;
 
     public function displayInputSlaughters(request $request){
-        $InputSlaughters = input_slaughter_table::where('output_date',null)->get();
+        $InputSlaughters = input_slaughter_table::where([['output_date',null],['status',null]])->get();
         return response()->json($InputSlaughters, 200);
     }
 
-    public function changeStateInput(Request $request, $inputId){
-        input_slaughter_table::where('id',$inputId)->update(['slaughter_done' => 0]);
+    public function changeStateInput(Request $request){
+        input_slaughter_table::where('output_id',null)->update(['status' => 'يتم الذبح']);
         return response()->json(["status"=>true, "message"=>"يتم ذبح الشحنة"]);
     }
 
 
-
-    public function displayInputTotalWeight(Request $request){
-        $typeInput = DB::table('input_slaughters')
-        ->join('type_chickens', 'input_slaughters.type_id', '=', 'type_chickens.id')
-        ->select('input_slaughters.type_id','type_chickens.type', DB::raw('SUM(weight) as weight'))
-        ->where([['slaughter_done',0],['output_date',null]])->groupBy('type_id','type_chickens.type')->get();
-        return response()->json($typeInput, 200);
+    public function displayOutputDetTotalWeight(Request $request){
+        $typeOutput = DB::table('output_slaughtersupervisors_details')
+        ->join('output_production_types', 'output_slaughtersupervisors_details.type_id', '=', 'output_production_types.id')
+        ->select('output_slaughtersupervisors_details.type_id','output_production_types.type', DB::raw('SUM(weight) as weight'))
+        ->where([['direct_to_bahra',0]])->groupBy('type_id','output_production_types.type')->get();
+        return response()->json($typeOutput, 200);
     }
 
-    public function addOutputSlaughters(Request $request , $type_id){
+    public function commandDirectToBahra(Request $request){
+        outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->update(['direct_to_bahra'=>1]);
+        return response()->json(["status"=>true, "message"=>"تم التوجيه الى البحرات"]);
+    }
+
+    public function addOutputSlaughters(Request $request){
             $output = new outPut_SlaughterSupervisor_table();
             $output -> production_date = Carbon::now();
-            // $output -> waste_value = $request ->waste_value;
             $output ->save();
-            // $e = $this->numberOfType();
-            $findInput = input_slaughter_table::where([['type_id',$type_id],['slaughter_done',0]])
-            ->update(['output_id'=> $output->id]);
+            $findInput = input_slaughter_table::where('status' , 'يتم الذبح')
+            ->update([
+                'output_id' => $output->id,
+                'status' => 'تم انهاء الذبح',
+                'output_date' => Carbon::now()
+            ]);
 
             foreach($request->details as $_detail){
                 $outputDetail = new outPut_SlaughterSupervisor_detail();
                 $outputDetail->weight = $_detail['weight'];
                 $outputDetail->type_id = $_detail['type_id'];
                 $outputDetail->output_id = $output->id;
-                $daysToAdd = outPut_SlaughterSupervisorType_table::where('id',$_detail['type_id'])
-                ->pluck('number_day_validity')->first();
-                $date = $output -> production_date;
-                $outputDetail->expiry_date = $date->addDays($daysToAdd);
                 $outputDetail->save();
             }
+            // return response()->json($findInput, 200);
         return response()->json(["status"=>true, "message"=>"تم اضافة خرج"]);
 
     }
-    public function numberOfType(){
-        $InputSlaughters = input_slaughter_table::where('output_date',null)->get();
-        $number = 0;
-        $arrayTypeId = [];
-        foreach ($InputSlaughters as $_as ) {
-            if(!in_array('type_id',$arrayTypeId))
-            {
-                $arrayTypeId[$number] = $_as->type_id;
-                $number +=1;
-            }
-        }
-        return $arrayTypeId;
+
+    public function displayOutputTypesSlaughter(Request $request){
+        $types = outPut_Type_Production::where('by_section','قسم الذبح')->get(['id','type'] );
+        return response()->json($types, 200);
+    }
+
+    public function displayOutputSlaughter(Request $request){
+        $output = outPut_SlaughterSupervisor_detail::orderBy('id', 'DESC')->get();
+        return response()->json($output, 200);
     }
 }

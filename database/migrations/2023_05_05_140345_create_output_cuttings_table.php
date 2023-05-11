@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CommandSlaughterSupervisor extends Migration
+class CreateOutputCuttingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CommandSlaughterSupervisor extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('input_productions', function (Blueprint $table) {
-            $table->boolean('CommandSlaughterSupervisor')->nullable();
+        Schema::create('output_cuttings', function (Blueprint $table) {
+            $table->id();
+            $table->timestamp('production_date')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -26,6 +27,6 @@ class CommandSlaughterSupervisor extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('output_cuttings');
     }
 }

@@ -55,7 +55,9 @@ class LibraController extends Controller
                 $data['reciept_id'] = $recieptId;
                 $this->notificationService->addWeightRecieptAfterArriveNotif($data);
                 // ////////////////// SEND THE NOTIFICATION /////////////////////////
-                return ["status" => true, "message" => "تم وزن الشحنة بعد وصولها بنجاح"];
+
+
+                return ["status" => true, "message" => "  تم وزن الشحنة بعد وصولها بنجاح وارسالها لقسم الذبح"];
             }
             else
                 throw new \ErrorException($finalResult['message']);

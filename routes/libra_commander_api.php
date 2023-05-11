@@ -13,9 +13,11 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         Route::group(['middleware' => 'check-reciept-id'], function () {
             Route::get('get-reciept-info/{recieptId}', [LibraController::class, 'getRecieptInfo']);
             Route::post('add-weight-after-arrival-detection/{recieptId}', [LibraController::class, 'addWeightAfterArrivalDetection'])->middleware('check-reciept-not-weighted');
-    
+            Route::get('get-weight-after-arrival-for-reciept/{recieptId}', [LibraController::class, 'getWeightAfterArrival']);
+
+
         });
-        
-        
+
+
     });
 });

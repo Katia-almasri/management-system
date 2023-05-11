@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSlaughterDone extends Migration
+class AddSection extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,8 @@ class AddSlaughterDone extends Migration
     public function up()
     {
         //
-        Schema::table('input_slaughters', function (Blueprint $table) {
-            $table->boolean('slaughter_done')->nullable()->comment('صفر تتم العملية و واحد تم انهاء الذبح');
-
+        Schema::table('output_production_types', function (Blueprint $table) {
+            $table->enum('by_section', ['قسم التقطيع', 'قسم التصنيع', 'قسم الذبح'])->nullable()->after('type');
         });
     }
 

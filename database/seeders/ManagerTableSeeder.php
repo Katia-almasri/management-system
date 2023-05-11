@@ -81,6 +81,24 @@ class ManagerTableSeeder extends Seeder
             'password'=>Hash::make('password'),
         ]);
 
+        Manager::create([
+            'managing_level'=>'cutting_supervisor',
+            'first_name'=>'yousef',
+            'last_name'=>'yousef',
+            'username'=>'yousef yousef',
+            'password'=>Hash::make('password'),
+        ]);
+
+        Manager::create([
+            'managing_level'=>'Manufacturing_Supervisor',
+            'first_name'=>'ammar',
+            'last_name'=>'ammar',
+            'username'=>'ammar ammar',
+            'password'=>Hash::make('password'),
+        ]);
+
+
+
 
 
 

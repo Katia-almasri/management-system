@@ -72,7 +72,7 @@ class SalesPurchasingRequestController extends Controller
                     $salesPurchasingRequsetDetail->save();
                 }
 
-                //MAKE NEW NOTIFICATION RECORD       
+                //MAKE NEW NOTIFICATION RECORD
                 $AddSalesPurchasingNotif = new AddSalesPurchasingNotif();
                 $AddSalesPurchasingNotif->is_read = 0;
                 if($request->request_type == 1){
@@ -83,10 +83,10 @@ class SalesPurchasingRequestController extends Controller
                     $AddSalesPurchasingNotif->type = 'طلب مبيع من مزرعة';
                     $AddSalesPurchasingNotif->farm_id = $request->farm_id;
                 }
-                
+
                 $AddSalesPurchasingNotif->total_amount = $totalAmount['result'];
                 $AddSalesPurchasingNotif->save();
-                
+
                 //SEND NOTIFICATION ADD OFFER TO SALES MANAGER USING PUSHER
                 $data['is_read'] = 0;
                 $data['total_amount'] = $totalAmount['result'];
@@ -98,7 +98,7 @@ class SalesPurchasingRequestController extends Controller
                     $data['type'] = 'طلب مبيع من مزرعة';
                     $data['farm_id'] = $request->farm_id;
                 }
-                
+
                 $this->notificationService->addSalesPurchaseToCEONotif($data);
                 ////////////////// SEND THE NOTIFICATION /////////////////////////
 
@@ -109,7 +109,7 @@ class SalesPurchasingRequestController extends Controller
     public function commandForMechanismCoordinator(Request $request, $RequestId){
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1],['accept_by_sales', '=', 1],['id', '=', $RequestId]])
         ->update(['command' => 1]);
-        //STORE IN THE NOTIFICATION TABLE IN DB 
+        //STORE IN THE NOTIFICATION TABLE IN DB
         $newNotification = new Notification();
         $newNotification->channel = 'add-start-command-notification';
         $newNotification->event = 'App\\Events\\addStartCommandNotif';
@@ -119,8 +119,8 @@ class SalesPurchasingRequestController extends Controller
         $newNotification->details = $RequestId.' تم إعطاْ أمر جديد للشحنة';
         $newNotification->is_seen = 0;
         $newNotification->save();
-                                            
-        //إرسال إشعار لمنسق حركة الآليات حول الأمر  
+
+        //إرسال إشعار لمنسق حركة الآليات حول الأمر
         $data['title'] = 'أمر جديد لمنسق حركة الآليات';
         $data['details'] = $RequestId.' تم إعطاْ أمر جديد للشحنة';
         $data['command_id'] = $RequestId;
@@ -170,7 +170,7 @@ class SalesPurchasingRequestController extends Controller
         $offerDetail = $this->purchaseOfferService->compareOfferDetailsToRequestDetails($request->details, $offerId);
         if($offerDetail['status']==false)
             return  response()->json(["status"=>false, "message"=>$offerDetail['message']]);
-        
+
         //CALCULATE TOTAL AMOUNT OF OFFER
          $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
 
@@ -204,17 +204,18 @@ class SalesPurchasingRequestController extends Controller
         $countRegisterFarmRequestNotif = $RegisterFarmRequestNotif->count();
         return response()->json(['RegisterFarmRequestNotif'=> $RegisterFarmRequestNotif,
                                  'countRegisterFarmRequestNotif'=> $countRegisterFarmRequestNotif]);
-    }  
-    
-    
+    }
+
+
     public function getResgisterSellingPortRequestsNotifs(Request $request){
         $RegisterSellingPortRequestNotif = RegisterSellingPortRequestNotif::where('is_read', '=', 0)->get();
         $countRegisterSellingPortRequestNotif = $RegisterSellingPortRequestNotif->count();
         return response()->json(['RegisterSellingPortRequestNotif'=> $RegisterSellingPortRequestNotif,
                                  'countRegisterSellingPortRequestNotif'=> $countRegisterSellingPortRequestNotif]);
     }
-    
-    
+
+
+
     //عدد أوامر الانطلاق يراها منسق حركة الآليات
     public function countStartCommandsNotifs(Request $request){
         $notifications = Notification::where([['channel', '=', 'add-start-command-notification'],
@@ -223,20 +224,21 @@ class SalesPurchasingRequestController extends Controller
         $notificationsCount = $notifications->count();
         // $countStartCommandsNotif = salesPurchasingRequset::where([['command', '=', 1], ['is_seen_by_mechanism_coordinator','=', 0]])->count();
          return response()->json(['notifications' => $notifications, 'notificationsCount'=>$notificationsCount]);
-    } 
+    }
 
     // يراها مدير المشتريات والمبيعات عدد الشحنات الواصلة والتي تم وزنها
     public function countPoultryRecieptDetectionsNotifs(Request $request){
         $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', '=', 0], ['is_weighted_after_arrive', '=',1]])->count();
         return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
-    } 
+    }
+
 
     public function getAddOffersNotifs(Request $request){
         $AddOfferNotif = AddOfferNotif::where('is_read', '=', 0)->get();
         $countAddOfferNotif = $AddOfferNotif->count();
         return response()->json(['AddOfferNotif'=> $AddOfferNotif,
                                  'countAddOfferNotif'=> $countAddOfferNotif]);
-    } 
+    }
 
     public function getRequestToCompanyNotifs(Request $request){
         $RequestToCompanyNotif = RequestToCompanyNotif::where('is_read', '=', 0)->get();

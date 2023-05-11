@@ -7,6 +7,7 @@ use App\Models\PoultryReceiptDetection;
 use App\Models\PoultryReceiptDetectionsDetails;
 use App\Models\weightAfterArrivalDetection;
 use App\Models\weightAfterArrivalDetectionDetail;
+use App\Models\input_slaughter_table;
 use App\Exceptions\Exception;
 use Auth;
 use Illuminate\Http\Request;
@@ -77,7 +78,7 @@ class weightAfterArrivalServices
         $num_cages = 0;
         $tot_material_weight = 0.0;
         $dead_chicken = 0;
-        
+
         foreach ($detection_details as $_detail) {
             $num_cages += 1;
             $tot_material_weight += $_detail['cage_weight'];
@@ -99,7 +100,7 @@ class weightAfterArrivalServices
         if ($poultryRecieptDetection[0]->PoultryReceiptDetectionDetails[$counter]->num_cages * $this->num_birds < $dead_chicken) {
             return (["status" => false, "message" => "خطأ في الإدخال"]);
         }
-        
+
         $empty = $num_cages * $this->cage_weight;
         $net_weight_after_arrival = $tot_material_weight - $empty;
         $weight_loss = $poultryRecieptDetection[0]->PoultryReceiptDetectionDetails[$counter]->net_weight - $net_weight_after_arrival;
@@ -213,9 +214,10 @@ class weightAfterArrivalServices
 
     public function weightAfterArrive(WeightAfterArrivalRequest $request, $recieptId){
 
+
         $poultryRecieptDetection = PoultryReceiptDetection::with('PoultryReceiptDetectionDetails')
         ->where('id', '=', $recieptId)->get();
-        
+
         $weightAfterArrivalDetection = new weightAfterArrivalDetection();
         $weightAfterArrivalDetection->libra_commander_id = $request->user()->id;
         $weightAfterArrivalDetection->polutry_detection_id = $recieptId;
@@ -225,11 +227,18 @@ class weightAfterArrivalServices
         $weightAfterArrivalDetection->net_weight_after_arrival = $request['tot_weight'] - $request['empty_weight'];
         $weightAfterArrivalDetection->weight_loss = $poultryRecieptDetection[0]->tot_weight - $weightAfterArrivalDetection->net_weight_after_arrival;
         $weightAfterArrivalDetection->save();
+        $inputSlaughters = new input_slaughter_table();
+        $inputSlaughters -> weight = $weightAfterArrivalDetection->net_weight_after_arrival;
+        $inputSlaughters -> weight_after_id = $weightAfterArrivalDetection->id;
+        $inputSlaughters -> income_date = $weightAfterArrivalDetection->created_at;
+        $inputSlaughters ->save();
+
         return ([
             "status" => true,
-            "message" => "تم إضافة وزن بعد الشحنة بعد الوصول بنجاح",
+            "message" => " تم إضافة وزن بعد الشحنة بعد الوصول بنجاح والدخل لقسم الذبح",
             "detectionId" => $weightAfterArrivalDetection->id
         ]);
 
     }
 }
+

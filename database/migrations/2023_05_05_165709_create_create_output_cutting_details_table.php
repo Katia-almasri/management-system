@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddOutputSlaughtersTable extends Migration
+class CreateCreateOutputCuttingDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateAddOutputSlaughtersTable extends Migration
      */
     public function up()
     {
-        Schema::create('output_slaughterSupervisors_details', function (Blueprint $table) {
+        Schema::create('output_cutting_details', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('output_cutting_id');
+            $table->foreign('output_cutting_id')->references('id')->on('output_cuttings')->onDelete('cascade');
             $table->integer('weight');
+            $table->timestamp('expiry_date')->nullable();
             $table->unsignedBigInteger('type_id');
             $table->foreign('type_id')->references('id')->on('output_production_types')->onDelete('cascade');
-            $table->boolean('direct_to_bahra')->default(0);
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateAddOutputSlaughtersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('add_output_slaughters');
+        Schema::dropIfExists('create_output_cutting_details');
     }
 }

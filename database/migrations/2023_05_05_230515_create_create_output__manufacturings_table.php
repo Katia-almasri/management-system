@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWieghtAfter extends Migration
+class CreateCreateOutputManufacturingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class AddWieghtAfter extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('input_productions', function (Blueprint $table) {
-            $table->unsignedBigInteger('weight_detail_id');
-            $table->foreign('weight_detail_id')->references('id')->on('after_arrival_detection_details')->onDelete('cascade');
+        Schema::create('output_manufacturings', function (Blueprint $table) {
+            $table->id();
+            $table->timestamp('production_date')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -27,6 +27,6 @@ class AddWieghtAfter extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('create_output__manufacturings');
     }
 }
