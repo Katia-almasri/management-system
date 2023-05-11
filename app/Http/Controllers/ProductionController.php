@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\outPut_Type_Production;
 use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
@@ -111,9 +112,8 @@ class ProductionController extends Controller
         if($validator->fails()){
             return response()->json(['error' => $validator->errors()->all()]);
         }
-        $type = new outPut_SlaughterSupervisorType_table();
+        $type = new outPut_Type_Production();
         $type -> type = $request->type;
-        $type -> number_day_validity = $request->number_day_validity;
         $type -> save();
         ///////////ADD THE NEW TYPE IN WAREHOUSE
         $this->warehouseService->addNewTypeInWarehouse($type->id);
