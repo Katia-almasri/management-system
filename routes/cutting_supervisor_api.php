@@ -17,6 +17,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         ->middleware('is-exist-type-id-input-cutting');
         Route::get('display-output-cutting',[CuttingController::class, 'displayOutputCutting']);
 
+
+        //////////////// OUTPUT FROM CUTTINHG SECTION //////////////////
+        Route::post('direct-cutting-to',[CuttingController::class, 'directCuttingTo']);
+        
     });
 
 

@@ -25,4 +25,26 @@ class OutputManufacturingDetails extends Model
         return $this->belongsTo('App\Models\OutputManufacturing', 'output_manufacturing_id', 'id');
     }
 
+    //morph outputable
+    public function outputable(){
+        return $this->morphTo();
+    }
+    //inputable from (det detaail 1, 2, 3,  zero frige detail)
+
+    public function DetonatorFrige1Detail()
+    {
+        return $this->morphOne('App\Models\DetonatorFrige1Detail', 'inputable');
+    }
+
+    public function DetonatorFrige2Detail()
+    {
+        return $this->morphOne('App\Models\DetonatorFrige2Detail', 'inputable');
+    }
+
+    public function DetonatorFrige3Detail()
+    {
+        return $this->morphOne('App\Models\DetonatorFrige3Detail', 'inputable');
+    }
+
+
 }

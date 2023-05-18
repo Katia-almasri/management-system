@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDetonatorFrigesTable extends Migration
+class CreateStoresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateDetonatorFrigesTable extends Migration
      */
     public function up()
     {
-        Schema::create('detonator_friges', function (Blueprint $table) {
+        Schema::create('stores', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('warehouse_id')->nullable();
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('cascade');
 
@@ -33,6 +32,6 @@ class CreateDetonatorFrigesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detonator_friges');
+        Schema::dropIfExists('stores');
     }
 }

@@ -16,7 +16,8 @@ class AddTypeIdInputCutting extends Migration
         Schema::table('input_cuttings', function (Blueprint $table) {
             $table->unsignedBigInteger('output_citting_id')->after('cutting_done')->nullable();
             $table->foreign('output_citting_id')->references('id')->on('output_cuttings')->onDelete('cascade');
-            $table->integer('type_id')->after('cutting_done');
+            $table->unsignedBigInteger('type_id')->after('output_citting_id');
+            $table->foreign('type_id')->references('id')->on('output_production_types')->onDelete('cascade');
         });
 
     }

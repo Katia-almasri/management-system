@@ -33,6 +33,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         ///////////حذف ملاحظة/////////////////////////////
         Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
 
+        //////////////////// أوامر مدير الإنتاج لمشرف المحازن
+        Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse']);
+        
+        
     });
 
 

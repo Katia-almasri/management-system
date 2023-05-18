@@ -18,10 +18,8 @@ class CreateCreateInputManufacturingsTable extends Migration
             $table->integer('weight');
             $table->timestamp('income_date')->nullable();
             $table->timestamp('output_date')->nullable();
-            $table->boolean('manufacturings_done')->nullable()->comment('صفر تتم العملية و واحد تم انهاء التقطيع');
-            $table->unsignedBigInteger('output_cutting_det_Id')->nullable();
-            $table->foreign('output_cutting_det_Id')->references('id')->on('output_cutting_details')->onDelete('cascade');
-            $table->integer('type_id');
+            $table->unsignedBigInteger('type_id');
+            $table->foreign('type_id')->references('id')->on('output_production_types')->onDelete('cascade');
             $table->timestamps();
         });
     }

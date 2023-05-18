@@ -24,4 +24,7 @@ class OutputManufacturing extends Model
     public function detail_output_manufacturing(){
         return $this->hasMany('App\Models\OutputManufacturingDetails', 'output_manufacturing_id', 'id');
     }
+
+
+   
 }

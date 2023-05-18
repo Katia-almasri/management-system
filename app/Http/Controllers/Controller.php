@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Direction;
 use App\Models\PoultryReceiptDetection;
 use App\Models\product;
 use App\Models\RowMaterial;
@@ -92,8 +93,43 @@ class Controller extends BaseController
     }
 
     public function displayWarehouseContent(Request $request){
-        $warehouseContent = Warehouse::with(['zeroFrige', 'lake'])->get();
+        $warehouseContent = Warehouse::with('outPut_Type_Production')->get();
         return response()->json($warehouseContent);
+    }
+    ///////////////////// drop down //////////////////////
+    public function dropDownFromLake(Request $request){
+        $directions = Direction::select('to')->where('section', 'بحرات')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromZero(Request $request){
+        $directions = Direction::select('to')->where('section', 'براد صفري')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromManufactoring(Request $request){
+        $directions = Direction::select('to')->where('section', 'تصنيع')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromCutting(Request $request){
+        $directions = Direction::select('to')->where('section', 'التقطيع')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromDet1(Request $request){
+        $directions = Direction::select('to')->where('section', 'صاعقة 1')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromDet2(Request $request){
+        $directions = Direction::select('to')->where('section', 'صاعقة 2')->get();
+        return response()->json($directions);
+    }
+
+    public function dropDownFromDet3(Request $request){
+        $directions = Direction::select('to')->where('section', 'صاعقة 3')->get();
+        return response()->json($directions);
     }
 
 

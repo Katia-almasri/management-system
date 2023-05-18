@@ -18,6 +18,12 @@ class outPut_Type_Production extends Model
     public function productionManager(){
         return $this->hasMany('App\Models\outPut_SlaughterSupervisor_detail', 'type_id', 'id');
     }
+    public function inputCutting(){
+        return $this->hasMany('App\Models\InputCutting', 'type_id', 'id');
+    }
+    public function inputManufacturing(){
+        return $this->hasMany('App\Models\InputManufacturing', 'type_id', 'id');
+    }
     public function output_Cutting(){
         return $this->hasMany('App\Models\output_cutting_detail', 'type_id', 'id');
     }

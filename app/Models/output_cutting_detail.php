@@ -21,12 +21,27 @@ class output_cutting_detail extends Model
         return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
     }
 
-    public function detail_output_cutting(){
+    public function output_cutting(){
         return $this->belongsTo('App\Models\output_cutting', 'output_cutting_id', 'id');
     }
 
-    public function Input_manufacturing(){
-        return $this->hasOne('App\Models\InputManufacturing', 'output_cutting_det_Id', 'id');
+    
+
+    /////////////////// morph ////////////////
+
+     //MORPH RELATIONSHIP BTN DETAILS AND(SLAUGHTER, .., .., SAWA3E8)
+     public function outputable(){
+        return $this->morphTo();
+    }
+
+    public function ZeroFrigeDetail()
+    {
+        return $this->morphOne('App\Models\ZeroFrigeDetail', 'inputable');
+    }
+    //inputable method from(manufactoring detail and zero frige detail)
+    public function InputManufacturing()
+    {
+        return $this->morphOne('App\Models\InputManufacturing', 'inputable');
     }
 
 }

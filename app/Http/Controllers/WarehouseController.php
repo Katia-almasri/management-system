@@ -3,12 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WarehouseRequest;
+use App\Models\Command;
+use App\Models\CommandDetail;
+use App\Models\DetonatorFrige1;
+use App\Models\DetonatorFrige1Output;
+use App\Models\DetonatorFrige2;
+use App\Models\DetonatorFrige2Output;
+use App\Models\DetonatorFrige3;
+use App\Models\DetonatorFrige3Output;
+use App\Models\Lake;
 use App\Models\LakeDetail;
+use App\Models\LakeOutput;
+use App\Models\Store;
 use App\Models\Warehouse;
+use App\Models\ZeroFrige;
 use App\Models\ZeroFrigeDetail;
+use App\Models\ZeroFrigeOutput;
 use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Validator;
 
 class WarehouseController extends Controller
 {
@@ -20,163 +34,260 @@ class WarehouseController extends Controller
         $this->warehouseService  = new warehouseServices();
     }
 
-    ////////////////////////INPUT  LAKES //////////////////////////////
+    //////////////////////// LAKES //////////////////////////////
+    public function inputFromLakeToOutput(Request $request){
 
-    public function setNewFromSlaughterToLakes(Request $request){
-        
-        //1. foreach detail:
-            /*[
-                fetch the weight and type from id
-                if the type is new: then insert into warehouse, lakes lake_details
-                then:{
-                    (inputable, request->id, type = App\Models\outputslaughter)
-                    check if this
-                    update values
-
-                }
-            ]
-            */
-            foreach($request->details as $_detail){
-                $isTypeExist = $this->warehouseService->getDataFromOutputSlaughterId($_detail);
-                if($isTypeExist['status']==false){
-                    response()->json(["status" => false, "message" => $isTypeExist['type_id']]);
-                }
-                else{
-                    //THIS TYPE IS IN WAREHOUSE: THEN CONTINUE
-                    $warehouse_id = $isTypeExist['warehouse_id'];
-                    $this->warehouseService->storeNewInLake($warehouse_id, $_detail);
-                }
-            }
-    }
-
-    public function insertNewElementInWarehouse(WarehouseRequest $request){
-
-        try { 
-            $typeExist = $this->warehouseService->checkIfTypeExist($request['type_id']);
-            if($typeExist != null)
-                throw new \ErrorException("هذه المادة موجودة سابقاً في المخزن");
-            else{
-                //CHECK IF THIS TYPE ALREADY IN WAREHOUSE
-                DB::beginTransaction();     
-                $warehouseElement = new Warehouse();
-                $warehouseElement->type_id = $request['type_id'];
-                if($request['stockpile']!=null)
-                    $warehouseElement->stockpile = $request['stockpile'];
-                if($request['minimum']!=null)
-                    $warehouseElement->minimum = $request['minimum'];
-
-                $warehouseElement->tot_amount = 0;
-                $warehouseElement->tot_weight = 0;
-                $warehouseElement->save();
+        try {
+            DB::beginTransaction();
+            foreach ($request->details as $_detail) {
+                    $result = $this->warehouseService->outputWeightFromLake($_detail, $request['outputChoice']);
+                    if($result['status']==false)
+                        throw new \ErrorException($result['message']);
                 
-                //CREATE NEW ELEMENT IN ALL WAREHOUSES
-                //1. lake
-                //2. zero
-                //3. ...
-
-                $lake = $this->warehouseService->insertNewElementInLake($warehouseElement->id);
-                $detonatorFrige = $this->warehouseService->insertNewElementInDetonator($warehouseElement->id);
-                $zeroFrige = $this->warehouseService->insertNewElementInZero($warehouseElement->id);
-                DB::commit();
-                return ["status" => true, "message" => "تم إدخال مادة جديدة إلى المحزن بنجاح"];
-
             }
-    } catch (\Exception $exception) {
+            DB::commit();
+            return response()->json(["status" => true, "message" => "تمت عملية الإخراج بنجاح"]);
+    }catch (\Exception $exception) {
         DB::rollback();
         return response()->json(["status" => false, "message" => $exception->getMessage()]);
     }
-        
-        
-    }
-
-    public function setNewFromCuttingToLakes(){
 
     }
 
-    public function setNewFromMAnufacturingToLakes(){
+    public function displayLakeContent(Request $request){
+        $lakes = Lake::with('warehouse.outPut_Type_Production')
+                    ->get();
+        return response()->json($lakes);
+    } 
+
+    //////////////////// ZERO FRIGE //////////////////////
+    public function displayZeroFrigeContent(Request $request){
+        $zeroFriges = ZeroFrige::with('warehouse.outPut_Type_Production')
+        ->get();
+        return response()->json($zeroFriges);
 
     }
 
-    //INPUT FROM WAREHOUSE SECTIONS 
-            //1. FROM LAKE TO ZERO 
-    public function  inputFromLakeToZeroFrige(Request $request){
-        //1. OUTPUT FROM LAKE
-        //2. UPDATE VALUES
-        /*
-        foreach details as detail{
-            if(weight = 0) // take the amount{
-                lake_detail = detail[lake_detail_id]
-                insert new row in output_lake_table
-                 * output_lake_table_id = id
-                through all elements in lake_Detail table: {
-                    1 sum to reach the amount
-                    2 sub from this row
-                    3 if lake detail id amount is zero: then {
-                        11. insert into input_output_lakes with output_lake_id = *
-                        22. update the output date in lake_detail_id
-                    }
-
-                }
-                when reach then:{
-                    update into output lake where id = * 
-                    update the sum
-                    update input output lake where sign_out date != null and output_lake = *
-                }
+    public function inputFromZeroToOutput(Request $request){
+        try {
+            DB::beginTransaction();
+            foreach ($request->details as $_detail) {
+                    $result = $this->warehouseService->outputWeightFromZero($_detail, $request['outputChoice']);
+                    if($result['status']==false)
+                        throw new \ErrorException($result['message']);
+                
             }
-            else if (amount = 0) //take the weight:
-                THE SAME
-        }
-        *
-        */
+            DB::commit();
+            return response()->json(["status" => true, "message" => 'تمت عملية الإخراج بنجاح']);
+    }catch (\Exception $exception) {
+        DB::rollback();
+        return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    }
+
+    }
+
+    //////////////////// DETONATOR 1 ////////////////////////
+
+    public function  inputFromDet1ToOutput(Request $request){
             try {
                 DB::beginTransaction();
                 foreach ($request->details as $_detail) {
-                    if($_detail['weight'] == 0){
-                        $result = $this->warehouseService->outputAmountFromLake($_detail);
+                        $result = $this->warehouseService->outputWeightFromDet1($_detail, $request['outputChoice']);
                         if($result['status']==false)
                             throw new \ErrorException($result['message']);
-                        //process the amount
-                    }
-                    else if($_detail['amount'] == 0){
-                        //process the weight
-                        $result = $this->warehouseService->outputWeightFromLake($_detail);
-                        if($result['status']==false)
-                            throw new \ErrorException($result['message']);
-                    }
                 }
                 DB::commit();
-                return response()->json($result['message']);
+                return response()->json(["status" => true, "message" => 'تم الإدخال بنجاح']);
         }catch (\Exception $exception) {
             DB::rollback();
             return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
     }
 
+    public function displayDetonatorFrige1Content(){
+        $detonatorFrige1 = DetonatorFrige1::with('warehouse.outPut_Type_Production')
+        ->get();
+        return response()->json($detonatorFrige1);
 
-    ////////////////////INPUT DETONATOR ////////////////////////
-    //INPUT FROM WAREHOUSE SECTIONS
-    //////////////////INPUT ZERO //////////////////////////////
-    //INPUT FROM WAREHOUSE SECTIONS
-
-
-    //DISPLAY LAKE CONTENT
-    public function displayLakeDetailsMovement(Request $request, $lakeId){
-        $lakeDetails = LakeDetail::with('inputable')
-                        ->where('lake_id', $lakeId)->get();
-        return response()->json($lakeDetails);
     }
-    //DISPLAY DETONATOR CONTENT 
-    //DISPLAY ZERO CONTENT 
-    public function displayZeroDetailsMovement(Request $request, $zeroId){
-        $zeroDetails = ZeroFrigeDetail::with('inputable')
-                        ->where('zero_frige_id', $zeroId)->get();
-        return response()->json($zeroDetails);
+
+    ///////////////////// DETONATOR 2 ////////////////////
+
+    public function displayDetonatorFrige2Content(){
+        $detonatorFrige2 = DetonatorFrige2::with('warehouse.outPut_Type_Production')
+        ->get();
+        return response()->json($detonatorFrige2);
+
+    }
+
+    public function  inputFromDet2ToOutput(Request $request){
+        try {
+            DB::beginTransaction();
+            foreach ($request->details as $_detail) {
+                    $result = $this->warehouseService->outputWeightFromDet2($_detail, $request['outputChoice']);
+                   if($result['status']==false)
+                        throw new \ErrorException($result['message']);
+            }
+            DB::commit();
+            return response()->json(["status" => true, "message" => 'تم الإدخال بنجاح']);
+    }catch (\Exception $exception) {
+        DB::rollback();
+        return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    }
+}
+
+////////////////////////// DETONATOR 3 ///////////////////////
+    public function displayDetonatorFrige3Content(){
+        $detonatorFrige3 = DetonatorFrige3::with('warehouse.outPut_Type_Production')
+        ->get();
+        return response()->json($detonatorFrige3);
+
+    }
+
+    public function  inputFromDet3ToOutput(Request $request){
+        try {
+            DB::beginTransaction();
+            foreach ($request->details as $_detail) {
+                    $result = $this->warehouseService->outputWeightFromDet3($_detail, $request['outputChoice']);
+                   if($result['status']==false)
+                        throw new \ErrorException($result['message']);
+            }
+            DB::commit();
+            return response()->json(["status" => true, "message" => 'تم الإدخال بنجاح']);
+    }catch (\Exception $exception) {
+        DB::rollback();
+        return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    }
+}
+
+    /////////////////// STORE CONTENT /////////////////////////
+    public function displayStoreContent(){
+        $store = Store::with('warehouse.outPut_Type_Production')
+        ->get();
+        return response()->json($store);
+
+    }
+
+
+    
+
+    /////////////// WAREHOUSE FEATURES ///////////////
+
+    public function displayWarehouseDetail(Request $request, $warehouseId){
+        $warehouseDetail = Warehouse::where('id', $warehouseId)
+                                    ->with(['zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
+        return response()->json($warehouseDetail);
+    }
+    public function editWarehouseRowInfo(Request $request, $warehouseId){
+
+        $validator = Validator::make($request->all(),
+        [
+            "minimum"=>"numeric",
+            "stockpile" => "numeric"      
+        ]);
+       if ($validator->fails()) {
+           return response()->json(['status'=>false,
+           'message'=>$validator->errors()->all()
+       ]);
+       }
+        $warehouseRow = Warehouse::find($warehouseId);
+        $warehouseRow->update(['minimum'=>$request['minimum'], 'stockpile'=>$request['stockpile']]);
+        return response()->json(["status" => false, "message" =>'تم التعديل بنجاح']);
+     
+    }
+
+    //////////////////// FILL COMMAND FROM PRODUCTION MAANAGER //////////////////
+    public function fillCommandFromProductionManager(Request $request, $commandId){
+
+        $from = $request['from'];
+        try {
+            DB::beginTransaction();
+            foreach ($request['details'] as $_detail) {
+                $result = $this->warehouseService->fillCommand($_detail, $from);
+                if($result['status']!=true)
+                throw new \ErrorException($result['message']);
+            }
+            DB::commit();
+            $message = 'تمت العملية بنجاح';
+            $doneCommand = $this->warehouseService->checkIsCommandDone($commandId);
+            if($doneCommand['status']==true)
+                $message= $message . ' و'.$doneCommand['message'];
+            return response()->json(["status"=>true, "message"=>$message]);
+        }catch (\Exception $exception) {
+            DB::rollback();
+            return response()->json(["status" => false, "message" => $exception->getMessage()]);
+        }
+       
+    }
+
+    public function displayCommand(Request $request, $commandId){
+        $command = Command::with(['commandDetails.warehouse.outPut_Type_Production'])->find($commandId);
+        return response()->json($command);
+    }
+
+    public function displayWarehouseContentWithDetails(Request $request){
+        $warehouse = Warehouse::with(['zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
+        return response()->json($warehouse);
+    }
+    /////////////////////// LAKE MOVEMENT (I/O) //////////////////
+    //I
+    public function displayLakeInputMov(Request $request){
+        $lakeMovement = Lake::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'lakeDetails.inputable'])->get();
+        return response()->json($lakeMovement);
+    }
+    //O    
+    public function displayLakeOutMov(Request $request){
+        $lakeMovement = LakeOutput::with(['lake.warehouse.outPut_Type_Production', 'outputable'])->get();
+        return response()->json($lakeMovement);
+    }
+
+    /////////////////////// ZERO MOVEMENT (I/O) //////////////////
+    public function displayZeroInputMov(Request $request){
+        $zeroMovement = ZeroFrige::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'zeroFrigeDetails.inputable'])->get();
+        return response()->json($zeroMovement);
+    }
+
+    public function displayZeroOutMov(Request $request){
+        $lakeMovement = ZeroFrigeOutput::with(['zeroFrige.warehouse.outPut_Type_Production', 'outputable'])->get();
+        return response()->json($lakeMovement);
     }
     
-    //DISPLAY WAREHOUSE (ALL)
+    /////////////////////// DET1 MOVEMENT (I/O) //////////////////
+    public function displayDet1InputMov(Request $request){
+        $det1Movement = DetonatorFrige1::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'detonatorFrige1Details.inputable'])->get();
+        return response()->json($det1Movement);
+    }
 
-    //////////////// OUTPUT //////////////////(later)
-    /////////////// warehouse movement //////(later)
+    public function displayDet1OutMov(Request $request){
+        $det1Movement = DetonatorFrige1Output::with(['detonator1.warehouse.outPut_Type_Production', 'outputable'])->get();
+        return response()->json($det1Movement);
+    }
 
-    
+    /////////////////////// DET2 MOVEMENT (I/O) //////////////////
+    public function displayDet2InputMov(Request $request){
+        $det2Movement = DetonatorFrige2::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'detonatorFrige2Details.inputable'])->get();
+        return response()->json($det2Movement);
+    }
+
+    public function displayDet2OutMov(Request $request){
+        $det2Movement = DetonatorFrige2Output::with(['detonator2.warehouse.outPut_Type_Production', 'outputable'])->get();
+        return response()->json($det2Movement);
+    }
+
+     /////////////////////// DET3 MOVEMENT (I/O) //////////////////
+     public function displayDet3InputMov(Request $request){
+        $det3Movement = DetonatorFrige3::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'detonatorFrige3Details.inputable'])->get();
+        return response()->json($det3Movement);
+    }
+
+    public function displayDet3OutMov(Request $request){
+        $det3Movement = DetonatorFrige3Output::with(['detonator3.warehouse.outPut_Type_Production', 'outputable'])->get();
+        return response()->json($det3Movement);
+    }
+
+     /////////////////////// STORE MOVEMENT (I/O) //////////////////
+     public function displayStoreInputMov(Request $request){
+        $storeMovement = Store::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'storeDetails.inputable'])->get();
+        return response()->json($storeMovement);
+    }
 }   

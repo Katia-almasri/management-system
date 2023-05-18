@@ -26,4 +26,8 @@ class Lake extends Model
         return $this->hasMany('App\Models\LakeDetail', 'lake_id', 'id');
     }
 
+    public function lakeOutputs(){
+        return $this->hasMany('App\Models\LakeOutput', 'lake_id', 'id');
+    }
+
 }

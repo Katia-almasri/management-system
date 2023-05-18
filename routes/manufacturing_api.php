@@ -17,5 +17,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-total-input-munufacturing',[ManufacturingController::class, 'displayInputManufacturingTotalWeight']);
         Route::post('add-output-munufacturing/{type_id}',[ManufacturingController::class, 'addOutputManufacturing'])
         ->middleware('is-exist-type-id-input-munufacturing');
+        Route::get('display-output-munufacturing',[ManufacturingController::class, 'displayOutputManufacturing']);
+        
+
+        //////////////// DITRCT MANUFACTORING TO ////////////////
+        Route::post('direct-manufactoring-to',[ManufacturingController::class, 'directManufactoringTo']);
+
     });
 });

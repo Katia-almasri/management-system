@@ -16,27 +16,32 @@ class LakeTableSeeder extends Seeder
     {
         Lake::create([
 
-            'warehouse_id'=>1
+            'warehouse_id'=>1,
+            'weight'=>0
         ]);
 
         Lake::create([
 
-            'warehouse_id'=>2
+            'warehouse_id'=>2,
+            'weight'=>0
         ]);
 
         Lake::create([
 
-            'warehouse_id'=>3
+            'warehouse_id'=>3,
+            'weight'=>0
         ]);
 
         Lake::create([
 
-            'warehouse_id'=>4
+            'warehouse_id'=>4,
+            'weight'=>0
         ]);
 
         Lake::create([
 
-            'warehouse_id'=>5
+            'warehouse_id'=>5,
+            'weight'=>0
         ]);
 
     }

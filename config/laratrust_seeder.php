@@ -44,11 +44,13 @@ return [
         'Production_Manager' => [
             'commander'=>'r',
             'note' =>'r',
-            'warehouse' => 'r'
+            'warehouse' => 'r',
+            'commands for warehouse'=> 'r,d,u,c'
         ],
 
         'slaughter_supervisor' => [
-            'commander'=>'r'
+            'commander'=>'r',
+            'warehouse' => 'r'
         ],
 
        
@@ -56,17 +58,21 @@ return [
         'cutting_supervisor' => [
             'input'=>'r',
             'output'=>'c',
-            'command' =>'u'
+            'command' =>'u',
+            'warehouse' => 'r'
         ],
 
         'Manufacturing_Supervisor' => [
             'input'=>'r',
             'output'=>'c',
-            'command' =>'u'
+            'command' =>'u',
+            'warehouse' => 'r'
         ],
 
         'warehouse_supervisor' => [
-            'warehouse'=>'r,d,u,c'
+            'warehouse'=>'r,d,u,c',
+            'commands for warehouse'=>'r'
+
         ],
 
     ],

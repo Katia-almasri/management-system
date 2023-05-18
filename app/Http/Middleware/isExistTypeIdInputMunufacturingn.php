@@ -20,7 +20,7 @@ class isExistTypeIdInputMunufacturingn
     public function handle(Request $request, Closure $next)
     {
         $type_id = $request->type_id;
-        $findInput = InputManufacturing::where([['type_id',$type_id],['manufacturings_done',0]])->get()->first();
+        $findInput = InputManufacturing::where('type_id',$type_id)->get()->first();
         if(!is_null($findInput ) )
             return $next($request);
         return  $this -> returnError('error', 'النوع غير متوفر');

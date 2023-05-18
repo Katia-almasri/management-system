@@ -16,8 +16,28 @@ class InputCutting extends Model
        'income_date',
        'output_date',
        'cutting_done',
-       'output_slaughter_det_Id'
+       'output_citting_id',
+       'type_id',
+       'input_from'
+
     ];
+
+    public function detail_output_cutiing(){
+        return $this->belongsTo('App\Models\output_cutting', 'output_cutting_details', 'id');
+    }
+
+    public function output_types(){
+        return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
+    }
+    //morph 
+    public function inputable(){
+        return $this->morphTo();
+    }
+
+    public function ZeroFrigeOutput()
+    {
+        return $this->morphOne('App\Models\ZeroFrigeOutput', 'outputable');
+    }
 
 
 

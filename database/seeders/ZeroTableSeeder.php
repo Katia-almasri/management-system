@@ -16,27 +16,32 @@ class ZeroTableSeeder extends Seeder
     {
         ZeroFrige::create([
 
-            'warehouse_id'=>1
+            'warehouse_id'=>1,
+            'weight'=>0
         ]);
 
         ZeroFrige::create([
 
-            'warehouse_id'=>2
+            'warehouse_id'=>2,
+            'weight'=>0
         ]);
 
         ZeroFrige::create([
 
-            'warehouse_id'=>3
+            'warehouse_id'=>3,
+            'weight'=>0
         ]);
 
         ZeroFrige::create([
 
-            'warehouse_id'=>4
+            'warehouse_id'=>4,
+            'weight'=>0
         ]);
 
         ZeroFrige::create([
 
-            'warehouse_id'=>5
+            'warehouse_id'=>5,
+            'weight'=>0
         ]);
 
        

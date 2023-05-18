@@ -22,7 +22,7 @@ class output_cutting extends Model
     }
 
     public function detail_output_cutiing(){
-        return $this->hasMany('App\Models\output_cutting_detail', 'output_cutting_details', 'id');
+        return $this->hasMany('App\Models\output_cutting_detail', 'output_cutting_id', 'id');
     }
 
 

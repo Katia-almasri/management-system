@@ -19,7 +19,8 @@ class LakeDetail extends Model
        'cur_amount',
        'date_of_destruction',
        'expiration_date',
-       'output_slaughter_detail_id'
+       'output_slaughter_detail_id',
+       'input_from'
     ];
 
     ############################## Begin Relations #############################
@@ -37,8 +38,13 @@ class LakeDetail extends Model
         return $this->morphTo();
     }
 
-    public function outputSlaughterDetail(){
-        return $this->belongsTo('App\Models\outPut_SlaughterSupervisor_detail', 'output_slaughter_detail_id', 'id');
+    public function zeroDetail(){
+        return $this->morphOne('App\Models\ZeroFrigeOutput', 'outputable');
     }
+
+   
+
+    
+
 
 }

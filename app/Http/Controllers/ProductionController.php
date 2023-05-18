@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Command;
+use App\Models\CommandDetail;
 use App\Models\outPut_Type_Production;
 use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
@@ -166,6 +168,42 @@ class ProductionController extends Controller
             }
         }
         return  response()->json(["status"=>true, "message"=>"تم توجيه الخرج الى القسم الجديد "]);
+    }
+    /////////////////////// command from warehouse to production ///////////////////
+    
+    //إضافة أمر من مجير الإنتاج إلى المخازن
+    public function addCommandToWarehouse(Request $request){
+        $to = $request['to'];
+        try {
+            DB::beginTransaction();
+            $command = new Command();
+            $command->Done = 0;
+            $command->save();
+            foreach($request['details'] as $_detail){
+                $warehouse_id = $_detail['warheouse_id'];
+                $command_detail = new CommandDetail();
+                $command_detail->warehouse_id = $warehouse_id; 
+                $command_detail->command_id = $command->id;
+                $command_detail->cur_weight = 0; 
+                $command_detail->input_weight = 0;
+                $command_detail->command_weight = $_detail['weight'];
+                $command_detail->from = '';
+                $command_detail->to = $request['outputChoice'];
+                $command_detail->save();
+            }
+            DB::commit();
+            return response()->json(["status" => true, "message" => "تمت إضافة الأمر بنجاح"]);
+    } catch (\Exception $exception) {
+        DB::rollback();
+        return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    }
+
+    }
+
+    public function displayCommandsToWarehouse(Request $request){
+        $commands = Command::
+        with('commandDetails.warehouse.outPut_Type_Production')->where('done', '=', 0)->get();
+        return  response()->json(["status"=>true, "message"=>$commands]);
     }
 
 

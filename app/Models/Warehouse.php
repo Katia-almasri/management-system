@@ -24,16 +24,32 @@ class Warehouse extends Model
             return $this->hasOne('App\Models\ZeroFrige', 'warehouse_id', 'id');
         }
 
-        public function detonatorFrige(){
-            return $this->hasOne('App\Models\DetonatorFrige', 'warehouse_id', 'id');
+        public function detonatorFrige1(){
+            return $this->hasOne('App\Models\DetonatorFrige1', 'warehouse_id', 'id');
+        }
+
+        public function detonatorFrige2(){
+            return $this->hasOne('App\Models\DetonatorFrige2', 'warehouse_id', 'id');
+        }
+
+        public function detonatorFrige3(){
+            return $this->hasOne('App\Models\DetonatorFrige3', 'warehouse_id', 'id');
         }
 
         public function lake(){
             return $this->hasOne('App\Models\Lake', 'warehouse_id', 'id');
         }
 
-        public function outPutSlaughterSupervisorType(){
-            return $this->belongsTo('App\Models\outPut_SlaughterSupervisorType_table', 'type_id', 'id');
+        public function store(){
+            return $this->hasOne('App\Models\Store', 'warehouse_id', 'id');
+        }
+
+        public function outPut_Type_Production(){
+            return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
+        }
+
+        public function commandDetails(){
+            return $this->hasMany('App\Models\CommandDetail', 'warehouse_id', 'id');
         }
 
 

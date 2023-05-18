@@ -25,4 +25,8 @@ class ZeroFrige extends Model
     public function zeroFrigeDetails(){
         return $this->hasMany('App\Models\ZeroFrigeDetail', 'zero_frige_id', 'id');
     }
+
+    public function zeroOutputs(){
+        return $this->hasMany('App\Models\ZeroFrigeOutput', 'zero_id', 'id');
+    }
 }

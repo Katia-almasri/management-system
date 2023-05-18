@@ -36,6 +36,12 @@ class DatabaseSeeder extends Seeder
         $this->call(WarehouseTableSeeder::class);
         $this->call(LakeTableSeeder::class);
         $this->call(ZeroTableSeeder::class);
+        $this->call(Det1TableSeeder::class);
+        $this->call(Det2TableSeeder::class);
+        $this->call(Det3TableSeeder::class);
+        $this->call(StoreTableSeeder::class);
+        $this->call(DirectionTableSeeder::class);
+        
         
         
         

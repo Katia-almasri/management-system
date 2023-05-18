@@ -14,7 +14,7 @@ class AddOutputManufacturingId extends Migration
     public function up()
     {
         Schema::table('input_manufacturings', function (Blueprint $table) {
-            $table->unsignedBigInteger('output_manufacturing_id')->after('manufacturings_done')->nullable();
+            $table->unsignedBigInteger('output_manufacturing_id')->nullable();
             $table->foreign('output_manufacturing_id')->references('id')->on('output_manufacturings')->onDelete('cascade');
         });
 

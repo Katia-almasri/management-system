@@ -15,18 +15,34 @@ class InputManufacturing extends Model
        'weight',
        'income_date',
        'output_date',
-       'manufacturings_done',
-       'output_slaughter_det_Id',
-       'output_cutting_det_Id',
-       'type_id'
+       'output_manufacturing_id',
+       'type_id',
+       'input_from'
     ];
 
-
-    public function output_detail_SlaughterSupervisor(){
-        return $this->BelongsTo('App\Models\outPut_SlaughterSupervisor_detail', 'output_slaughter_det_Id', 'id');
+    //morph inputable
+    public function inputable(){
+        return $this->morphTo();
+    }
+    //outputable method from (output cutting detail)
+    public function output_cutting_detail()
+    {
+        return $this->morphOne('App\Models\output_cutting_detail', 'outputable');
     }
 
-    public function output_detail_cutting(){
-        return $this->BelongsTo('App\Models\output_cutting_detail', 'output_cutting_det_Id', 'id');
+    public function ZeroFrigeOutput()
+    {
+        return $this->morphOne('App\Models\ZeroFrigeOutput', 'outputable');
+    }
+
+
+
+
+    public function output_manuFacturing(){
+        return $this->BelongsTo('App\Models\OutputManufacturing', 'output_manufacturing_id', 'id');
+    }
+
+    public function output_types(){
+        return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
     }
 }

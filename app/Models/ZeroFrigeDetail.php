@@ -18,7 +18,8 @@ class ZeroFrigeDetail extends Model
        'cur_weight',
        'cur_amount',
        'date_of_destruction',
-       'expiration_date'   
+       'expiration_date',
+       'input_from'
     ];
 
     ############################## Begin Relations #############################
@@ -41,6 +42,16 @@ class ZeroFrigeDetail extends Model
         return $this->morphOne('App\Models\LakeOutput', 'outputable');
     }
 
+    public function LakeOutput()
+    {
+        return $this->morphOne('App\Models\LakeOutput', 'outputable');
+    }
+    //outputable method from(output cutting detail)
+    public function output_cutting_detail()
+    {
+        return $this->morphOne('App\Models\output_cutting_detail', 'outputable');
+    }
+    //outputable method from (output manufactoring detail)
 
     
 } 
