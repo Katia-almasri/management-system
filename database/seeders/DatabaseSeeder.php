@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(sellingortypeTableSeeder::class);
         $this->call(ProductionTypes::class);
         $this->call(PoultryRecieptDetectionTableSeeder::class);
+        $this->call(PoultryRecieptDetectionDetailsTableSeeder::class);
         $this->call(WeightAfterArrivalDetectionTableSeeder::class);
 
         //today
