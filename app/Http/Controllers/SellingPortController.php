@@ -13,7 +13,9 @@ use App\Models\ContractDetail;
 use App\Models\salesPurchasingRequset;
 use App\Models\salesPurchasingRequsetDetail;
 use App\systemServices\notificationServices;
-use App\Models\Manager  ;
+use App\Models\Manager;
+use App\Models\outPut_Type_Production;
+
 use Auth;
 use Carbon\Carbon;
 use App\Http\Requests\SalesPurchasingRequest;
@@ -146,18 +148,24 @@ class SellingPortController extends Controller
     }
 
     //حذف طلب من طلباتي كمنفذ بيع
-    public function deleteSellingPortOrder(Request $request , $SellingPortOrderId){
-        $findRequest = salesPurchasingRequset::find($SellingPortOrderId)->delete();
-       return  response()->json(["status"=>true, "message"=>"تم حذف طلب بنجاح"]);
+    // public function deleteSellingPortOrder(Request $request , $SellingPortOrderId){
+    //     $findRequest = salesPurchasingRequset::find($SellingPortOrderId)->delete();
+    //    return  response()->json(["status"=>true, "message"=>"تم حذف طلب بنجاح"]);
+    // }
+    public function calculcateTotalAmount(Request $request){
+        $totalAmount = 0;
+        foreach($request->details as $_detail){
+            $totalAmount += $_detail['amount'];
+        }
+        return  $totalAmount;
     }
-
     //اضافة طلب كمنفذ بيع
-    public function addRequestToCompany(SalesPurchasingRequest $request){
+    public function addRequestToCompany(Request $request){
 
-        $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
+        $totalAmount = $this->calculcateTotalAmount($request);
 
         $SalesPurchasingRequest = new salesPurchasingRequset();
-        $SalesPurchasingRequest->total_amount = $totalAmount['result'];
+        $SalesPurchasingRequest->total_amount = $totalAmount;
         $SalesPurchasingRequest->request_type = 1;
         $SalesPurchasingRequest->selling_port_id = $request->user()->id;
         $SalesPurchasingRequest->save();
@@ -170,17 +178,17 @@ class SellingPortController extends Controller
             $salesPurchasingRequsetDetail->save();
         }
 
-         //MAKE NEW NOTIFICATION RECORD       
+         //MAKE NEW NOTIFICATION RECORD
        $RequestToCompanyNotif = new RequestToCompanyNotif();
        $RequestToCompanyNotif->from = $request->user()->id;
        $RequestToCompanyNotif->is_read = 0;
-       $RequestToCompanyNotif->total_amount = $totalAmount['result'];
+       $RequestToCompanyNotif->total_amount = $totalAmount;
        $RequestToCompanyNotif->save();
 
        //SEND NOTIFICATION REGISTER REQUEST TO SALES MANAGER USING PUSHER
        $data['from'] =$request->user()->id;
        $data['is_read'] = 0;
-       $data['total_amount'] = $totalAmount['result'];
+       $data['total_amount'] = $totalAmount;
        $this->notificationService->addRequestToCompany($data);
        ////////////////// SEND THE NOTIFICATION /////////////////////////
 
@@ -197,7 +205,7 @@ public function displaySellingPortRegisterRequest(Request $request){
 public function commandAcceptForSellingPort(Request $request, $sellingPortId){
     $findRequest = sellingPort::where([['id' , '=' , $sellingPortId]])
     ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
-    
+
      //UPDATE THE is_read IN REGISTER SELLNING PORT REQUEST TO read
      $RegisterFarmRequestNotif = RegisterSellingPortRequestNotif::where('from', '=', $sellingPortId)->update(['is_read'=> 1]);
     return response()->json(["status"=>true, "message"=>"تمت الموافقة على حساب منفذ البيع بنجاح"]);
@@ -238,8 +246,13 @@ public function refuseOrderDetail(Request $request, $SellingPortOrderId){
 
     $find = salesPurchasingRequset::find($SellingPortOrderId);
     $RequestToCompanyNotif = RequestToCompanyNotif::where('from', '=', $find->selling_port_id)->update(['is_read'=> 1]);
-    
+
     return response()->json(["status"=>true, "message"=>"تم رفض الطلبية وتعبئة سبب الرفض"]);
+}
+
+public function displayOutputTypes(Request $request){
+    $types = outPut_Type_Production::all();
+    return response()->json($types, 200);
 }
 
 }

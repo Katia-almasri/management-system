@@ -28,10 +28,10 @@ class LibraController extends Controller
 
     }
 
-    public function addPoultryRecieptDetection(PoultryRecieptDetectionRequest $request)
+    public function addPoultryRecieptDetection(PoultryRecieptDetectionRequest $request, $trip_id)
     {
         try {
-            $finalResult = $this->poultryDetectionRequestService->storePoultryDetectionRequest($request);
+            $finalResult = $this->poultryDetectionRequestService->storePoultryDetectionRequest($request, $trip_id);
             if ($finalResult['status'] == true)
                 return ["status" => true, "message" => "تم إضافة الكشف بنجاح"];
             else
@@ -70,21 +70,15 @@ class LibraController extends Controller
     public function getReciepts(Request $request)
     {
         $PoultryReceiptDetections = PoultryReceiptDetection::with([
-            'farm',
-            'PoultryReceiptDetectionDetails' => function ($q) {
-                $q->with('rowMaterial');
-            }
-        ])->get();
+            'PoultryReceiptDetectionDetails.rowMaterial','farm'
+        ])->orderBy('id', 'DESC')->get();
         return response()->json($PoultryReceiptDetections);
     }
 
     public function getRecieptInfo(Request $request, $recieptId)
     {
         $poultryRecieptDetection = PoultryReceiptDetection::with([
-            'farm',
-            'PoultryReceiptDetectionDetails' => function ($q) {
-                $q->with('rowMaterial');
-            }
+            'PoultryReceiptDetectionDetails.rowMaterial','farm'
         ])->where('id', '=', $recieptId)->get();
         return response()->json($poultryRecieptDetection);
     }

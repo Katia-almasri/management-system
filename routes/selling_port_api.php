@@ -15,9 +15,9 @@ Route::group( ['middleware' => ['auth:selling-port-api', 'check-scope-selling-po
         Route::post('add-request-to-company',[SellingPortController::class, 'addRequestToCompany']);
         //إضافة طلب عقد
         // Route::post('add-request-contract',[ContractController::class, 'addRequestContract']);
-        Route::delete('delete-my-request/{SellingPortOrderId}',[SellingPortController::class, 'deleteSellingPortOrder'])
-        ->middleware('is-selling-port-order-delete');
-
+        // Route::delete('delete-my-request/{SellingPortOrderId}',[SellingPortController::class, 'deleteSellingPortOrder'])
+        // ->middleware('is-selling-port-order-delete');
+        Route::get('display-types',[SellingPortController::class, 'displayOutputTypes']);
 
 });
 

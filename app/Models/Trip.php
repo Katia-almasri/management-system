@@ -16,7 +16,8 @@ class Trip extends Model
        'driver_id',
        'farm_id',
        'selling_port_id',
-       'sales_purchasing_requsets_id'
+       'sales_purchasing_requsets_id',
+       'status'
     ];
 
      ############################## Begin Relations #############################
@@ -36,5 +37,10 @@ class Trip extends Model
     public function manager(){
         return $this->belongsTo('App\Models\Manager', 'manager_id', 'id');
     }
+
+    public function poultryRecipet(){
+        return $this->hasOne('App\Models\PoultryReceiptDetection', 'trip_id', 'id');
+    }
+
     ############################## End Relations ##############################
 }

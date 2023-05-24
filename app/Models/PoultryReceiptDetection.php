@@ -20,8 +20,9 @@ class PoultryReceiptDetection extends Model
        'net_weight',
        'num_cages',
        'is_seen_by_sales_manager',
-       
-       
+       'trip_id'
+
+
     ];
 
     ############################ Begin Relations ##############################
@@ -39,6 +40,10 @@ class PoultryReceiptDetection extends Model
 
     public function weightAfterArrivalDetection(){
         return $this->hasOne('App\Models\weightAfterArrivalDetection', 'polutry_detection_id', 'id');
+    }
+
+    public function trip(){
+        return $this->belongsTo('App\Models\Trip', 'trip_id', 'id');
     }
 
     ############################ End Relations ##############################

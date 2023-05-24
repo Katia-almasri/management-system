@@ -29,14 +29,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //ملاحظام لمدير المشتريات والمبيعات
         Route::Post('add-note',[NoteController::class, 'AddNoteForSalesManager']);
         /////////////عرض الملاحظات///////////////////
-        Route::get('display-notes',[NoteController::class, 'displayNote']);
+        Route::get('display-notes',[NoteController::class, 'displayNoteProduction']);
         ///////////حذف ملاحظة/////////////////////////////
         Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
 
         //////////////////// أوامر مدير الإنتاج لمشرف المحازن
         Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse']);
-        
-        
+
+
     });
 
 

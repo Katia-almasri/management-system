@@ -16,7 +16,7 @@ class poultryDetectionRequestServices
     protected $num_birds = 10;
     protected $cage_weight = 8.5;
 
-    public function storePoultryDetectionRequest(PoultryRecieptDetectionRequest $request)
+    public function storePoultryDetectionRequest(PoultryRecieptDetectionRequest $request, $trip_id)
     {
         //1. MANAGE THE CAGE DETAILS
         //2. MANAGE THE DETECTION DETAILS
@@ -37,7 +37,7 @@ class poultryDetectionRequestServices
             if ($netWeight < 0 || $netWeight > $tot_weight)  //tot_weight - net_weight if more than percentage (check)
                 throw new \ErrorException('خطأ في الإدخال');
             //2. cage weight > num(cage_weight + max(bird_wieght)*num_bird)
-            
+
             //1. STORE THE DETECTION
             $polutryDetectionData = [
                 'farm_id' => $request->farm_id,
@@ -45,6 +45,7 @@ class poultryDetectionRequestServices
                 'tot_weight' => $tot_weight,
                 'empty' => $empty,
                 'net_weight' => $netWeight,
+                'trip_id' => $trip_id,
                 'num_cages' => $num_cages
             ];
 
@@ -101,6 +102,7 @@ class poultryDetectionRequestServices
         $poultryRecieptDetection->empty = $polutryDetectionData['empty'];
         $poultryRecieptDetection->net_weight = $polutryDetectionData['net_weight'];
         $poultryRecieptDetection->num_cages = $polutryDetectionData['num_cages'];
+        $poultryRecieptDetection->trip_id = $polutryDetectionData['trip_id'];
         $poultryRecieptDetection->save();
         return ([
             "status" => true,

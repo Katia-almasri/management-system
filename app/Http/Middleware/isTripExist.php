@@ -8,6 +8,8 @@ use App\Traits\validationTrait;
 use App\Models\salesPurchasingRequset;
 use App\Models\Driver;
 use App\Models\Truck;
+use App\Models\Trip;
+
 
 class isTripExist
 {
@@ -26,7 +28,9 @@ class isTripExist
         $requestExist = salesPurchasingRequset::find($requestId);
         $driverExist = Driver::find($request->driver_id);
         $truckExist = Truck::find($request->truck_id);
-
+        $findCommand = Trip::where('sales_purchasing_requsets_id',$requestId)->get()->first();
+        if($findCommand != null && $requestExist!=null)
+            return  response()->json(["status"=>false, "message"=>"تم اعطاء امر الرحلة مسبقا"]);
         if($requestExist!=null){
             if($driverExist != null){
                 $stateDriver = $driverExist->state;

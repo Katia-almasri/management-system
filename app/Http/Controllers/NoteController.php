@@ -25,8 +25,13 @@ class NoteController extends Controller
             return  response()->json(["status"=>true, "message"=>"تمت اضافة ملاحظة لمدير الانتاج بنجاح"]);
     }
 
-    public function displayNote(Request $request){
-        $displayNotes = Note::get();
+    public function displayNoteProduction(Request $request){
+        $displayNotes = Note::with('purchasingManager')->orderBy('id', 'DESC')->get();
+        return response()->json($displayNotes, 200);
+    }
+
+    public function displayNoteSales(Request $request){
+        $displayNotes = Note::with('productionManager')->orderBy('id', 'DESC')->get();
         return response()->json($displayNotes, 200);
     }
 
@@ -59,7 +64,7 @@ class NoteController extends Controller
         }
 
         return  response()->json(["status"=>false, "message"=>"لا يمكن حذف ملاحظة لم تقم بإضافتها"]);
-        
+
     }
 
 

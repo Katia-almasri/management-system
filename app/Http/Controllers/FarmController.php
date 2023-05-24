@@ -10,6 +10,7 @@ use Validator;
 use App\Models\Farm;
 use App\Models\PurchaseOffer;
 use App\Models\DetailPurchaseOffer;
+use App\Models\RowMaterial;
 use App\systemServices\notificationServices;
 
 
@@ -34,14 +35,14 @@ class FarmController extends Controller
 
     public function displayPurchaseOffers(Request $request){
         $PurchaseOffer = PurchaseOffer::with('detailpurchaseOrders','farm')->orderBy('id', 'DESC')->get();
-    
+
         return response()->json($PurchaseOffer, 200);
     }
 
-    public function SoftDeleteFarm(Request $request, $FarmId){
-        Farm::find($FarmId)->delete();
-       return  response()->json(["status"=>true, "message"=>"تم حذف المزرعة بنجاح"]);
-   }
+//     public function SoftDeleteFarm(Request $request, $FarmId){
+//         Farm::find($FarmId)->delete();
+//        return  response()->json(["status"=>true, "message"=>"تم حذف المزرعة بنجاح"]);
+//    }
 
    public function restoreFarm(Request $request, $FarmId)
    {
@@ -79,8 +80,8 @@ class FarmController extends Controller
        $farm->location = $request->location;
        $farm->mobile_number = $request->mobile_number;
        $farm->save();
-       
-       //MAKE NEW NOTIFICATION RECORD       
+
+       //MAKE NEW NOTIFICATION RECORD
        $RegisterFarmRequestNotif = new RegisterFarmRequestNotif();
        $RegisterFarmRequestNotif->from = $farm->id;
        $RegisterFarmRequestNotif->is_read = 0;
@@ -160,13 +161,13 @@ public function addOffer(Request $request){
     }
     $findOffer = PurchaseOffer::find($offer->id)->update(['total_amount'=>$totalAmount]);
 
-     //MAKE NEW NOTIFICATION RECORD       
+     //MAKE NEW NOTIFICATION RECORD
      $AddOfferNotif = new AddOfferNotif();
      $AddOfferNotif->from = $request->user()->id;
      $AddOfferNotif->is_read = 0;
      $AddOfferNotif->total_amount = $totalAmount;
      $AddOfferNotif->save();
-     
+
      //SEND NOTIFICATION ADD OFFER TO SALES MANAGER USING PUSHER
      $data['from'] =$request->user()->id;
      $data['is_read'] = 0;
@@ -187,5 +188,9 @@ public function deleteOffer(Request $request, $offerId){
    return  response()->json(["status"=>true, "message"=>"تم حذف العرض بنجاح"]);
 }
 
+public function displayRowMaterial(Request $request){
+    $rowMaterial = RowMaterial::get();
+    return response()->json($rowMaterial , 200);
+}
 
 }

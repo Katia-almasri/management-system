@@ -29,7 +29,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////اضافة ملاحظة لمدير الانتاج//////////////////////
         Route::Post('add-note',[NoteController::class, 'AddNoteForPuductionManager']);
         /////////////عرض الملاحظات///////////////////
-        Route::get('display-notes',[NoteController::class, 'displayNote']);
+        Route::get('display-notes',[NoteController::class, 'displayNoteSales']);
         ///////////حذف ملاحظة/////////////////////////////
         Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteBySales'])->middleware('is-note-exist');
 
@@ -39,11 +39,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
             //تأكيد طلب تسجيل حساب منفذ بيع
             Route::post('confirm-request-register/{sellingPortId}',[SellingPortController::class, 'commandAcceptForSellingPort']);
         });
-        
+
         Route::get('display-non-accept',[SalesPurchasingRequestController::class, 'displayNonAcceptByCEO']);
 
         Route::get('display-accept',[SalesPurchasingRequestController::class, 'displayAcceptByCEO']);
-        
+
         //استرجاع منفذ بيع محذوفة
         Route::post('restore-selling-port/{SellingId}',[SellingPortController::class, 'restoreSellingPort'])->middleware('is-deleted-selling-port-exist');
         //عرض منافذ البيع المحذوفة
@@ -83,19 +83,19 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //تأكيد طلب من العروض
         Route::post('confirm_offer/{offerId}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist');
 
-        
+
         //إشعارات طلبات تسجيل المزارع و عدد الإشعارات
         Route::get('get-register-farm-request',[SalesPurchasingRequestController::class, 'getResgisterFarmRequestsNotifs']);
         // إشعارات طلبات تسجيل منافذ البيع و عدد الإشعارات
         Route::get('get-register-selling-port-request',[SalesPurchasingRequestController::class, 'getResgisterSellingPortRequestsNotifs']);
         // إشعارات عروض المزارع و عدد الإشعارات
         Route::get('get-add-offers-notifs',[SalesPurchasingRequestController::class, 'getAddOffersNotifs']);
-        
+
         // إشعارات طلبات منافذ البيع و عدد الإشعارات
         Route::get('get-request-to-company-notifs',[SalesPurchasingRequestController::class, 'getRequestToCompanyNotifs']);
         //عدد الشحنات الواصلة والتي تم وزنها
         Route::get('get-poultry-reciept-count-notifs',[SalesPurchasingRequestController::class, 'countPoultryRecieptDetectionsNotifs']);
-        
+
 
         Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
         //تقارير لطلبات الشراء

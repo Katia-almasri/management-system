@@ -120,7 +120,7 @@ class SalesPurchasingRequestController extends Controller
         $newNotification->is_seen = 0;
         $newNotification->save();
 
-        //إرسال إشعار لمنسق حركة الآليات حول الأمر  
+        //إرسال إشعار لمنسق حركة الآليات حول الأمر
         $data['title'] = 'أمر جديد لمنسق حركة الآليات';
         $data['details'] = $RequestId.' تم إعطاْ أمر جديد للشحنة';
         $data['command_id'] = $RequestId;
@@ -165,14 +165,24 @@ class SalesPurchasingRequestController extends Controller
         ->where('accept_by_sales',1)->get();
         return response()->json($displayRequests, 200);
     }
+
+    public function calculcateTotalAmount(Request $request){
+        $totalAmount = 0;
+        foreach($request->details as $_detail){
+            $totalAmount += $_detail['amount'];
+        }
+        return  $totalAmount;
+    }
+
+
     //تأكيد طلب من عروض المزارع
-    public function requestFromOffer(SalesPurchasingRequest $request , $offerId){
+    public function requestFromOffer(Request $request , $offerId){
         $offerDetail = $this->purchaseOfferService->compareOfferDetailsToRequestDetails($request->details, $offerId);
         if($offerDetail['status']==false)
             return  response()->json(["status"=>false, "message"=>$offerDetail['message']]);
 
         //CALCULATE TOTAL AMOUNT OF OFFER
-         $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
+         $totalAmount = $this->calculcateTotalAmount($request);
 
         $findOffer = PurchaseOffer::find($offerId);
         //SAVE THE NEW OFFER
@@ -182,7 +192,7 @@ class SalesPurchasingRequestController extends Controller
         $SalesPurchasingRequest->farm_id = $findOffer->farm_id;
         $SalesPurchasingRequest->offer_id = $offerId;
         $SalesPurchasingRequest->accept_by_sales = 1;
-        $SalesPurchasingRequest->total_amount = $totalAmount['result'];
+        $SalesPurchasingRequest->total_amount = $totalAmount;
         $SalesPurchasingRequest->request_type = 0;
         $SalesPurchasingRequest->save();
 
@@ -213,9 +223,9 @@ class SalesPurchasingRequestController extends Controller
         return response()->json(['RegisterSellingPortRequestNotif'=> $RegisterSellingPortRequestNotif,
                                  'countRegisterSellingPortRequestNotif'=> $countRegisterSellingPortRequestNotif]);
 
-    } 
-    
-    
+    }
+
+
     //عدد أوامر الانطلاق يراها منسق حركة الآليات
     public function countStartCommandsNotifs(Request $request){
         $notifications = Notification::where([['channel', '=', 'add-start-command-notification'],
@@ -230,7 +240,7 @@ class SalesPurchasingRequestController extends Controller
     public function countPoultryRecieptDetectionsNotifs(Request $request){
         $countPoultryRecieptDetectionsNotif =PoultryReceiptDetection::where([['is_seen_by_sales_manager', '=', 0], ['is_weighted_after_arrive', '=',1]])->count();
         return response()->json(['countPoultryRecieptDetectionsNotif' => $countPoultryRecieptDetectionsNotif]);
-    } 
+    }
 
     public function getAddOffersNotifs(Request $request){
         $AddOfferNotif = AddOfferNotif::where('is_read', '=', 0)->get();

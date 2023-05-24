@@ -20,6 +20,12 @@ class TripController extends Controller
 {
     use validationTrait;
 
+
+    public function displayCommandSalesPurchasing(Request $request){
+        $findCommand = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
+        ->where('command',1)->get();
+        return response()->json($findCommand, 200);
+    }
     //اضافة تفاصيل رحلة
     public function AddDetailTrip(TripRequest $request, $requestId){
         $validator = Validator::make($request->all(), [
@@ -31,6 +37,7 @@ class TripController extends Controller
             return response()->json(['error' => $validator->errors()->all()]);
         }
         $findRequest = salesPurchasingRequset::find($requestId);
+
         if($findRequest->command ==1){
             $DetailTrip = new Trip();
             $DetailTrip->manager_id = $request->user()->id;;
@@ -46,7 +53,7 @@ class TripController extends Controller
             return  response()->json(["status"=>true, "message"=>"تم اضافة تفاصيل الرحلة بنجاح"]);
         }
         else
-        return  response()->json(["status"=>true, "message"=>"لم يعطى الامر من قبل مدير المشتريات والمبيعات"]);
+        return  response()->json(["status"=>false, "message"=>"لم يعطى الامر من قبل مدير المشتريات والمبيعات"]);
 
 
 
@@ -55,8 +62,13 @@ class TripController extends Controller
     public function displayTrip(Request $request){
         $SalesPurchasingRequset = Trip::with(['truck','driver','requset1'=>function ($query) {
             $query->with('sellingPort','farm','salesPurchasingRequsetDetail');
-        }])->get();
+        }])->orderBy('id', 'DESC')->get();
         return response()->json($SalesPurchasingRequset, 200);
+    }
+
+    public function displayTripInLibra(Request $request){
+        $trips = Trip::where('status','في الرحلة')->orderBy('id', 'DESC')->get();
+        return response()->json($trips, 200);
     }
 
 }

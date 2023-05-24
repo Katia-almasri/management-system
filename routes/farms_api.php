@@ -16,7 +16,7 @@ Route::group( ['middleware' => ['auth:farms-api', 'check-scope-farms', 'scopes:f
     Route::get('display-my-offer',[FarmController::class, 'displayMyOffers']);
     Route::delete('delete-offer/{offerId}',[FarmController::class, 'deleteOffer'])
     ->middleware('is-deleted-offer');
-
+    Route::get('display-row-material',[FarmController::class, 'displayRowMaterial']);
 
 
 });
