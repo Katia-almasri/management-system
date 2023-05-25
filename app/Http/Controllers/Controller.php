@@ -88,7 +88,7 @@ class Controller extends BaseController
 
         if($request->user()->hasRole('Purchasing-and-Sales-manager'))
             PoultryReceiptDetection::where('id', $recieptId)->update(['is_seen_by_sales_manager'=>1]);
-        
+
         return response()->json($weightAfterArrivalDetection);
     }
 

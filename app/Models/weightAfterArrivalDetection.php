@@ -30,9 +30,9 @@ class weightAfterArrivalDetection extends Model
         return $this->belongsTo('App\Models\PoultryReceiptDetection', 'polutry_detection_id', 'id');
     }
 
-    // public function weightAfterArrivalDetectionDetail(){
-    //     return $this->hasMany('App\Models\weightAfterArrivalDetectionDetail', 'detection_id', 'id');
-    // }
+    public function weightAfterArrivalDetectionDetail(){
+        return $this->hasMany('App\Models\weightAfterArrivalDetectionDetail', 'detection_id', 'id');
+    }
 
     public function inputProductions(){
         return $this->hasOne('App\Models\InputProduction', 'weight_after_libra_id', 'id');

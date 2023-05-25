@@ -67,7 +67,7 @@ class TripController extends Controller
     }
 
     public function displayTripInLibra(Request $request){
-        $trips = Trip::where('status','في الرحلة')->orderBy('id', 'DESC')->get();
+        $trips = Trip::with('driver','truck','requset1.farm','requset1.sellingPort','requset1.salesPurchasingRequsetDetail')->where('status','في الرحلة')->orderBy('id', 'DESC')->get();
         return response()->json($trips, 200);
     }
 

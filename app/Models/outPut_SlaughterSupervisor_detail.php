@@ -17,7 +17,7 @@ class outPut_SlaughterSupervisor_detail extends Model
        'output_id'
     ];
 
-    public function productionManager(){
+    public function productionTypeOutPut(){
         return $this->belongsTo('App\Models\outPut_Type_Production', 'type_id', 'id');
     }
 

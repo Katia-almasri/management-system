@@ -26,14 +26,14 @@ class SlaughterSupervisorController extends Controller
         $this->warehouseService  = new warehouseServices();
     }
     public function displayInputSlaughters(request $request){
-        $InputSlaughters = input_slaughter_table::where([['output_date',null],['status',null]])->get();
+        $InputSlaughters = input_slaughter_table::where('output_date',null)->get();
         return response()->json($InputSlaughters, 200);
     }
 
-    public function changeStateInput(Request $request){
-        input_slaughter_table::where('output_id',null)->update(['status' => 'يتم الذبح']);
-        return response()->json(["status"=>true, "message"=>"يتم ذبح الشحنة"]);
-    }
+    // public function changeStateInput(Request $request){
+    //     input_slaughter_table::where('output_id',null)->update(['status' => 'يتم الذبح']);
+    //     return response()->json(["status"=>true, "message"=>"يتم ذبح الشحنة"]);
+    // }
 
 
     public function displayOutputDetTotalWeight(Request $request){
@@ -45,7 +45,7 @@ class SlaughterSupervisorController extends Controller
     }
 
     public function commandDirectToBahra(Request $request){
-        
+
         $outPut_SlaughterSupervisor_detail = outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->get();
         foreach ($outPut_SlaughterSupervisor_detail as $_outputDetail) {
             $type_id = $_outputDetail->type_id;
@@ -61,10 +61,9 @@ class SlaughterSupervisorController extends Controller
             $output = new outPut_SlaughterSupervisor_table();
             $output -> production_date = Carbon::now();
             $output ->save();
-            $findInput = input_slaughter_table::where('status' , 'يتم الذبح')
+            $findInput = input_slaughter_table::where('output_date' , null)
             ->update([
                 'output_id' => $output->id,
-                'status' => 'تم انهاء الذبح',
                 'output_date' => Carbon::now()
             ]);
 
@@ -75,7 +74,15 @@ class SlaughterSupervisorController extends Controller
                 $outputDetail->output_id = $output->id;
                 $outputDetail->save();
             }
+            $outPut_SlaughterSupervisor_detail = outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->get();
             // return response()->json($findInput, 200);
+            foreach ($outPut_SlaughterSupervisor_detail as $_outputDetail) {
+                $type_id = $_outputDetail->type_id;
+                //SEARCH IN WAREHOUSE
+                $warehouse = Warehouse::where('type_id', $type_id)->get()->first();
+                $this->warehouseService->storeNewInLake($warehouse->id, $_outputDetail->id);
+            }
+            outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->update(['direct_to_bahra'=>1]);
         return response()->json(["status"=>true, "message"=>"تم اضافة خرج"]);
 
     }
@@ -86,7 +93,7 @@ class SlaughterSupervisorController extends Controller
     }
 
     public function displayOutputSlaughter(Request $request){
-        $output = outPut_SlaughterSupervisor_detail::orderBy('id', 'DESC')->get();
+        $output = outPut_SlaughterSupervisor_detail::with('productionTypeOutPut')->orderBy('id', 'DESC')->get();
         return response()->json($output, 200);
     }
 }

@@ -9,7 +9,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
     Route::group( ['middleware' => 'is-slaughter-supervisor'] ,function(){
         Route::get('display-input-slaughters',[SlaughterSupervisorController::class, 'displayInputSlaughters']);
-        Route::post('change-state-input',[SlaughterSupervisorController::class, 'changeStateInput']);
+        // Route::post('change-state-input',[SlaughterSupervisorController::class, 'changeStateInput']);
         Route::get('display-output-total-weight',[SlaughterSupervisorController::class, 'displayOutputDetTotalWeight']);
         Route::post('add-output-slaughters',[SlaughterSupervisorController::class, 'addOutputSlaughters']);
         // ->middleware('is-exist-type-id-input-slaughters');
