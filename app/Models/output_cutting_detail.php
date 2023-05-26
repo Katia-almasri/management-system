@@ -14,7 +14,9 @@ class output_cutting_detail extends Model
        'type_id',
        'expiry_date',
        'weight',
-       'output_cutting_id'
+       'output_cutting_id',
+       'outputable_type',
+       'outputable_id'
     ];
 
     public function outputTypes(){
@@ -25,7 +27,7 @@ class output_cutting_detail extends Model
         return $this->belongsTo('App\Models\output_cutting', 'output_cutting_id', 'id');
     }
 
-    
+
 
     /////////////////// morph ////////////////
 

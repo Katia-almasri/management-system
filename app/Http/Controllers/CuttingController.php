@@ -30,7 +30,7 @@ class CuttingController extends Controller
 
     public function displayInputCutting(Request $request)
     {
-        $input = InputCutting::get();
+        $input = InputCutting::with('output_types')->get();
         return response()->json($input, 200);
     }
 
@@ -96,5 +96,16 @@ class CuttingController extends Controller
             DB::rollback();
             return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
+    }
+
+    public function displayTypeCuttingOutput(Request $request){
+        $types = outPut_Type_Production::where('by_section','قسم التقطيع')->get();
+        return response()->json($types, 200);
+    }
+
+
+    public function displayCuttingOutputWhereNotOutputable(Request $request){
+        $output = output_cutting_detail::with('outputTypes')->where('outputable_id',0)->get();
+        return response()->json($output, 200);
     }
 }

@@ -35,7 +35,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         Route::group( ['middleware' => 'is-selling-port-exist'] ,function(){
             //حذف منفذ بيع
-            Route::delete('soft-delete-selling-port/{sellingPortId}',[SellingPortController::class, 'SoftDeleteSellingPort']);
+            Route::delete('soft-delete-selling-port/{sellingPortId}',[SellingPortController::class, 'SoftDeleteSellingPort'])->middleware('is-sellingPort-used');
             //تأكيد طلب تسجيل حساب منفذ بيع
             Route::post('confirm-request-register/{sellingPortId}',[SellingPortController::class, 'commandAcceptForSellingPort']);
         });
@@ -64,7 +64,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         Route::group( ['middleware' => 'is-farm-exist'] ,function(){
             //حذف مزرعة
-            Route::delete('soft-delete-farm/{FarmId}',[FarmController::class, 'SoftDeleteFarm']);
+            Route::delete('soft-delete-farm/{FarmId}',[FarmController::class, 'SoftDeleteFarm'])->middleware('is-farm-used');
+
             // تأكيد حساب مزرعة
             Route::post('confirm-request-farm-register/{FarmId}',[FarmController::class, 'commandAcceptForFarm']);
 

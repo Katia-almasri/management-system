@@ -19,6 +19,7 @@ use App\Models\outPut_SlaughterSupervisor_detail;
 use App\Models\InputCutting;
 use App\Models\InputManufacturing;
 use App\Models\DirectToOutputSlaughter;
+use App\Models\Warehouse;
 
 
 
@@ -107,7 +108,6 @@ class ProductionController extends Controller
     public function addTypeToProductionOutPut(Request $request){
         $validator = Validator::make($request->all(), [
             'type' => 'required',
-            'number_day_validity' => 'required',
 
         ]);
 
@@ -116,6 +116,7 @@ class ProductionController extends Controller
         }
         $type = new outPut_Type_Production();
         $type -> type = $request->type;
+        $type -> by_section = $request->by_section;
         $type -> save();
         ///////////ADD THE NEW TYPE IN WAREHOUSE
         $this->warehouseService->addNewTypeInWarehouse($type->id);
@@ -123,7 +124,7 @@ class ProductionController extends Controller
     }
 
     public function displayTypeProductionOutPut(Request $request){
-        $outPutProduction = outPut_SlaughterSupervisorType_table::all();
+        $outPutProduction = outPut_Type_Production::all();
         return response()->json($outPutProduction, 200);
     }
 
@@ -170,7 +171,7 @@ class ProductionController extends Controller
         return  response()->json(["status"=>true, "message"=>"تم توجيه الخرج الى القسم الجديد "]);
     }
     /////////////////////// command from warehouse to production ///////////////////
-    
+
     //إضافة أمر من مجير الإنتاج إلى المخازن
     public function addCommandToWarehouse(Request $request){
         $to = $request['to'];
@@ -182,9 +183,9 @@ class ProductionController extends Controller
             foreach($request['details'] as $_detail){
                 $warehouse_id = $_detail['warheouse_id'];
                 $command_detail = new CommandDetail();
-                $command_detail->warehouse_id = $warehouse_id; 
+                $command_detail->warehouse_id = $warehouse_id;
                 $command_detail->command_id = $command->id;
-                $command_detail->cur_weight = 0; 
+                $command_detail->cur_weight = 0;
                 $command_detail->input_weight = 0;
                 $command_detail->command_weight = $_detail['weight'];
                 $command_detail->from = '';
@@ -206,6 +207,13 @@ class ProductionController extends Controller
         return  response()->json(["status"=>true, "message"=>$commands]);
     }
 
+    public function displayWarehouse(Request $request){
+        $warehouse = Warehouse::with('outPut_Type_Production')->get();
+        return response()->json($warehouse, 200);
+    }
 
-
+    public function displayCommandsWarehousToProduction(Request $request){
+        $command = Command::with('commandDetails')->get();
+        return response()->json($command, 200);
+    }
 }

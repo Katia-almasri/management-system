@@ -11,6 +11,7 @@ use App\Models\OutputManufacturing;
 use App\Models\output_cutting_detail;
 use App\Models\OutputManufacturingDetails;
 use App\systemServices\productionServices;
+use App\Models\outPut_Type_Production;
 
 use Carbon\Carbon;
 
@@ -30,7 +31,7 @@ class ManufacturingController extends Controller
 
     public function displayInputManufacturing(Request $request)
     {
-        $input = InputManufacturing::get();
+        $input = InputManufacturing::with('output_types')->get();
         return response()->json($input, 200);
     }
 
@@ -68,7 +69,7 @@ class ManufacturingController extends Controller
             $outputDetail->outputable_type = '';
             $outputDetail->outputable_id = 0;
             $outputDetail->save();
-            
+
         }
         return response()->json(["status" => true, "message" => "تم اضافة خرج"]);
 
@@ -97,6 +98,17 @@ class ManufacturingController extends Controller
             DB::rollback();
             return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
+    }
+
+
+    public function displayOutputTypeManufacturing(Request $request){
+        $type = outPut_Type_Production::where('by_section','قسم التصنيع')->get();
+        return response()->json($type, 200);
+    }
+
+    public function displayManufacturingOutputWhereNotOutputable(Request $request){
+        $output = OutputManufacturingDetails::with('outputTypes')->where('outputable_id',0)->get();
+        return response()->json($output, 200);
     }
 
 }

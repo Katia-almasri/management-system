@@ -71,6 +71,11 @@ class TripController extends Controller
         return response()->json($trips, 200);
     }
 
+    public function SoftDeleteTrip(Request $request, $TripId){
+        Trip::find($TripId)->delete();
+       return  response()->json(["status"=>true, "message"=>"تم حذف الرحلة بنجاح"]);
+   }
+
 }
 
 

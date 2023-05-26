@@ -112,11 +112,17 @@ class Kernel extends HttpKernel
         'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
         'is-exist-id-to-direct-bahra' => \App\Http\Middleware\isExistIdToDirectBahra::class,
 
-        //tody
+
         'has-display-warehouse-role' => \App\Http\Middleware\hasDisplayWarehouseContentRole::class,
         'has-display-commands-warehouse-role' => \App\Http\Middleware\hasDisplayCommandsToWarehouseRole::class,
-        
-        
+        //today
+        'is-truck-used' => \App\Http\Middleware\is_truck_used::class,
+        'is-driver-used' => \App\Http\Middleware\isDriverUsed::class,
+        'is-farm-used' => \App\Http\Middleware\isFarmUsed::class,
+        'is-sellingPort-used' => \App\Http\Middleware\isSellingPortUsed::class,
+
+
+
 
     ];
 }

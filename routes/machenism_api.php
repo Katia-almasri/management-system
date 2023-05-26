@@ -24,7 +24,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
             /////////////تعديل حالة شاحنة
             Route::post('update-state/{TruckId}',[TruckContoller::class, 'UpdateTruckState']);
             //حذف شاحنة
-            Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck']);
+            Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck'])->middleware('is-truck-used');
 
         });
         //استرجاع شاحنة محذوفة
@@ -34,7 +34,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         Route::group( ['middleware' => 'is-driver-exist'] ,function(){
             //حذف سائق
-            Route::delete('soft-delete-driver/{DriverId}',[DriverController::class, 'SoftDeleteDriver']);
+            Route::delete('soft-delete-driver/{DriverId}',[DriverController::class, 'SoftDeleteDriver'])->middleware('is-driver-used');
 
             //تعديل حالة سائق
             Route::post('update-state-driver/{DriverId}',[DriverController::class, 'UpdateDriverState']);
@@ -57,6 +57,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //عرض كل الرحلات
         Route::get('display-trips',[TripController::class, 'displayTrip']);
         Route::get('display-command',[TripController::class, 'displayCommandSalesPurchasing']);
+        Route::delete('delete-trip/{TripId}',[TripController::class, 'SoftDeleteTrip']);
 
         //عداد إشعار استعراض الأوامر
 

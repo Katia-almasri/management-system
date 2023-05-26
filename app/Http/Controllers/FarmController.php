@@ -39,10 +39,10 @@ class FarmController extends Controller
         return response()->json($PurchaseOffer, 200);
     }
 
-//     public function SoftDeleteFarm(Request $request, $FarmId){
-//         Farm::find($FarmId)->delete();
-//        return  response()->json(["status"=>true, "message"=>"تم حذف المزرعة بنجاح"]);
-//    }
+    public function SoftDeleteFarm(Request $request, $FarmId){
+        Farm::find($FarmId)->delete();
+       return  response()->json(["status"=>true, "message"=>"تم حذف المزرعة بنجاح"]);
+   }
 
    public function restoreFarm(Request $request, $FarmId)
    {

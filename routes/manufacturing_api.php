@@ -18,7 +18,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('add-output-munufacturing/{type_id}',[ManufacturingController::class, 'addOutputManufacturing'])
         ->middleware('is-exist-type-id-input-munufacturing');
         Route::get('display-output-munufacturing',[ManufacturingController::class, 'displayOutputManufacturing']);
-        
+        Route::get('display-output-type-munufacturing',[ManufacturingController::class, 'displayOutputTypeManufacturing']);
+        Route::get('display-output-munufacturing-where',[ManufacturingController::class, 'displayManufacturingOutputWhereNotOutputable']);
 
         //////////////// DITRCT MANUFACTORING TO ////////////////
         Route::post('direct-manufactoring-to',[ManufacturingController::class, 'directManufactoringTo']);

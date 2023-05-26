@@ -34,10 +34,6 @@ class SellingPort extends Authenticatable
         return $this->hasMany('App\Models\salesPurchasingRequset', 'selling_port_id', 'id');
     }
 
-    public function contract(){
-        return $this->hasMany('App\Models\Contract', 'selling_port_id', 'id');
-    }
-
     public function registerFarmRequestNotif(){
         return $this->hasOne('App\Models\RegisterSellingPortRequestNotif', 'from', 'id');
     }
