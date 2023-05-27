@@ -13,16 +13,16 @@ class PoultryRecieptDetectionRequest extends FormRequest
         return true;
     }
 
-    
+
     public function rules()
     {
         return [
-            "farm_id" => "required",
+
             "details.*.row_material_id" => "required",
             "details.*.detection_details.*.group_weight" => "required|numeric|gt:0",
             "details.*.detection_details.*.num_cages" => "required|numeric|gt:0"
 
-            
+
         ];
 
     }

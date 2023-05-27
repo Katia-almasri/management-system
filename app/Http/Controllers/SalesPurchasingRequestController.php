@@ -152,7 +152,7 @@ class SalesPurchasingRequestController extends Controller
     }
     //رفض طلب من قبل المدير التنفيذي مع امكانية ادخال سبب الرفض
     public function refuseSalesPurchasingRequestFromCeo(Request $request, $RequestId){
-        $findOrder = salesPurchasingRequset::where([['id'=> $RequestId]])
+        $findOrder = salesPurchasingRequset::where('id', $RequestId)
         ->update(array('reason_refuse_by_ceo' => $request->reason_refuse_by_ceo));
         $findRequestOrder = salesPurchasingRequset::where([['id', '=', $RequestId]])
         ->update(['accept_by_ceo'=>0]);
@@ -162,7 +162,7 @@ class SalesPurchasingRequestController extends Controller
 
     public function displaySalesPurchasingRequestFromCeo(Request $request){
         $displayRequests = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
-        ->where('accept_by_sales',1)->get();
+        ->where([['accept_by_sales',1],['accept_by_ceo',null]])->get();
         return response()->json($displayRequests, 200);
     }
 

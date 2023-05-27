@@ -8,6 +8,8 @@ use App\Http\Requests\PoultryRecieptDetectionRequest;
 use App\Http\Requests\WeightAfterArrivalRequest;
 use App\Models\PoultryReceiptDetection;
 use App\Models\PoultryReceiptDetectionsDetails;
+// use App\Models\Trip;
+
 use App\systemServices\poultryDetectionRequestServices;
 use App\systemServices\weightAfterArrivalServices;
 use App\Exceptions\Exception;
