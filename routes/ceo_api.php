@@ -42,5 +42,10 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     //استعراض خرج قسم التصنيع
     Route::get('display-output-munufacturing',[ManufacturingController::class, 'displayOutputManufacturing']);
 
+    ////////////////////// استعراض managing level ////////////////////////
+    Route::get('display-managing-level',[CEOController::class, 'getManagingLevel']);
+
+    //إضافة مستخدم جديد
+    Route::post('add-user',[CEOController::class, 'addUser']);
 });
 

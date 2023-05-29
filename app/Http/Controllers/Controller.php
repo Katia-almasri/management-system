@@ -35,10 +35,13 @@ class Controller extends BaseController
         }
 
         if(auth()->guard('managers')->attempt(['username' => request('username'), 'password' => request('password')])){
-
             config(['auth.guards.api.provider' => 'managers']);
 
             $user = Manager::select('*')->find(auth()->guard('managers')->user()->id);
+            if($user->date_of_leave!=null)
+                return response()->json([
+                    'message' => 'عذراً يرجى مراجعة المدير التنفيذي'
+                ]);
             $success =  $user;
             $success['token'] =  $user->createToken('api-token', ['managers'])->accessToken;
 

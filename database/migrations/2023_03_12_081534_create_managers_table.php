@@ -15,14 +15,16 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->id();
-            $table->string('managing_level');
+            $table->enum('managing_level', ['مدير المشتريات والمبيعات', 'المدير التنفيذي', 'منسق حركة الآليات',
+                'مدير الإنتاج', 'آمر القبان', 'مدير المحاسبة المالية', 'مشرف الذبح', 'مشرف التقطيع' ,'مشرف التصنيع', 'مدير قسم المستودعات'
+        ]);
             $table->string('first_name');
             $table->string('last_name');
             $table->string('username')->unique();
             $table->string('password');
             $table->timestamps();
             $table->timestamp('date_of_hiring')->useCurrent();
-            $table->timestamp('date_of_leave')->useCurrent();
+            $table->timestamp('date_of_leave')->nullable();
         });
     }
 

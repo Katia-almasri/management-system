@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Hash;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
@@ -41,6 +43,31 @@ class CEOController extends Controller
          return response()->json([
            'message' => 'logged out successfully'
          ]);
+    }
+
+    public function getManagingLevel(Request $request){
+        $managing_levels = Manager::pluck('managing_level');
+        return response()->json($managing_levels);
+    }
+
+    public function addUser(Request $request){
+
+        //search
+        $oldManager = MAnager::where('managing_level', $request->managing_level)->latest('id')->first();
+        $oldManager->update(['date_of_leave'=>Carbon::now()]);
+        $manager = new Manager();
+        $manager->managing_level = $request->managing_level;
+        $manager->first_name = $request->first_name;
+        $manager->last_name = $request->last_name;
+        $password = $request->first_name.'123456';
+        $manager->password = Hash::make($password);
+        $manager->username = $request->username;
+        $manager->date_of_hiring = Carbon::now();
+        $manager->save();
+
+        return response()->json([
+            'message' =>' تم إضافة '.$request->managing_level.' جديد'
+          ]);
     }
 
 

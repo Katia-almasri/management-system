@@ -102,6 +102,5 @@ class ManagerTableSeeder extends Seeder
 
 
 
-
     }
 }
