@@ -97,7 +97,6 @@ class Kernel extends HttpKernel
         'is-slaughter-supervisor' => \App\Http\Middleware\isSlaughterSupervisor::class,
         'is-deleted-type' => \App\Http\Middleware\isDeletedType::class,
         'is-warehouse-supervisor' => \App\Http\Middleware\isWarehouseSupervisor::class,
-        //today
         'is-user-has-permission-to-read-poultry-detection' => \App\Http\Middleware\checkReadPoultryRecieptPermission::class,
         'is-current-weight-and-id' => \App\Http\Middleware\isCurrentWeightAndId::class,
         'is-exist-input-slaughters' => \App\Http\Middleware\isExistIdInInputSlaughters::class,
@@ -111,15 +110,16 @@ class Kernel extends HttpKernel
         'is-exist-type-id-input-munufacturing' => \App\Http\Middleware\isExistTypeIdInputMunufacturingn::class,
         'is-exist-input-munufacturing' => \App\Http\Middleware\isExistInputMunufacturing::class,
         'is-exist-id-to-direct-bahra' => \App\Http\Middleware\isExistIdToDirectBahra::class,
-
-
         'has-display-warehouse-role' => \App\Http\Middleware\hasDisplayWarehouseContentRole::class,
         'has-display-commands-warehouse-role' => \App\Http\Middleware\hasDisplayCommandsToWarehouseRole::class,
-        //today
         'is-truck-used' => \App\Http\Middleware\is_truck_used::class,
         'is-driver-used' => \App\Http\Middleware\isDriverUsed::class,
         'is-farm-used' => \App\Http\Middleware\isFarmUsed::class,
         'is-sellingPort-used' => \App\Http\Middleware\isSellingPortUsed::class,
+
+        //today
+        'check-offer-exist-in-purchase-offer' => \App\Http\Middleware\checkOfferExistInPurchaseOffer::class,
+        
 
 
 

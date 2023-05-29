@@ -16,6 +16,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////Farm///////////
         Route::get('get-farms',[FarmController::class, 'displayFarms']);
         Route::get('get-purchase-offer',[FarmController::class, 'displayPurchaseOffers']);
+        Route::get('get-purchase-offer-last-48h',[FarmController::class, 'displayPurchaseOffersLast48H']);
+        
         //////////////Selling Port////////////////
         Route::get('get-selling-port',[SellingPortController::class, 'displaySellingPort']);
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
@@ -81,8 +83,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         Route::get('display-contracts',[ContractController::class, 'getContracts']);
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
+        //استعراض تفاصيل عرض
+        Route::get('get-detail-for-purchase-offer/{offerId}',[FarmController::class, 'displayDetailOffer'])->middleware('check-offer-exist-in-purchase-offer');
+        
         //تأكيد طلب من العروض
-        Route::post('confirm_offer/{offerId}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist');
+        Route::post('confirm_offer/{offerId}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist-in-purchase-offer');
 
 
         //إشعارات طلبات تسجيل المزارع و عدد الإشعارات
