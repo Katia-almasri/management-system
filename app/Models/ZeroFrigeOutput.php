@@ -15,7 +15,8 @@ class ZeroFrigeOutput extends Model
        'output_date',
        'weight',
        'amount',
-       'zero_id'
+       'zero_id',
+       'output_to'
     ];
 
      ############################## Begin Relations #############################

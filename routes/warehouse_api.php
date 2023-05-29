@@ -26,12 +26,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         
         
-
-        // استعراض تفاصيل مادة معينة في المخزن
+        Route::group( ['middleware' => 'is-warehouse-id-exist'] ,function(){
+                    // استعراض تفاصيل مادة معينة في المخزن
         Route::get('display-warehouse-detail/{warehouseId}',[WarehouseController::class, 'displayWarehouseDetail']);
 
         // تعديل معلومات مادة في مخزن
         Route::post('edit-warehouse-row-info/{warehouseId}',[WarehouseController::class, 'editWarehouseRowInfo']);
+
+        });
         
         ///////////////////////display //////////////////
         //استعراض محتوى البحرات
@@ -52,11 +54,17 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //استعراض محتويات المخزن النهائي 
         Route::get('display-store-content',[WarehouseController::class, 'displayStoreContent']);
         
-        // ملء أمر الإنتاج من قبل مشرف المخازن  
+        Route::group( ['middleware' => 'is-command-id-exist'] ,function(){
+         // ملء أمر الإنتاج من قبل مشرف المخازن  
         Route::post('fill-command-from-production-manager/{commandId}',[WarehouseController::class, 'fillCommandFromProductionManager']);
 
         //استعراض تفاصيل أمر معين
         Route::get('display-command/{commandId}',[WarehouseController::class, 'displayCommand']);
+
+        });
+
+        //استعراض الأوامر من مدير الإنتاج
+        Route::get('display-commands',[WarehouseController::class, 'displayCommands']);
 
         //استعراض كل محتويات المخازن
          Route::get('display-warehouse-with-details',[WarehouseController::class, 'displayWarehouseContentWithDetails']);
@@ -84,6 +92,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-det3-output-mov',[WarehouseController::class, 'displayDet3OutMov']);
         //////////////////// حركة المخزن النهائي ///////////////////////
         Route::get('display-store-input-mov',[WarehouseController::class, 'displayStoreInputMov']);
+
+        ////////////////////استعراض كافة أسماْ المخازن ///////////////////////
+        Route::get('display-warehouses-types',[WarehouseController::class, 'displayWarehousesTypes']);
+
 
     });
 

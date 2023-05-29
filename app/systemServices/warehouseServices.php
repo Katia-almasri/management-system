@@ -203,8 +203,9 @@ class warehouseServices
         } else {
             $model = $this->getModel($outputChoice);
 
-            //ENOUGH AMOUNT
-            $lakeOutput = $this->insertNewRowInOutputLakeTable($_detail['weight'], null, $model, $lake_id);
+            //ENOUGH AMOUNT 
+            //edit output_to: outputChoice
+            $lakeOutput = $this->insertNewRowInOutputLakeTable($_detail['weight'], null, $model, $lake_id, $outputChoice);
             $this->setOutputIdToInputOutputLakeTable($lakeOutput->id);
             //UPDATE THE AMOUNT IN LAKE
             $lake->update(['weight' => $lake['weight'] - $_detail['weight']]);
@@ -348,7 +349,7 @@ class warehouseServices
         return $inputOutputLakeElement->id;
     }
 
-    public function insertNewRowInOutputLakeTable($weight, $amount, $model, $lake_id)
+    public function insertNewRowInOutputLakeTable($weight, $amount, $model, $lake_id, $outputChoice)
     {
         $lakeOutput = new LakeOutput();
         $lakeOutput->output_date = Carbon::today()->format('Y-m-d H:i:s');
@@ -356,6 +357,7 @@ class warehouseServices
         $lakeOutput->outputable_id = 0;
         $lakeOutput->weight = $weight;
         $lakeOutput->amount = $amount;
+        $lakeOutput->output_to = $outputChoice;
         $lakeOutput->lake_id = $lake_id;
         $lakeOutput->save();
         return $lakeOutput;
@@ -498,7 +500,7 @@ class warehouseServices
         } else {
             $model = $this->getModel($outputChoice);
             //ENOUGH WEIGHT
-            $zeroOutput = $this->insertNewRowInOutputZeroTable($_detail['weight'], null, $model, $zero_id);
+            $zeroOutput = $this->insertNewRowInOutputZeroTable($_detail['weight'], null, $model, $zero_id, $outputChoice);
             $this->setOutputIdToInputOutputZeroTable($zeroOutput->id);
             //UPDATE THE AMOUNT IN ZERO
             $zero->update(['weight' => $zero['weight'] - $_detail['weight']]);
@@ -613,7 +615,7 @@ class warehouseServices
 
     }
 
-    public function insertNewRowInOutputZeroTable($weight, $amount, $model, $zero_id)
+    public function insertNewRowInOutputZeroTable($weight, $amount, $model, $zero_id, $outputChoice)
     {
         $zeroOutput = new ZeroFrigeOutput();
         $zeroOutput->output_date = Carbon::today()->format('Y-m-d H:i:s');
@@ -621,6 +623,7 @@ class warehouseServices
         $zeroOutput->outputable_id = 0;
         $zeroOutput->weight = $weight;
         $zeroOutput->amount = $amount;
+        $zeroOutput->output_to = $outputChoice;
         $zeroOutput->zero_id = $zero_id;
         $zeroOutput->save();
         return $zeroOutput;
@@ -678,7 +681,7 @@ class warehouseServices
             $model = $this->getModel($outputChoice);
 
             //ENOUGH AMOUNT
-            $det1Output = $this->insertNewRowInOutputDet1Table($_detail['weight'], null, $model, $det1_id);
+            $det1Output = $this->insertNewRowInOutputDet1Table($_detail['weight'], null, $model, $det1_id, $outputChoice);
             $this->setOutputIdToInputOutputDet1Table($det1Output->id);
             //UPDATE THE AMOUNT IN LAKE
             $det1->update(['weight' => $det1['weight'] - $_detail['weight']]);
@@ -707,13 +710,14 @@ class warehouseServices
         return $inputOutputDet1->id;
     }
 
-    public function insertNewRowInOutputDet1Table($weight, $amount, $model, $det1_id){
+    public function insertNewRowInOutputDet1Table($weight, $amount, $model, $det1_id, $outputChoice){
         $det1Output = new DetonatorFrige1Output();
         $det1Output->output_date = Carbon::today()->format('Y-m-d H:i:s');
         $det1Output->outputable_type = $model;
         $det1Output->outputable_id = 0;
         $det1Output->weight = $weight;
         $det1Output->amount = $amount;
+        $det1Output->output_to = $outputChoice;
         $det1Output->det1_id = $det1_id;
         $det1Output->save();
         return $det1Output;
@@ -802,7 +806,7 @@ class warehouseServices
             $model = $this->getModel($outputChoice);
 
             //ENOUGH AMOUNT
-            $det2Output = $this->insertNewRowInOutputDet2Table($_detail['weight'], null, $model, $det2_id);
+            $det2Output = $this->insertNewRowInOutputDet2Table($_detail['weight'], null, $model, $det2_id, $outputChoice);
             $this->setOutputIdToInputOutputDet2Table($det2Output->id);
             //UPDATE THE AMOUNT IN LAKE
             $det2->update(['weight' => $det2['weight'] - $_detail['weight']]);
@@ -831,13 +835,14 @@ class warehouseServices
         return $inputOutputDet2->id;
     }
 
-    public function insertNewRowInOutputDet2Table($weight, $amount, $model, $det2_id){
+    public function insertNewRowInOutputDet2Table($weight, $amount, $model, $det2_id, $outputChoice){
         $det2Output = new DetonatorFrige2Output();
         $det2Output->output_date = Carbon::today()->format('Y-m-d H:i:s');
         $det2Output->outputable_type = $model;
         $det2Output->outputable_id = 0;
         $det2Output->weight = $weight;
         $det2Output->amount = $amount;
+        $det2Output->output_to = $outputChoice;
         $det2Output->det2_id = $det2_id;
         $det2Output->save();
         return $det2Output;
@@ -926,7 +931,7 @@ class warehouseServices
             $model = $this->getModel($outputChoice);
 
             //ENOUGH AMOUNT
-            $det3Output = $this->insertNewRowInOutputDet3Table($_detail['weight'], null, $model, $det3_id);
+            $det3Output = $this->insertNewRowInOutputDet3Table($_detail['weight'], null, $model, $det3_id, $outputChoice);
             $this->setOutputIdToInputOutputDet3Table($det3Output->id);
             //UPDATE THE AMOUNT IN LAKE
             $det3->update(['weight' => $det3['weight'] - $_detail['weight']]);
@@ -955,13 +960,14 @@ class warehouseServices
         return $inputOutputDet3->id;
     }
 
-    public function insertNewRowInOutputDet3Table($weight, $amount, $model, $det3_id){
+    public function insertNewRowInOutputDet3Table($weight, $amount, $model, $det3_id, $outputChoice){
         $det3Output = new DetonatorFrige3Output();
         $det3Output->output_date = Carbon::today()->format('Y-m-d H:i:s');
         $det3Output->outputable_type = $model;
         $det3Output->outputable_id = 0;
         $det3Output->weight = $weight;
         $det3Output->amount = $amount;
+        $det3Output->output_to = $outputChoice;
         $det3Output->det3_id = $det3_id;
         $det3Output->save();
         return $det3Output;

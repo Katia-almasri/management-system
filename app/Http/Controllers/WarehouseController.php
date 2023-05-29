@@ -16,6 +16,7 @@ use App\Models\LakeDetail;
 use App\Models\LakeOutput;
 use App\Models\Store;
 use App\Models\Warehouse;
+use App\Models\WarehouseType;
 use App\Models\ZeroFrige;
 use App\Models\ZeroFrigeDetail;
 use App\Models\ZeroFrigeOutput;
@@ -226,18 +227,20 @@ class WarehouseController extends Controller
     }
 
     public function displayWarehouseContentWithDetails(Request $request){
-        $warehouse = Warehouse::with(['zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
+        $warehouse = Warehouse::with(['outPut_Type_Production', 'zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
         return response()->json($warehouse);
     }
     /////////////////////// LAKE MOVEMENT (I/O) //////////////////
     //I
     public function displayLakeInputMov(Request $request){
-        $lakeMovement = Lake::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'lakeDetails.inputable'])->get();
+        $lakeMovement = Lake::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'lakeDetails.inputable'=>function($query){
+            $query->orderBy('created_at', 'DESC');
+        }])->get();
         return response()->json($lakeMovement);
     }
     //O    
     public function displayLakeOutMov(Request $request){
-        $lakeMovement = LakeOutput::with(['lake.warehouse.outPut_Type_Production', 'outputable'])->get();
+        $lakeMovement = LakeOutput::with(['lake.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($lakeMovement);
     }
 
@@ -248,7 +251,7 @@ class WarehouseController extends Controller
     }
 
     public function displayZeroOutMov(Request $request){
-        $lakeMovement = ZeroFrigeOutput::with(['zeroFrige.warehouse.outPut_Type_Production', 'outputable'])->get();
+        $lakeMovement = ZeroFrigeOutput::with(['zeroFrige.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($lakeMovement);
     }
     
@@ -259,7 +262,7 @@ class WarehouseController extends Controller
     }
 
     public function displayDet1OutMov(Request $request){
-        $det1Movement = DetonatorFrige1Output::with(['detonator1.warehouse.outPut_Type_Production', 'outputable'])->get();
+        $det1Movement = DetonatorFrige1Output::with(['detonator1.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($det1Movement);
     }
 
@@ -270,7 +273,7 @@ class WarehouseController extends Controller
     }
 
     public function displayDet2OutMov(Request $request){
-        $det2Movement = DetonatorFrige2Output::with(['detonator2.warehouse.outPut_Type_Production', 'outputable'])->get();
+        $det2Movement = DetonatorFrige2Output::with(['detonator2.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($det2Movement);
     }
 
@@ -281,7 +284,7 @@ class WarehouseController extends Controller
     }
 
     public function displayDet3OutMov(Request $request){
-        $det3Movement = DetonatorFrige3Output::with(['detonator3.warehouse.outPut_Type_Production', 'outputable'])->get();
+        $det3Movement = DetonatorFrige3Output::with(['detonator3.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($det3Movement);
     }
 
@@ -289,5 +292,15 @@ class WarehouseController extends Controller
      public function displayStoreInputMov(Request $request){
         $storeMovement = Store::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'storeDetails.inputable'])->get();
         return response()->json($storeMovement);
+    }
+    /////////////////// END MOVEMENTS /////////////////////////////////
+    public function displayCommands(Request $request){
+        $commands = Command::get();
+        return response()->json($commands);
+    }
+
+    public function displayWarehousesTypes(Request $request){
+        $wareouseTypes = WarehouseType::get();
+        return response()->json($wareouseTypes);
     }
 }   

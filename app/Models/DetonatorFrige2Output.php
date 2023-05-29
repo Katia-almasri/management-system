@@ -15,7 +15,8 @@ class DetonatorFrige2Output extends Model
        'output_date',
        'weight',
        'amount',
-       'det2_id'
+       'det2_id',
+       'output_to'
     ];
 
     ################### Begin Relations #####################

@@ -116,9 +116,13 @@ class Kernel extends HttpKernel
         'is-driver-used' => \App\Http\Middleware\isDriverUsed::class,
         'is-farm-used' => \App\Http\Middleware\isFarmUsed::class,
         'is-sellingPort-used' => \App\Http\Middleware\isSellingPortUsed::class,
+        'check-offer-exist-in-purchase-offer' => \App\Http\Middleware\checkOfferExistInPurchaseOffer::class,
 
         //today
-        'check-offer-exist-in-purchase-offer' => \App\Http\Middleware\checkOfferExistInPurchaseOffer::class,
+        'is-warehouse-id-exist' => \App\Http\Middleware\isWarehouseIdExist::class,
+        'is-command-id-exist' => \App\Http\Middleware\isCommandIdExist::class,
+        
+        
         
 
 

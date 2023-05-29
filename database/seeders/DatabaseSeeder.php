@@ -32,8 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PoultryRecieptDetectionTableSeeder::class);
         $this->call(PoultryRecieptDetectionDetailsTableSeeder::class);
         $this->call(WeightAfterArrivalDetectionTableSeeder::class);
-
-        //today
         $this->call(WarehouseTableSeeder::class);
         $this->call(LakeTableSeeder::class);
         $this->call(ZeroTableSeeder::class);
@@ -42,6 +40,9 @@ class DatabaseSeeder extends Seeder
         $this->call(Det3TableSeeder::class);
         $this->call(StoreTableSeeder::class);
         $this->call(DirectionTableSeeder::class);
+        
+        //today
+        $this->call(WarehouseTypesTableSeed::class);
         
         
         

@@ -15,7 +15,8 @@ class LakeOutput extends Model
        'output_date',
        'weight',
        'amount',
-        'lake_id'
+        'lake_id',
+        'output_to'
     ];
 
      ############################## Begin Relations #############################
