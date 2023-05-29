@@ -67,9 +67,11 @@ class TripController extends Controller
     }
 
     public function displayTripInLibra(Request $request){
-        $trips = Trip::with('driver','truck','requset1.farm','requset1.sellingPort','requset1.salesPurchasingRequsetDetail')->where('status','في الرحلة')->orderBy('id', 'DESC')->get();
+        $trips = Trip::with('driver','truck','requset1.farm','requset1.salesPurchasingRequsetDetail')
+        ->where([['status','في الرحلة'],['farm_id','!=',null]])->orderBy('id', 'DESC')->get();
         return response()->json($trips, 200);
     }
+
 
     public function SoftDeleteTrip(Request $request, $TripId){
         Trip::find($TripId)->delete();

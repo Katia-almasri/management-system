@@ -6,6 +6,7 @@ use App\Http\Requests\PoultryRecieptDetectionRequest;
 use App\Models\CageDetail;
 use App\Models\PoultryReceiptDetection;
 use App\Models\PoultryReceiptDetectionsDetails;
+use App\Models\Trip;
 use App\Exceptions\Exception;
 use Auth;
 use Illuminate\Http\Request;
@@ -39,8 +40,9 @@ class poultryDetectionRequestServices
             //2. cage weight > num(cage_weight + max(bird_wieght)*num_bird)
 
             //1. STORE THE DETECTION
+            $farm_id = Trip::where('id',$trip_id)->get()->pluck('farm_id')->first();
             $polutryDetectionData = [
-                'farm_id' => $request->farm_id,
+                'farm_id' => $farm_id,
                 'libra_commander_id' => $request->user()->id,
                 'tot_weight' => $tot_weight,
                 'empty' => $empty,
