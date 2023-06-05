@@ -70,6 +70,26 @@ class CEOController extends Controller
           ]);
     }
 
+    public function displayUsers(Request $request){
+        $users = Manager::get(['id','managing_level','first_name','last_name','created_at','date_of_leave']);
+        return response()->json($users);
+    }
+
+    public function restorUser(Request $request, $userId){
+
+        $user = Manager::find($userId);
+        $oldManager = Manager::where('managing_level', $user->managing_level)->get();
+        foreach($oldManager as $_oldManager){
+            $_oldManager->update(['date_of_leave'=>Carbon::now()]);
+        }
+        $user->update(['date_of_leave'=>null]);
+        return response()->json([
+            'message' =>' تم استرجاع '.$user->first_name
+          ]);
+        return response()->json($_oldManager);
+
+    }
+
 
 
 

@@ -251,7 +251,7 @@ public function refuseOrderDetail(Request $request, $SellingPortOrderId){
 }
 
 public function displayOutputTypes(Request $request){
-    $types = outPut_Type_Production::all();
+    $types = outPut_Type_Production::pluck('type');
     return response()->json($types, 200);
 }
 

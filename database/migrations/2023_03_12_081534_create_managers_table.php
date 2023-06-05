@@ -15,8 +15,9 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->id();
-            $table->enum('managing_level', ['مدير المشتريات والمبيعات', 'المدير التنفيذي', 'منسق حركة الآليات',
-                'مدير الإنتاج', 'آمر القبان', 'مدير المحاسبة المالية', 'مشرف الذبح', 'مشرف التقطيع' ,'مشرف التصنيع', 'مدير قسم المستودعات'
+            $table->enum('managing_level', ['Purchasing-and-Sales-manager', 'ceo', 'Mechanism-Coordinator',
+                'Production_Manager', 'libra-commander', 'Accounting-Manager', 'slaughter_supervisor',
+                 'cutting_supervisor' ,'Manufacturing_Supervisor', 'warehouse_supervisor'
         ]);
             $table->string('first_name');
             $table->string('last_name');

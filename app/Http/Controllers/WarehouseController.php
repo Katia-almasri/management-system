@@ -44,7 +44,7 @@ class WarehouseController extends Controller
                     $result = $this->warehouseService->outputWeightFromLake($_detail, $request['outputChoice']);
                     if($result['status']==false)
                         throw new \ErrorException($result['message']);
-                
+
             }
             DB::commit();
             return response()->json(["status" => true, "message" => "تمت عملية الإخراج بنجاح"]);
@@ -59,7 +59,7 @@ class WarehouseController extends Controller
         $lakes = Lake::with('warehouse.outPut_Type_Production')
                     ->get();
         return response()->json($lakes);
-    } 
+    }
 
     //////////////////// ZERO FRIGE //////////////////////
     public function displayZeroFrigeContent(Request $request){
@@ -76,7 +76,7 @@ class WarehouseController extends Controller
                     $result = $this->warehouseService->outputWeightFromZero($_detail, $request['outputChoice']);
                     if($result['status']==false)
                         throw new \ErrorException($result['message']);
-                
+
             }
             DB::commit();
             return response()->json(["status" => true, "message" => 'تمت عملية الإخراج بنجاح']);
@@ -170,7 +170,7 @@ class WarehouseController extends Controller
     }
 
 
-    
+
 
     /////////////// WAREHOUSE FEATURES ///////////////
 
@@ -184,7 +184,7 @@ class WarehouseController extends Controller
         $validator = Validator::make($request->all(),
         [
             "minimum"=>"numeric",
-            "stockpile" => "numeric"      
+            "stockpile" => "numeric"
         ]);
        if ($validator->fails()) {
            return response()->json(['status'=>false,
@@ -194,7 +194,7 @@ class WarehouseController extends Controller
         $warehouseRow = Warehouse::find($warehouseId);
         $warehouseRow->update(['minimum'=>$request['minimum'], 'stockpile'=>$request['stockpile']]);
         return response()->json(["status" => false, "message" =>'تم التعديل بنجاح']);
-     
+
     }
 
     //////////////////// FILL COMMAND FROM PRODUCTION MAANAGER //////////////////
@@ -218,7 +218,7 @@ class WarehouseController extends Controller
             DB::rollback();
             return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
-       
+
     }
 
     public function displayCommand(Request $request, $commandId){
@@ -238,7 +238,7 @@ class WarehouseController extends Controller
         }])->get();
         return response()->json($lakeMovement);
     }
-    //O    
+    //O
     public function displayLakeOutMov(Request $request){
         $lakeMovement = LakeOutput::with(['lake.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($lakeMovement);
@@ -254,7 +254,7 @@ class WarehouseController extends Controller
         $lakeMovement = ZeroFrigeOutput::with(['zeroFrige.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($lakeMovement);
     }
-    
+
     /////////////////////// DET1 MOVEMENT (I/O) //////////////////
     public function displayDet1InputMov(Request $request){
         $det1Movement = DetonatorFrige1::where('weight', '!=', 0)->with(['warehouse.outPut_Type_Production', 'detonatorFrige1Details.inputable'])->get();
@@ -295,7 +295,7 @@ class WarehouseController extends Controller
     }
     /////////////////// END MOVEMENTS /////////////////////////////////
     public function displayCommands(Request $request){
-        $commands = Command::get();
+        $commands = Command::with('commandDetails.warehouse')->get();
         return response()->json($commands);
     }
 
@@ -303,4 +303,4 @@ class WarehouseController extends Controller
         $wareouseTypes = WarehouseType::get();
         return response()->json($wareouseTypes);
     }
-}   
+}

@@ -105,7 +105,7 @@ class CuttingController extends Controller
 
 
     public function displayCuttingOutputWhereNotOutputable(Request $request){
-        $output = output_cutting_detail::with('outputTypes')->where('outputable_id',0)->get();
+        $output = output_cutting_detail::with('outputTypes')->where('weight','!=',0)->get();
         return response()->json($output, 200);
     }
 }

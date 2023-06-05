@@ -53,7 +53,7 @@ class FarmController extends Controller
                 ->get();
 
         return response()->json($PurchaseOffer);
-        
+
     }
 
     public function SoftDeleteFarm(Request $request, $FarmId)
@@ -217,7 +217,7 @@ class FarmController extends Controller
 
     public function displayRowMaterial(Request $request)
     {
-        $rowMaterial = RowMaterial::get();
+        $rowMaterial = RowMaterial::pluck('name');
         return response()->json($rowMaterial, 200);
     }
     public function displayDetailOffer(Request $request, $offer_id){

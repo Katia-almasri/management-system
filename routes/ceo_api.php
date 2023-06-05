@@ -8,6 +8,8 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\SlaughterSupervisorController;
 use App\Http\Controllers\CuttingController;
 use App\Http\Controllers\ManufacturingController;
+use App\Http\Controllers\ChartController;
+
 
 
 Route::post('login',[CEOController::class, 'CEOLogin'])->name('CEOLogin');
@@ -47,5 +49,13 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
 
     //إضافة مستخدم جديد
     Route::post('add-user',[CEOController::class, 'addUser']);
+
+    Route::get('display-user',[CEOController::class, 'displayUsers']);
+    //استرجاع مستخدم جديد
+    Route::post('restore-user/{userId}',[CEOController::class, 'restorUser']);
+
+    Route::get('count-user',[ChartController::class, 'CountManager']);
+
+
 });
 

@@ -107,7 +107,7 @@ class ManufacturingController extends Controller
     }
 
     public function displayManufacturingOutputWhereNotOutputable(Request $request){
-        $output = OutputManufacturingDetails::with('outputTypes')->where('outputable_id',0)->get();
+        $output = OutputManufacturingDetails::with('outputTypes')->where('weight','!=',0)->get();
         return response()->json($output, 200);
     }
 

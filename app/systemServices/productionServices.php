@@ -67,7 +67,7 @@ class productionServices{
         $warehouse[0]->update([
             'tot_weight' => $warehouse[0]->tot_weight + $weight
         ]);
-        
+
     }
 
     public function insertInInputManufacturing($type_id, $weight, $model, $output_cutting_detail){
@@ -82,7 +82,7 @@ class productionServices{
         $output_cutting_detail->outputable()->associate($inputManufacturing);
         $output_cutting_detail->save();
         //UPDATE output_cutting_detail VALUE
-        $output_cutting_detail->update(['weight'=>$output_cutting_detail->weight - $weight]);
+        // $output_cutting_detail->update(['weight'=>$output_cutting_detail->weight - $weight]);
 
     }
 
@@ -114,7 +114,7 @@ class productionServices{
         else if ($outputChoice == 'براد صفري') {
             $this->insertInZeroFrigeDetail($type_id, $_detail['weight'], 'App\Models\OutputManufacturingDetails', $outputManufactoringDetail);
         }
-        
+
         return (["status" => true, "message" => "تمت عملية الإخراج بنجاح "]);
     }
 
