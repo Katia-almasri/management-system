@@ -15,8 +15,18 @@ return [
         'ceo' => [
             'warehouses' => 'r',
             'invoices' => 'r,u',
-            'profile' => 'c,r,u,d'
+            'profile' => 'c,r,u,d',
+            'output_slaughter' => 'r',
+            'output_cutting' => 'r',
+            'output_manufacturing' => 'r',
+            'content lake' => 'r',
+            'content zero-frige' => 'r',
+            'content det-1' => 'r',
+            'content det-2' => 'r',
+            'content det-3' => 'r',
+            'content store' => 'r'
         ],
+
         'general-manager' => [
             'warehouses' => 'r',
             'invoices' => 'r'
@@ -24,6 +34,7 @@ return [
 
         'Purchasing-and-Sales-manager' => [
             'farms'=>'r,d',
+            'note' =>'r,c',
             'statement after weight'=>'r'
         ],
 
@@ -43,35 +54,48 @@ return [
 
         'Production_Manager' => [
             'commander'=>'r',
-            'note' =>'r',
+            'note' =>'r,c',
             'warehouse' => 'r',
-            'commands for warehouse'=> 'r,d,u,c'
+            'commands for warehouse'=> 'r,d,u,c',
+            'output_slaughter' => 'r',
+            'output_cutting' => 'r',
+            'output_manufacturing' => 'r'
         ],
 
         'slaughter_supervisor' => [
             'commander'=>'r',
-            'warehouse' => 'r'
+            'warehouse' => 'r',
+            'output_slaughter' => 'r,c'
         ],
 
-       
+
 
         'cutting_supervisor' => [
             'input'=>'r',
             'output'=>'c',
             'command' =>'u',
-            'warehouse' => 'r'
+            'warehouse' => 'r',
+            'output_cutting' => 'r,c'
         ],
 
         'Manufacturing_Supervisor' => [
             'input'=>'r',
             'output'=>'c',
             'command' =>'u',
-            'warehouse' => 'r'
+            'warehouse' => 'r',
+            'output_manufacturing' => 'r,c'
         ],
 
         'warehouse_supervisor' => [
             'warehouse'=>'r,d,u,c',
-            'commands for warehouse'=>'r'
+            'commands for warehouse'=>'r',
+            'content lake' => 'r',
+            'content zero-frige' => 'r',
+            'content det-1' => 'r',
+            'content det-2' => 'r',
+            'content det-3' => 'r',
+            'content store' => 'r'
+
 
         ],
 

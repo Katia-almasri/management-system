@@ -12,6 +12,7 @@ use App\Models\PurchaseOffer;
 use App\Models\DetailPurchaseOffer;
 use App\Models\RowMaterial;
 use App\systemServices\notificationServices;
+use App\Models\salesPurchasingRequset;
 
 
 use Auth;
@@ -36,7 +37,8 @@ class FarmController extends Controller
 
     public function displayPurchaseOffers(Request $request)
     {
-        $PurchaseOffer = PurchaseOffer::with('detailpurchaseOrders', 'farm')->orderBy('id', 'DESC')->get();
+        $offer_id = salesPurchasingRequset::pluck('offer_id');
+        $PurchaseOffer = PurchaseOffer::doesnthave('requestSales')->with('detailpurchaseOrders', 'farm')->orderBy('id', 'DESC')->get();
 
         return response()->json($PurchaseOffer, 200);
     }

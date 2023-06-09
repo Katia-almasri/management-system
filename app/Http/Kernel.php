@@ -121,10 +121,15 @@ class Kernel extends HttpKernel
         //today
         'is-warehouse-id-exist' => \App\Http\Middleware\isWarehouseIdExist::class,
         'is-command-id-exist' => \App\Http\Middleware\isCommandIdExist::class,
-        
-        
-        
-
+        'check-read-output-slaughter' => \App\Http\Middleware\checkReadOutputSlaughter::class,
+        'check-read-output-cutting' => \App\Http\Middleware\checkReadOutputCutting::class,
+        'check-read-output-manufacturing' => \App\Http\Middleware\checkReadOutputManufacturing::class,
+        'check-read-content-lake' => \App\Http\Middleware\checkReadContentLake::class,
+        'check-read-content-zero-frige' => \App\Http\Middleware\checkReadContentZeroFrige::class,
+        'check-read-content-det1' => \App\Http\Middleware\checkReadContentDet1::class,
+        'check-read-content-det2' => \App\Http\Middleware\checkReadContentDet2::class,
+        'check-read-content-det3' => \App\Http\Middleware\checkReadContentDet3::class,
+        'check-read-content-store' => \App\Http\Middleware\checkReadContentStore::class,
 
 
 

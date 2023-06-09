@@ -71,7 +71,7 @@ class CEOController extends Controller
     }
 
     public function displayUsers(Request $request){
-        $users = Manager::get(['id','managing_level','first_name','last_name','created_at','date_of_leave']);
+        $users = Manager::get(['id','username','managing_level','first_name','last_name','created_at','date_of_leave']);
         return response()->json($users);
     }
 

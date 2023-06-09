@@ -11,6 +11,8 @@ use App\Http\Controllers\TruckContoller;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ChartController;
+
 
 Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
@@ -62,6 +64,21 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //عداد إشعار استعراض الأوامر
 
         Route::get('count-start-commands-notifs',[SalesPurchasingRequestController::class, 'countStartCommandsNotifs']);
+
+
+        //احصاءات
+        //عدد الشاحنات المتاحة
+        Route::get('count-avaiable-truck',[ChartController::class, 'CountAvaiableTrucks']);
+        //عدد الشاحنات الكلي
+        Route::get('count-trucks',[ChartController::class, 'CountTrucks']);
+        //عدد السائقين الكلي
+        Route::get('count-drivers',[ChartController::class, 'CountDriver']);
+        //عدد السائقين المتاحين
+        Route::get('count-avaiable-drivers',[ChartController::class, 'CountAvaiableDriver']);
+        //شارت للرحلات
+        Route::get('count-trips-chart',[ChartController::class, 'CountTrip']);
+
+
 
     });
 
