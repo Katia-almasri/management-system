@@ -65,6 +65,8 @@ class CEOController extends Controller
         $manager->date_of_hiring = Carbon::now();
         $manager->save();
 
+        $manager->attachRole($request->managing_level);
+
         return response()->json([
             'message' =>' تم إضافة '.$request->managing_level.' جديد'
           ]);

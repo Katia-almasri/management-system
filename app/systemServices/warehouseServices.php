@@ -1021,6 +1021,9 @@ class warehouseServices
         $command_detail = CommandDetail::find($command_detail_id);
         if($_detail['weight']> $command_detail->command_weight)
             return (["status" => false, "message" =>"الوزن المدخل أكبر من الموجود"]);
+        
+        if($_detail['weight'] + $command_detail->cur_weight> $command_detail->command_weight)
+            return (["status" => false, "message" =>"الوزن الحالي سيصبح أكبر من الوزن المطلوب"]);
 
         $to = $command_detail['to'];
         $warehouse = Warehouse::find($command_detail->warehouse_id);
@@ -1055,6 +1058,9 @@ class warehouseServices
             $fillCommand->save();
             //UPDATE COMMAND DETAILS CUR_WEIGHT
             $command_detail->update(['cur_weight'=>$command_detail->cur_weight + $weight, 'from'=>$from]);
+            //check if the cur_weight of the command details == command_weight now (after the addition)
+            if($command_detail->cur_weight == $command_detail->command_weight)
+                $command_detail->update(['is_filled'=>1]);
             //// UPDATE THE COMMAND CUR_WEIGHT
             $command = Command::find($command_detail->command_id);
             $command->update(['cur_weight'=>$command->cur_weight + $weight]);
@@ -1082,6 +1088,7 @@ class warehouseServices
             return (["status" => false, "message" =>"لم يتم إنهاء عملية الإخراج بعد"]);
         
     } 
+
 
 }    
 

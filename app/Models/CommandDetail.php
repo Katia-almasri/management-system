@@ -17,7 +17,8 @@ class CommandDetail extends Model
        'command_weight',
        'cur_weight',
        'from',
-       'to'
+       'to',
+       'is_filled'
     ];
 
     ####################### Begin Relations #######################################

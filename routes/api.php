@@ -20,6 +20,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     //  drop down مواد للشراء
     Route::get('get-row-materials',[Controller::class, 'getRowMaterial']);
 
+     //  drop down ملء أمر إنتاج
+     Route::get('get-production-command',[Controller::class, 'getProductionCommandsDropDown']);
+
     // drop down منتجات للبيع
     Route::get('get-products',[Controller::class, 'getProducts']);
 

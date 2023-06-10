@@ -38,6 +38,18 @@ class WarehouseController extends Controller
     //////////////////////// LAKES //////////////////////////////
     public function inputFromLakeToOutput(Request $request){
 
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
         try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
@@ -70,6 +82,18 @@ class WarehouseController extends Controller
     }
 
     public function inputFromZeroToOutput(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
         try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
@@ -90,6 +114,18 @@ class WarehouseController extends Controller
     //////////////////// DETONATOR 1 ////////////////////////
 
     public function  inputFromDet1ToOutput(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
             try {
                 DB::beginTransaction();
                 foreach ($request->details as $_detail) {
@@ -122,6 +158,18 @@ class WarehouseController extends Controller
     }
 
     public function  inputFromDet2ToOutput(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
         try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
@@ -146,6 +194,19 @@ class WarehouseController extends Controller
     }
 
     public function  inputFromDet3ToOutput(Request $request){
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
         try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
@@ -183,8 +244,8 @@ class WarehouseController extends Controller
 
         $validator = Validator::make($request->all(),
         [
-            "minimum"=>"numeric",
-            "stockpile" => "numeric"
+            "minimum"=>"numeric|gt:0",
+            "stockpile" => "numeric|gt:0"
         ]);
        if ($validator->fails()) {
            return response()->json(['status'=>false,
@@ -199,7 +260,18 @@ class WarehouseController extends Controller
 
     //////////////////// FILL COMMAND FROM PRODUCTION MAANAGER //////////////////
     public function fillCommandFromProductionManager(Request $request, $commandId){
-
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
         $from = $request['from'];
         try {
             DB::beginTransaction();
@@ -222,7 +294,12 @@ class WarehouseController extends Controller
     }
 
     public function displayCommand(Request $request, $commandId){
-        $command = Command::with(['commandDetails.warehouse.outPut_Type_Production'])->find($commandId);
+        $command = Command::whereHas('commandDetails', function($q){
+            $q->where('is_filled', '=', 0);
+        })
+        ->with(['commandDetails'=>function($q){
+            $q->with('warehouse.outPut_Type_Production')->where('is_filled', '=', 0);
+        }])->find($commandId);
         return response()->json($command);
     }
 
@@ -295,7 +372,7 @@ class WarehouseController extends Controller
     }
     /////////////////// END MOVEMENTS /////////////////////////////////
     public function displayCommands(Request $request){
-        $commands = Command::with('commandDetails.warehouse')->get();
+        $commands = Command::where('done', 0)->with('commandDetails.warehouse')->get();
         return response()->json($commands);
     }
 

@@ -135,6 +135,10 @@ class Controller extends BaseController
         return response()->json($directions);
     }
 
+    public function getProductionCommandsDropDown(Request $request){
+        return response()->json(["بحرات", "براد صفري"]);
+    }
+
 
 
 }

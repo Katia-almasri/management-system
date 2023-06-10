@@ -96,7 +96,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         ////////////////////استعراض كافة أسماْ المخازن ///////////////////////
         Route::get('display-warehouses-types',[WarehouseController::class, 'displayWarehousesTypes']);
 
-
+        
     });
 
 
