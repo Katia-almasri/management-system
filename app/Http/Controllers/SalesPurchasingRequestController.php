@@ -54,6 +54,7 @@ class SalesPurchasingRequestController extends Controller
                 $SalesPurchasingRequest->total_amount = $totalAmount['result'];
                 $SalesPurchasingRequest->request_type = $request->request_type; //purchasing from farm_id
                 $SalesPurchasingRequest->accept_by_ceo = 0;
+                $SalesPurchasingRequest->accept_by_sales = 1;
                 $SalesPurchasingRequest->command = 0;
                 if($request->request_type == 1){
                     $SalesPurchasingRequest->selling_port_id = $request->selling_port_id;
