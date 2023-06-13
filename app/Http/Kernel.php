@@ -117,8 +117,6 @@ class Kernel extends HttpKernel
         'is-farm-used' => \App\Http\Middleware\isFarmUsed::class,
         'is-sellingPort-used' => \App\Http\Middleware\isSellingPortUsed::class,
         'check-offer-exist-in-purchase-offer' => \App\Http\Middleware\checkOfferExistInPurchaseOffer::class,
-
-        //today
         'is-warehouse-id-exist' => \App\Http\Middleware\isWarehouseIdExist::class,
         'is-command-id-exist' => \App\Http\Middleware\isCommandIdExist::class,
         'check-read-output-slaughter' => \App\Http\Middleware\checkReadOutputSlaughter::class,
@@ -130,6 +128,17 @@ class Kernel extends HttpKernel
         'check-read-content-det2' => \App\Http\Middleware\checkReadContentDet2::class,
         'check-read-content-det3' => \App\Http\Middleware\checkReadContentDet3::class,
         'check-read-content-store' => \App\Http\Middleware\checkReadContentStore::class,
+
+        //today
+        'is-weight-under-minimum-in-lakes' => \App\Http\Middleware\isWeightUnderMinimumInLakes::class,
+        'is-weight-under-minimum-in-zero-friges' => \App\Http\Middleware\isWeightUnderMinimumInZeroFriges::class,
+        'is-weight-under-minimum-in-det-1' => \App\Http\Middleware\isWeightUnderMinimumInDet1::class,
+        'is-weight-under-minimum-in-det-2' => \App\Http\Middleware\isWeightUnderMinimumInDet2::class,
+        'is-weight-under-minimum-in-det-3' => \App\Http\Middleware\isWeightUnderMinimumInDet3::class,
+        'is-weight-under-minimum-in-warehouses' => \App\Http\Middleware\isWeightUnderMinimumInWarehouse::class,
+        
+        
+        
 
 
 

@@ -40,7 +40,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
 
         //////////////////// أوامر مدير الإنتاج لمشرف المحازن
-        Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse']);
+        Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse'])->middleware('is-weight-under-minimum-in-warehouses');
         // Route::get('display-warehouse',[ProductionController::class, 'displayWarehouse']);
         Route::get('display-command-warehouse',[ProductionController::class, 'displayCommandsWarehousToProduction']);
 

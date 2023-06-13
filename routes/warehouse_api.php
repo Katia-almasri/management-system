@@ -9,22 +9,21 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
     Route::group( ['middleware' => 'is-warehouse-supervisor'] ,function(){
 
+
         // إخراج من البحرات
-        Route::post('set-from-lake-to-output',[WarehouseController::class, 'inputFromLakeToOutput']);
+        Route::post('set-from-lake-to-output',[WarehouseController::class, 'inputFromLakeToOutput'])->middleware('is-weight-under-minimum-in-lakes');
 
         // إخراج من البراد الصفري
-        Route::post('set-from-zero-to-output',[WarehouseController::class, 'inputFromZeroToOutput']);
+        Route::post('set-from-zero-to-output',[WarehouseController::class, 'inputFromZeroToOutput'])->middleware('is-weight-under-minimum-in-zero-friges');
 
         // إخراج من الصاعق 1
-        Route::post('set-from-det-1-to-output',[WarehouseController::class, 'inputFromDet1ToOutput']);
+        Route::post('set-from-det-1-to-output',[WarehouseController::class, 'inputFromDet1ToOutput'])->middleware('is-weight-under-minimum-in-det-1');
 
         // إخراج من الصاعق 2
-        Route::post('set-from-det-2-to-output',[WarehouseController::class, 'inputFromDet2ToOutput']);
+        Route::post('set-from-det-2-to-output',[WarehouseController::class, 'inputFromDet2ToOutput'])->middleware('is-weight-under-minimum-in-det-2');
 
         // إخراج من الصاعق 3
-        Route::post('set-from-det-3-to-output',[WarehouseController::class, 'inputFromDet3ToOutput']);
-
-
+        Route::post('set-from-det-3-to-output',[WarehouseController::class, 'inputFromDet3ToOutput'])->middleware('is-weight-under-minimum-in-det-3');
 
         Route::group( ['middleware' => 'is-warehouse-id-exist'] ,function(){
                     // استعراض تفاصيل مادة معينة في المخزن
