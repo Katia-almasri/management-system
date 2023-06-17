@@ -9,6 +9,8 @@ use App\Http\Controllers\SalesPurchasingRequestController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ChartSalesController;
+
 
 Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
@@ -17,7 +19,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('get-farms',[FarmController::class, 'displayFarms']);
         Route::get('get-purchase-offer',[FarmController::class, 'displayPurchaseOffers']);
         Route::get('get-purchase-offer-last-48h',[FarmController::class, 'displayPurchaseOffersLast48H']);
-        
+
         //////////////Selling Port////////////////
         Route::get('get-selling-port',[SellingPortController::class, 'displaySellingPort']);
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
@@ -85,7 +87,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-contract-request-detail/{contractId}',[ContractController::class, 'getContractRequestDetail']);
         //استعراض تفاصيل عرض
         Route::get('get-detail-for-purchase-offer/{offerId}',[FarmController::class, 'displayDetailOffer'])->middleware('check-offer-exist-in-purchase-offer');
-        
+
         //تأكيد طلب من العروض
         Route::post('confirm_offer/{offerId}',[SalesPurchasingRequestController::class, 'requestFromOffer'])->middleware('check-offer-exist-in-purchase-offer');
 
@@ -115,6 +117,21 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('monthly-offer-report',[SalesPurchasingRequestController::class, 'MonthlyReportOffer']);
         Route::get('yearly-offer-report',[SalesPurchasingRequestController::class, 'yearlyReportOffer']);
 
+        /// dashboard
+
+        ///////////////////////عدد المزارع/////////////////////
+        Route::get('count-farm',[ChartSalesController::class, 'CountFarm']);
+        //////////////////////عدد منافذ البيع
+        Route::get('count-sellingport',[ChartSalesController::class, 'CountSellingPort']);
+        ///////////////////////عدد عمليات الشراء///////////////////////////
+        Route::get('chart-purchase',[ChartSalesController::class, 'ChartPurchase']);
+        ///////////////////////عدد عمليات المبيع///////////////////////////
+        Route::get('chart-sales',[ChartSalesController::class, 'ChartSales']);
+
+        //افضل  مزارع
+        Route::get('sort_farm',[ChartSalesController::class, 'sortByTheBestFarm']);
+        //افضل  منافذ بيع
+        Route::get('sort_selling_port',[ChartSalesController::class, 'sortByTheBestSellingPort']);
 
     });
 
