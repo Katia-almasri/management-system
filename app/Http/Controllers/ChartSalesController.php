@@ -67,7 +67,13 @@ class ChartSalesController extends Controller
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','ASC')
                     ->pluck('count', 'month_name');
-        return response()->json($CountPurchase);
+        $labels = $CountPurchase->keys();
+        $data = $CountPurchase->values();
+        return response()->json([
+
+            'labels' => $labels,
+            'data' => $data,
+    ]);
     }
 
     public function ChartSales(Request $request)
@@ -78,7 +84,14 @@ class ChartSalesController extends Controller
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','ASC')
                     ->pluck('count', 'month_name');
-        return response()->json($CountSales);
+        $labels = $CountSales->keys();
+        $data = $CountSales->values();
+        return response()->json([
+
+            'labels' => $labels,
+            'data' => $data,
+    ]);
+
     }
 
     public function sortByTheBestFarm(Request $request){
