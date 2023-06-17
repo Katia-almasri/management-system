@@ -66,9 +66,29 @@ class CEOController extends Controller
         $manager->save();
 
         $manager->attachRole($request->managing_level);
-
+        //discuss managing level in arabic
+        $managing_name_arabic = '';
+        if($request->managing_level=='Purchasing-and-Sales-manager')
+            $managing_name_arabic = 'مدير مشتريات ومبيعات';
+        if($request->managing_level=='ceo')
+            $managing_name_arabic = 'مدير تنفيذي';
+        if($request->managing_level=='Mechanism-Coordinator')
+            $managing_name_arabic = 'منسق حركة آليات';
+        if($request->managing_level=='Production_Manager')
+            $managing_name_arabic = 'مدير إنتاج';
+        if($request->managing_level=='libra-commander')
+            $managing_name_arabic = 'آمر قبان';
+        if($request->managing_level=='slaughter_supervisor')
+            $managing_name_arabic = 'مشرف ذبح';
+        if($request->managing_level=='cutting_supervisor')
+            $managing_name_arabic = 'مشرف تقطيع';
+        if($request->managing_level=='Manufacturing_Supervisor')
+            $managing_name_arabic = 'مشرف تصنيع';
+        if($request->managing_level=='warehouse_supervisor')
+            $managing_name_arabic = 'مشرف مخازن';
+            
         return response()->json([
-            'message' =>' تم إضافة '.$request->managing_level.' جديد'
+            'message' =>' تم إضافة '.$managing_name_arabic.' جديد'
           ]);
     }
 

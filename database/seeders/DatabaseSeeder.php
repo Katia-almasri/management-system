@@ -40,9 +40,30 @@ class DatabaseSeeder extends Seeder
         $this->call(Det3TableSeeder::class);
         $this->call(StoreTableSeeder::class);
         $this->call(DirectionTableSeeder::class);
-        
-        //today
         $this->call(WarehouseTypesTableSeed::class);
+
+        //today
+        $this->call(OuputCuttingSeeder::class);
+        $this->call(OuputCuttingDetailsSeeder::class);
+
+        $this->call(OuputManufactoringSeeder::class);
+        $this->call(OuputManufactoringDetailsSeeder::class);
+
+        $this->call(OuputSlaughterSeeder::class);
+        $this->call(OuputSlaughterDetailsSeeder::class);
+
+        $this->call(LakeDetailSeeder::class);
+        $this->call(LakeOutputSeeder::class);
+
+        
+        $this->call(ZeroDetailSeeder::class);
+        $this->call(ZeroOutputSeeder::class);
+
+        
+        
+
+        
+
         
         
         
