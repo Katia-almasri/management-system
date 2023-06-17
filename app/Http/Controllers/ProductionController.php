@@ -201,6 +201,14 @@ class ProductionController extends Controller
 
     }
 
+    public function dropDownProducationManager(Request $request){
+        return response()->json(["التقطيع", "تصنيع"]);
+    }
+
+    public function dropDownProducationManagerBySection(Request $request){
+        return response()->json(['قسم الذبح', 'قسم التقطيع', 'قسم التصنيع']);
+    }
+
     public function displayCommandsToWarehouse(Request $request){
         $commands = Command::with('commandDetails.warehouse.outPut_Type_Production')->where('done', '=', 0)->get();
         return response()->json($commands, 200);

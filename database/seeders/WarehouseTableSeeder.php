@@ -17,31 +17,31 @@ class WarehouseTableSeeder extends Seeder
         Warehouse::create([
 
             'type_id'=>1,
-            'tot_weight'=>0
+            'tot_weight'=>200
         ]);
 
         Warehouse::create([
 
             'type_id'=>2,
-            'tot_weight'=>0
+            'tot_weight'=>200
         ]);
 
         Warehouse::create([
 
             'type_id'=>3,
-            'tot_weight'=>0  
+            'tot_weight'=>200
         ]);
 
         Warehouse::create([
 
             'type_id'=>4,
-            'tot_weight'=>0  
+            'tot_weight'=>200
         ]);
 
         Warehouse::create([
 
             'type_id'=>5,
-            'tot_weight'=>0
+            'tot_weight'=>200
         ]);
     }
 }
