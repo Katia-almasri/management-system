@@ -19,6 +19,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('command-directTo-bahra',[SlaughterSupervisorController::class, 'commandDirectToBahra'])
         ->middleware('is-exist-id-to-direct-bahra');
 
+        Route::get('display-inputs',[SlaughterSupervisorController::class, 'displayInputs']);
 
 
     });

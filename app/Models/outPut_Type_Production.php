@@ -48,7 +48,7 @@ class outPut_Type_Production extends Model
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)
