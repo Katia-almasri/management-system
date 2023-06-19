@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Trip;
 use App\systemServices\notificationServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\PoultryRecieptDetectionRequest;
@@ -34,8 +35,11 @@ class LibraController extends Controller
     {
         try {
             $finalResult = $this->poultryDetectionRequestService->storePoultryDetectionRequest($request, $trip_id);
-            if ($finalResult['status'] == true)
+            if ($finalResult['status'] == true){
+                Trip::where('id', $trip_id)->update(['status'=>'تم الاستلام']);
                 return ["status" => true, "message" => "تم إضافة الكشف بنجاح"];
+            }
+                
             else
                 throw new \ErrorException($finalResult['message']);
 

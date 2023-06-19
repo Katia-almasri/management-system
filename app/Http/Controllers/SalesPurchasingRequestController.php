@@ -116,7 +116,7 @@ class SalesPurchasingRequestController extends Controller
         $newNotification->title = 'أمر جديد لمنسق حركة الآليات';
         $newNotification->route = 'http://127.0.0.1:8000//sales-api//command-for-mechanism//2';
         $newNotification->act_id = $RequestId;
-        $newNotification->details = $RequestId.' تم إعطاْ أمر جديد للشحنة';
+        $newNotification->details = $RequestId.' تم إعطاء أمر جديد للشحنة';
         $newNotification->is_seen = 0;
         $newNotification->save();
 
@@ -344,7 +344,7 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayAcceptByCEO(Request $request){
         $requests = salesPurchasingRequset::with('sellingPort', 'farm', 'salesPurchasingRequsetDetail')
-                                            ->where('accept_by_ceo', '=', 1)->orderBy('id', 'DESC')->get();
+                                            ->where([['accept_by_ceo', '=', 1]])->orderBy('id', 'DESC')->get();
         return response()->json($requests, 200);
     }
 }

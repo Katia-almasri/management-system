@@ -50,7 +50,7 @@ class WarehouseController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        try {
+        // try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
                     $result = $this->warehouseService->outputWeightFromLake($_detail, $request['outputChoice']);
@@ -60,10 +60,11 @@ class WarehouseController extends Controller
             }
             DB::commit();
             return response()->json(["status" => true, "message" => "تمت عملية الإخراج بنجاح"]);
-    }catch (\Exception $exception) {
-        DB::rollback();
-        return response()->json(["status" => false, "message" => $exception->getMessage()]);
-    }
+            
+    // }catch (\Exception $exception) {
+    //     DB::rollback();
+    //     return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    // }
 
     }
 

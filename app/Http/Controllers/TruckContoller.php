@@ -77,5 +77,13 @@ class TruckContoller extends Controller
         return response()->json($TruckTrashed, 200);
     }
 
+    public function getTruckStates(Request $request){
+        return response()->json(["متاحة", "في الرحلة", "في الصيانة"]);
+    }
+
+    public function getDriverStates(Request $request){
+        return response()->json(["متاح", "في الرحلة", "إجازة", "دوام"]);
+    }
+
 
 }
