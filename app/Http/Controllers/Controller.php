@@ -8,6 +8,7 @@ use App\Models\product;
 use App\Models\RowMaterial;
 use App\Models\sellingortype;
 use App\Models\Warehouse;
+use App\Models\outPut_Type_Production;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -64,7 +65,7 @@ class Controller extends BaseController
     }
 
     public function getProducts(Request $request){
-        $products = product::get();
+        $products = outPut_Type_Production::get();
         return response()->json($products);
     }
 

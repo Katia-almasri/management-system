@@ -100,10 +100,10 @@ class ChartSalesController extends Controller
             $query->select('id','name');
         }])->groupBy('farm_id')
         ->whereMonth('created_at', Carbon::now()->month)
-        ->selectRaw( ' farm_id,count(*) as total')
+        ->selectRaw( 'farm_id,count(*) as total')
         ->where('farm_id','!=',null)
         ->orderBy('total','desc')
-        ->get();
+        ->limit(3)->get();
         return response()->json($purchaseRequest);
     }
 
@@ -116,7 +116,7 @@ class ChartSalesController extends Controller
         ->selectRaw( 'selling_port_id,count(*) as total')
         ->where('selling_port_id','!=',null)
         ->orderBy('total','desc')
-        ->get();
+        ->limit(3)->get();
         return response()->json($salesRequest);
     }
 
