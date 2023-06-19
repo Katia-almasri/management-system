@@ -25,10 +25,17 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::group( ['middleware' => 'is-truck-exist'] ,function(){
             /////////////تعديل حالة شاحنة
             Route::post('update-state/{TruckId}',[TruckContoller::class, 'UpdateTruckState']);
+            
             //حذف شاحنة
             Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck'])->middleware('is-truck-used');
 
         });
+        // حالة شاحنات drop down
+        Route::get('drop-down-truck-state',[TruckContoller::class, 'getTruckStates']);
+
+        // حالة سائق drop down
+        Route::get('drop-down-driver-state',[TruckContoller::class, 'getDriverStates']);
+
         //استرجاع شاحنة محذوفة
         Route::post('restore-truck/{TruckId}',[TruckContoller::class, 'restoreTruck'])->middleware('is-deleted-truck-exist');
         //عرض الشاحنات المحذوفة
