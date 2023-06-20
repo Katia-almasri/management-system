@@ -36,7 +36,7 @@ class poultryDetectionRequestServices
             $netWeight = $tot_weight - $empty;
 
             if ($netWeight < 0 || $netWeight > $tot_weight)  //tot_weight - net_weight if more than percentage (check)
-                throw new \ErrorException('خطأ في الإدخال');
+                throw new \ErrorException('/////////////خطأ في الإدخال');
             //2. cage weight > num(cage_weight + max(bird_wieght)*num_bird)
 
             //1. STORE THE DETECTION

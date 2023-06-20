@@ -22,7 +22,7 @@ class TripController extends Controller
 
 
     public function displayCommandSalesPurchasing(Request $request){
-        $findCommand = salesPurchasingRequset::with('salesPurchasingRequsetDetail','farm','sellingPort')
+        $findCommand = salesPurchasingRequset::doesnthave('trips')->with('salesPurchasingRequsetDetail','farm','sellingPort')
         ->where('command',1)->get();
         return response()->json($findCommand, 200);
     }

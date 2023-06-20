@@ -39,7 +39,7 @@ class LibraController extends Controller
                 Trip::where('id', $trip_id)->update(['status'=>'تم الاستلام']);
                 return ["status" => true, "message" => "تم إضافة الكشف بنجاح"];
             }
-                
+
             else
                 throw new \ErrorException($finalResult['message']);
 
