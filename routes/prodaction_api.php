@@ -47,7 +47,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('drop-down-production-manager-by-section',[ProductionController::class, 'dropDownProducationManagerBySection']);
 
 
-        Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse'])->middleware('is-weight-under-minimum-in-warehouses');
+        Route::Post('add-command-to-warehouse',[ProductionController::class, 'addCommandToWarehouse']);
         // Route::get('display-warehouse',[ProductionController::class, 'displayWarehouse']);
         Route::get('display-command-warehouse',[ProductionController::class, 'displayCommandsWarehousToProduction']);
 
