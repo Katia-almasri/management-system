@@ -27,8 +27,9 @@ class SalesPurchasingRequest extends FormRequest
             "request_type"=>"required",
             "details.*.amount" => "required|numeric",
             "details.*.type" => "required",
-            "farm_id"=> "required_if:request_type,==,0",
-            "selling_port_id"=> "required_if:request_type,==,1",
+            // "selling_port_id"=> "required_if:request_type,==,1",
+            // "farm_id"=> "required_if:request_type,==,0",
+
 
         ];
     }
@@ -41,8 +42,8 @@ class SalesPurchasingRequest extends FormRequest
            'details.*.amount.required'=>'يجب تعبئة جميع كميات تفاصيل طلب الشراء أو المبيع',
            'details.*.amount.numeric'=>'يجب أن تكون جميع كميات تفاصيل طلب الشراء أو المبيع عبارة عن تفاصيل رقمية',
            'details.*.type.required'=>'يجب تعبئة جميع أنواع المنتجات في تفاصيل طلب الشراء أو المبيع',
-           'farm_id.required_if'=>'هذا الطلب هو طلب شراء، لذلك يجب إدخال المزرعة المناسبة',
-           'selling_port_id.required_if'=>'هذا الطلب هو طلب مبيع لذلك يجب إدخال منفذ البيع المناسب',
+        //    'farm_id.required_if'=>'هذا الطلب هو طلب شراء، لذلك يجب إدخال المزرعة المناسبة',
+        //    'selling_port_id.required_if'=>'هذا الطلب هو طلب مبيع لذلك يجب إدخال منفذ البيع المناسب',
         ];
     }
 }

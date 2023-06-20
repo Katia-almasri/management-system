@@ -47,7 +47,6 @@ class SalesPurchasingRequestController extends Controller
     public function AddRequsetSalesPurchasing(SalesPurchasingRequest $request){
 
               $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
-
                 $SalesPurchasingRequest = new salesPurchasingRequset();
                 $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
                 $SalesPurchasingRequest->ceo_id = Manager::where('managing_level', 'ceo')->get()->last()->id;
