@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Direction;
+use App\Models\WarehouseType;
+
 use App\Models\PoultryReceiptDetection;
 use App\Models\product;
 use App\Models\RowMaterial;
@@ -137,7 +139,8 @@ class Controller extends BaseController
     }
 
     public function getProductionCommandsDropDown(Request $request){
-        return response()->json(["بحرات", "براد صفري"]);
+        $warehouType  = WarehouseType::limit(2)->get();
+        return response()->json($warehouType);
     }
 
 

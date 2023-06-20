@@ -373,7 +373,7 @@ class WarehouseController extends Controller
     }
     /////////////////// END MOVEMENTS /////////////////////////////////
     public function displayCommands(Request $request){
-        $commands = Command::where('done', 0)->with('commandDetails.warehouse')->get();
+        $commands = Command::where('done', 0)->with('commandDetails.warehouse.outPut_Type_Production')->get();
         return response()->json($commands);
     }
 
