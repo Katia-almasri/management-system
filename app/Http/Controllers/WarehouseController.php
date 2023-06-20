@@ -50,7 +50,7 @@ class WarehouseController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        try {
+        // try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
                     $result = $this->warehouseService->outputWeightFromLake($_detail, $request['outputChoice']);
@@ -61,22 +61,22 @@ class WarehouseController extends Controller
             DB::commit();
             return response()->json(["status" => true, "message" => "تمت عملية الإخراج بنجاح"]);
 
-    }catch (\Exception $exception) {
-        DB::rollback();
-        return response()->json(["status" => false, "message" => $exception->getMessage()]);
-    }
+    // }catch (\Exception $exception) {
+    //     DB::rollback();
+    //     return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    // }
 
     }
 
     public function displayLakeContent(Request $request){
-        $lakes = Lake::with('warehouse.outPut_Type_Production')
+        $lakes = Lake::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
                     ->get();
         return response()->json($lakes);
     }
 
     //////////////////// ZERO FRIGE //////////////////////
     public function displayZeroFrigeContent(Request $request){
-        $zeroFriges = ZeroFrige::with('warehouse.outPut_Type_Production')
+        $zeroFriges = ZeroFrige::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
         ->get();
         return response()->json($zeroFriges);
 
@@ -143,7 +143,7 @@ class WarehouseController extends Controller
     }
 
     public function displayDetonatorFrige1Content(){
-        $detonatorFrige1 = DetonatorFrige1::with('warehouse.outPut_Type_Production')
+        $detonatorFrige1 = DetonatorFrige1::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
         ->get();
         return response()->json($detonatorFrige1);
 
@@ -152,7 +152,7 @@ class WarehouseController extends Controller
     ///////////////////// DETONATOR 2 ////////////////////
 
     public function displayDetonatorFrige2Content(){
-        $detonatorFrige2 = DetonatorFrige2::with('warehouse.outPut_Type_Production')
+        $detonatorFrige2 = DetonatorFrige2::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
         ->get();
         return response()->json($detonatorFrige2);
 
@@ -188,7 +188,7 @@ class WarehouseController extends Controller
 
 ////////////////////////// DETONATOR 3 ///////////////////////
     public function displayDetonatorFrige3Content(){
-        $detonatorFrige3 = DetonatorFrige3::with('warehouse.outPut_Type_Production')
+        $detonatorFrige3 = DetonatorFrige3::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
         ->get();
         return response()->json($detonatorFrige3);
 
@@ -225,7 +225,7 @@ class WarehouseController extends Controller
 
     /////////////////// STORE CONTENT /////////////////////////
     public function displayStoreContent(){
-        $store = Store::with('warehouse.outPut_Type_Production')
+        $store = Store::where('weight', '!=', 0)->with('warehouse.outPut_Type_Production')
         ->get();
         return response()->json($store);
 
@@ -305,7 +305,7 @@ class WarehouseController extends Controller
     }
 
     public function displayWarehouseContentWithDetails(Request $request){
-        $warehouse = Warehouse::with(['outPut_Type_Production', 'zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
+        $warehouse = Warehouse::where('tot_weight', '!=', 0)->with(['outPut_Type_Production', 'zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
         return response()->json($warehouse);
     }
     /////////////////////// LAKE MOVEMENT (I/O) //////////////////
