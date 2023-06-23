@@ -93,7 +93,8 @@ class SlaughterSupervisorController extends Controller
     }
 
     public function displayOutputSlaughter(Request $request){
-        $output = outPut_SlaughterSupervisor_detail::with('productionTypeOutPut')->orderBy('id', 'DESC')->get();
+        $output = outPut_SlaughterSupervisor_detail::with('productionTypeOutPut')->orderBy('id', 'DESC')
+        ->orderby('id','desc')->get();
         return response()->json($output, 200);
     }
 }

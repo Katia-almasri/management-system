@@ -210,7 +210,9 @@ class ProductionController extends Controller
     }
 
     public function displayCommandsToWarehouse(Request $request){
-        $commands = Command::with('commandDetails.warehouse.outPut_Type_Production')->where('done', '=', 0)->get();
+        $commands = Command::with('commandDetails.warehouse.outPut_Type_Production')->where('done', '=', 0)
+        ->orderby('id','desc')
+        ->get();
         return response()->json($commands, 200);
     }
 

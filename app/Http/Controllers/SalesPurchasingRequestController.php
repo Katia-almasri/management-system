@@ -161,7 +161,7 @@ class SalesPurchasingRequestController extends Controller
 
     public function displaySalesPurchasingRequestFromCeo(Request $request){
         $displayRequests = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
-        ->where([['accept_by_sales',1],['accept_by_ceo',null]])->get();
+        ->where([['accept_by_sales',1],['accept_by_ceo',null]])->orderby('id','desc')->get();
         return response()->json($displayRequests, 200);
     }
 
