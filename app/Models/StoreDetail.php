@@ -21,7 +21,8 @@ class StoreDetail extends Model
        'date_of_destruction',
        'expiration_date',
        'output_slaughter_detail_id',
-       'input_from'
+       'input_from',
+       'cur_output_weight'
     ];
 
     ############################## Begin Relations #############################

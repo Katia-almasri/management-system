@@ -20,7 +20,8 @@ class DetonatorFrige2Detail extends Model
        'cur_amount',
        'date_of_destruction',
        'expiration_date',
-       'input_from'  
+       'input_from',
+       'cur_output_weight'
     ];
 
     ############################## Begin Relations #############################

@@ -99,7 +99,7 @@ class Controller extends BaseController
     }
 
     public function displayWarehouseContent(Request $request){
-        $warehouseContent = Warehouse::where('tot_weight', '!=', 0)->with('outPut_Type_Production')->get();
+        $warehouseContent = Warehouse::where([['tot_weight', '!=', 0], ['tot_weight', '!=', null]])->with('outPut_Type_Production')->get();
         return response()->json($warehouseContent);
     }
     ///////////////////// drop down //////////////////////

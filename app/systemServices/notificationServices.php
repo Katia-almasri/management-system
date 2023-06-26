@@ -64,4 +64,10 @@ class notificationServices
 
     }
 
+    public function addOutputExpiredNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('add-output-to-expiration-warehouse-notification', 'App\\Events\\addOutputToExpirationWarehouseNotification', $data);
+
+    }
+
 }

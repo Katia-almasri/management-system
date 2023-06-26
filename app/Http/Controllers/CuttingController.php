@@ -82,7 +82,7 @@ class CuttingController extends Controller
     /////////////////////////////////// katia //////////////////////
     public function directCuttingTo(Request $request)
     {
-        try {
+        // try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
                 $result = $this->productionService->outputWeightFromCutting($_detail, $request['outputChoice']);
@@ -92,10 +92,10 @@ class CuttingController extends Controller
             }
             DB::commit();
             return response()->json(["status" => true, "message" => $result['message']]);
-        } catch (\Exception $exception) {
-            DB::rollback();
-            return response()->json(["status" => false, "message" => $exception->getMessage()]);
-        }
+        // } catch (\Exception $exception) {
+        //     DB::rollback();
+        //     return response()->json(["status" => false, "message" => $exception->getMessage()]);
+        // }
     }
 
     public function displayTypeCuttingOutput(Request $request){

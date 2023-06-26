@@ -34,6 +34,7 @@ class productionServices{
             return (["status" => false, "message" => "الوزن المدخل أكبر من الموجود"]);
         }
         $output_cutting_detail->update(['weight'=>$weight - $_detail['weight']]);
+
         if($outputChoice=='براد صفري'){
             $this->insertInZeroFrigeDetail($type_id, $_detail['weight'], 'App\Models\output_cutting_detail', $output_cutting_detail);
         }
@@ -45,7 +46,7 @@ class productionServices{
 
     public function insertInZeroFrigeDetail($type_id, $weight, $model, $output_x_detail){
         $warehouse = Warehouse::where('type_id', $type_id)->get();
-        $zeroFrige = ZeroFrige::where('warehouse_id', $warehouse[0]->id)->get()->first();
+        $zeroFrige = ZeroFrige::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouse[0]->id)->get()->first();
         /////////////// INSERT NEW ROW IN ZERO FRIGE DETAIL ///////////////////
         $zeroFrigeDetail = new ZeroFrigeDetail();
         $zeroFrigeDetail->zero_frige_id = $zeroFrige->id;
@@ -54,6 +55,7 @@ class productionServices{
         $zeroFrigeDetail->inputable_type = $model;
         $zeroFrigeDetail->inputable_id = $output_x_detail->id;
         $zeroFrigeDetail->input_from = 'الإنتاج';
+        $zeroFrigeDetail->expiration_date = Carbon::now()->addDays($zeroFrige->warehouse->outPut_Type_Production->num_expiration_days);
         $zeroFrigeDetail->save();
 
         /////////////// UPDATE INPUTABLE ID AND TYPE IN output_cutting_detail
@@ -120,7 +122,7 @@ class productionServices{
 
     public function insertInDetonatorFrige1Detail($type_id, $weight, $model, $outputManufactoringDetail){
         $warehouse = Warehouse::where('type_id', $type_id)->get()->first();
-        $detonatorFrige1 = DetonatorFrige1::where('warehouse_id', $warehouse->id)->get()->first();
+        $detonatorFrige1 = DetonatorFrige1::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouse->id)->get()->first();
         /////////////// INSERT NEW ROW IN ZERO FRIGE DETAIL ///////////////////
         $detonatorFrige1Detail = new DetonatorFrige1Detail();
         $detonatorFrige1Detail->detonator_frige_1_id = $detonatorFrige1->id;
@@ -129,6 +131,7 @@ class productionServices{
         $detonatorFrige1Detail->inputable_type = $model;
         $detonatorFrige1Detail->inputable_id = $outputManufactoringDetail->id;
         $detonatorFrige1Detail->input_from = 'الإنتاج';
+        $detonatorFrige1Detail->expiration_date = Carbon::now()->addDays($detonatorFrige1->warehouse->outPut_Type_Production->num_expiration_days);
         $detonatorFrige1Detail->save();
 
         /////////////// UPDATE INPUTABLE ID AND TYPE IN outputManufactoringDetail
@@ -147,7 +150,7 @@ class productionServices{
 
     public function insertInDetonatorFrige2Detail($type_id, $weight, $model, $outputManufactoringDetail){
         $warehouse = Warehouse::where('type_id', $type_id)->get()->first();
-        $detonatorFrige2 = DetonatorFrige2::where('warehouse_id', $warehouse->id)->get()->first();
+        $detonatorFrige2 = DetonatorFrige2::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouse->id)->get()->first();
         /////////////// INSERT NEW ROW IN ZERO FRIGE DETAIL ///////////////////
         $detonatorFrige2Detail = new DetonatorFrige2Detail();
         $detonatorFrige2Detail->detonator_frige_2_id = $detonatorFrige2->id;
@@ -156,6 +159,7 @@ class productionServices{
         $detonatorFrige2Detail->inputable_type = $model;
         $detonatorFrige2Detail->inputable_id = $outputManufactoringDetail->id;
         $detonatorFrige2Detail->input_from = 'الإنتاج';
+        $detonatorFrige2Detail->expiration_date = Carbon::now()->addDays($detonatorFrige2->warehouse->outPut_Type_Production->num_expiration_days);
         $detonatorFrige2Detail->save();
 
         /////////////// UPDATE INPUTABLE ID AND TYPE IN outputManufactoringDetail
@@ -172,7 +176,7 @@ class productionServices{
 
     public function insertInDetonatorFrige3Detail($type_id, $weight, $model, $outputManufactoringDetail){
         $warehouse = Warehouse::where('type_id', $type_id)->get()->first();
-        $detonatorFrige3 = DetonatorFrige3::where('warehouse_id', $warehouse->id)->get()->first();
+        $detonatorFrige3 = DetonatorFrige3::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouse->id)->get()->first();
         /////////////// INSERT NEW ROW IN ZERO FRIGE DETAIL ///////////////////
         $detonatorFrige3Detail = new DetonatorFrige3Detail();
         $detonatorFrige3Detail->detonator_frige_3_id = $detonatorFrige3->id;
@@ -181,6 +185,7 @@ class productionServices{
         $detonatorFrige3Detail->inputable_type = $model;
         $detonatorFrige3Detail->inputable_id = $outputManufactoringDetail->id;
         $detonatorFrige3Detail->input_from = 'الإنتاج';
+        $detonatorFrige3Detail->expiration_date = Carbon::now()->addDays($detonatorFrige3->warehouse->outPut_Type_Production->num_expiration_days);
         $detonatorFrige3Detail->save();
 
         /////////////// UPDATE INPUTABLE ID AND TYPE IN outputManufactoringDetail

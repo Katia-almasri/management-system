@@ -31,7 +31,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         // تعديل معلومات مادة في مخزن
         Route::post('edit-warehouse-row-info/{warehouseId}',[WarehouseController::class, 'editWarehouseRowInfo']);
-
+        
         });
 
         ///////////////////////display //////////////////
@@ -94,7 +94,43 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         ////////////////////استعراض كافة أسماْ المخازن ///////////////////////
         Route::get('display-warehouses-types',[WarehouseController::class, 'displayWarehousesTypes']);
+        /////// NOTIFICATION PART ////////////////////////////
+        //استعراض إشعارات المواد المخرجة إلى الإتلاف
+        Route::get('display-expiration-notification',[WarehouseController::class, 'displayExpirationNotification']);
+        // استعراض جميع عمليات المواد المخرجة إلى الإتلاف
+        Route::get('display-all-output-expiration',[WarehouseController::class, 'displayAlloutputExpiration']);
+        // استعراض فقط إشعارات الخرج إلى مستودع الإتلاف التي لم يتم إدخالها إلى المتودع بعد
+        Route::get('get-not-input-detructed-types',[WarehouseController::class, 'getNotInputDestructedTypes']);
+        //أستعراض تفاصيل مادة سوف تدخل إلى مستودع الإتلاف
+        Route::get('display-output-expired-detail/{notification_id}',[WarehouseController::class, 'displayOutputExpiredDetail']);
+        //ملء إدخال مادة متلفة إلى مستودع الإتلاف
+        Route::post('fill-output-expiration/{notification_id}',[WarehouseController::class, 'fillInputExpiration']);
 
+        //استعراض محتويات مستودع الإتلاف
+        Route::get('display-expiration-warehouse',[WarehouseController::class, 'displayExpirationWarehouse']);
+
+        /////////////////////////////////////// DESTRUCTION PART //////////////(إتلاف)
+        //إتلاف من مستودع البحرات
+        Route::post('destruct-from-lake-details/{lake_detail_id}',[WarehouseController::class, 'destructFromLakeDetails']);
+
+        //إتلاف من مستودع البراد الصفري
+        Route::post('destruct-from-zero-frige-details/{zero_frige_detail_id}',[WarehouseController::class, 'destructFromZeroFrigeDetails']);
+
+        //إتلاف من مستودع الصاعقة 1
+        Route::post('destruct-from-det1-frige-details/{det1_frige_detail_id}',[WarehouseController::class, 'destructFromDet1FrigeDetails']);
+
+        //إتلاف من مستودع الصاعقة 2
+        Route::post('destruct-from-det2-frige-details/{det2_frige_detail_id}',[WarehouseController::class, 'destructFromDet2FrigeDetails']);
+
+        //إتلاف من مستودع الصاعقة 3
+        Route::post('destruct-from-det3-frige-details/{det3_frige_detail_id}',[WarehouseController::class, 'destructFromDet3FrigeDetails']);
+
+        //إتلاف من مستودع المخزن النهائي
+        Route::post('destruct-from-store-details/{store_detail_id}',[WarehouseController::class, 'destructFromStoreDetails']);
+
+        /////////////////////////// END DESTRUCTION PART /////////////////////////////////
+        
+        
         
     });
 

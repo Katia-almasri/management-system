@@ -108,6 +108,8 @@ class ProductionController extends Controller
     public function addTypeToProductionOutPut(Request $request){
         $validator = Validator::make($request->all(), [
             'type' => 'required',
+            'by_section'=>'required',
+            'num_expiration_days'=>'numeric|gte:0',
 
         ]);
 
@@ -210,8 +212,8 @@ class ProductionController extends Controller
     }
 
     public function displayCommandsToWarehouse(Request $request){
-        $commands = Command::with('commandDetails.warehouse.outPut_Type_Production')->where('done', '=', 0)
-        ->orderby('id','desc')
+        $commands = Command::with('commandDetails.warehouse.outPut_Type_Production')
+        ->orderby('created_at','desc')
         ->get();
         return response()->json($commands, 200);
     }

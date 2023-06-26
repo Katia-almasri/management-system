@@ -20,7 +20,7 @@ class CreateDetonatorFrige2InputOutputsTable extends Migration
             $table->foreign('output_id')->references('id')->on('detonator_frige2_outputs')->onDelete('cascade');
 
             $table->unsignedBigInteger('input_id')->nullable();
-            $table->foreign('input_id')->references('id')->on('detonator_frige1_details')->onDelete('cascade');
+            $table->foreign('input_id')->references('id')->on('detonator_frige2_details')->onDelete('cascade');
 
             $table->float('weight')->nullable();
             $table->integer('amount')->nullable();

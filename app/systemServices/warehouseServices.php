@@ -97,7 +97,7 @@ class warehouseServices
 
     public function storeNewInLake($warehouse_id, $outputSlaughterId)
     {
-        $lake = Lake::where('warehouse_id', $warehouse_id)->get();
+        $lake = Lake::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouse_id)->get();
         $outputSlaughterData = $this->getOutpuSlaughterDetailsData($outputSlaughterId);
         //INSERT INTO THE LAKE DETAIL TABLE
         $lakeDetails = new LakeDetail();
@@ -106,7 +106,9 @@ class warehouseServices
         $lakeDetails->cur_weight = $outputSlaughterData->weight;
         $lakeDetails->inputable_type = 'App\Models\outPut_SlaughterSupervisor_detail';
         $lakeDetails->inputable_id = $outputSlaughterId;
+        $lakeDetails->expiration_date = Carbon::now()->addDays($lake[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $lakeDetails->input_from = 'قسم الذبح';
+        $lakeDetails->cur_output_weight = 0;
         $lakeDetails->save();
 
         $this->updateLakeWeightValue($lake[0]->id, $lake[0]->weight, $outputSlaughterData['weight']);
@@ -165,19 +167,20 @@ class warehouseServices
     ///////////////////// LAKE //////////////////////////////
     public function outputWeightFromLake($_detail, $outputChoice)
     {
+        $warning_notification = null;
         $lake_id = $_detail['lake_id'];
-        $lake = Lake::find($lake_id);
+        $lake = Lake::with('warehouse.outPut_Type_Production')->find($lake_id);
         if (is_null($lake->weight) ||  $lake->weight < $_detail['weight'])
             return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
-
+        
         $flag = false;
-        $elementsInLakeDetails = LakeDetail::where([['lake_id', $lake_id], ['cur_weight', '!=', 0]])->orderBy('created_at', 'DESC')->get();
+        $elementsInLakeDetails = LakeDetail::where([['lake_id', $lake_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
         $tot_weight = $_detail['weight'];
         foreach ($elementsInLakeDetails as $_lake_detail) {
             if ($tot_weight != 0) {
                 if ($tot_weight >= $_lake_detail['cur_weight']) {
                     $tot_weight -= $_lake_detail['cur_weight'];
-                    $_lake_detail->update(['cur_weight' => 0]);
+                    $_lake_detail->update(['cur_output_weight'=>$_lake_detail['cur_output_weight'] + $_lake_detail['cur_weight'], 'cur_weight' => 0]);
 
                     //INSERT THIS ROW IN NEW INPUT_OUTPUT_LAKE TABLE
                     $this->insertNewRowInInputOutputLakeTable($_lake_detail['id'], $_lake_detail['weight'], null);
@@ -186,7 +189,7 @@ class warehouseServices
                     $_lake_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
                 } else {
 
-                    $_lake_detail->update(['cur_weight' => $_lake_detail['cur_weight'] - $tot_weight]);
+                    $_lake_detail->update(['cur_output_weight'=>$_lake_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_lake_detail['cur_weight'] - $tot_weight]);
                     $tot_weight = 0;
                     $flag = true;
                     break;
@@ -234,7 +237,12 @@ class warehouseServices
             else if ($outputChoice == 'التقطيع') {
                 $result = $this->inputFromLakeToCutting($lakeOutput, $warehouse->id, $type_id);
             }
-            return (["status" => true, "message" =>$result]);
+
+            //warning if increase on stockpile
+            if($lake->warehouse->stockpile != null && ($lake->warehouse->tot_weight < $lake->warehouse->stockpile)){
+                $warning_notification = $lake->warehouse->outPut_Type_Production;
+            }
+            return (["status" => true, "message" =>$result, "notification"=>$warning_notification]);
         }
 
     }
@@ -242,7 +250,7 @@ class warehouseServices
     public function inputFromLakeToDetonator1($lakeOutput, $warehouseId)
     {
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $DetonatorFrige1 = DetonatorFrige1::where('warehouse_id', $warehouseId)->get();
+        $DetonatorFrige1 = DetonatorFrige1::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $DetonatorFrige1Detail = new DetonatorFrige1Detail();
         $DetonatorFrige1Detail->detonator_frige_1_id = $DetonatorFrige1[0]->id;
         $DetonatorFrige1Detail->weight = $lakeOutput->weight;
@@ -252,6 +260,7 @@ class warehouseServices
         $DetonatorFrige1Detail->inputable_type = 'App\Models\LakeOutput';
         $DetonatorFrige1Detail->inputable_id = $lakeOutput->id;
         $DetonatorFrige1Detail->input_from = 'مستودع البحرات';
+        $DetonatorFrige1Detail->expiration_date = Carbon::now()->addDays($DetonatorFrige1[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $DetonatorFrige1Detail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -276,7 +285,7 @@ class warehouseServices
     public function inputFromLakeToDetonator2($lakeOutput, $warehouseId)
     {
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $DetonatorFrige2 = DetonatorFrige2::where('warehouse_id', $warehouseId)->get();
+        $DetonatorFrige2 = DetonatorFrige2::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $DetonatorFrige2Detail = new DetonatorFrige2Detail();
         $DetonatorFrige2Detail->detonator_frige_2_id = $DetonatorFrige2[0]->id;
         $DetonatorFrige2Detail->weight = $lakeOutput->weight;
@@ -286,6 +295,7 @@ class warehouseServices
         $DetonatorFrige2Detail->inputable_type = 'App\Models\LakeOutput';
         $DetonatorFrige2Detail->inputable_id = $lakeOutput->id;
         $DetonatorFrige2Detail->input_from = 'مستودع البحرات';
+        $DetonatorFrige2Detail->expiration_date = Carbon::now()->addDays($DetonatorFrige2[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $DetonatorFrige2Detail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -308,7 +318,7 @@ class warehouseServices
     public function inputFromLakeToDetonator3($lakeOutput, $warehouseId)
     {
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $DetonatorFrige3 = DetonatorFrige3::where('warehouse_id', $warehouseId)->get();
+        $DetonatorFrige3 = DetonatorFrige3::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $DetonatorFrige3Detail = new DetonatorFrige3Detail();
         $DetonatorFrige3Detail->detonator_frige_3_id = $DetonatorFrige3[0]->id;
         $DetonatorFrige3Detail->weight = $lakeOutput->weight;
@@ -318,6 +328,7 @@ class warehouseServices
         $DetonatorFrige3Detail->inputable_type = 'App\Models\LakeOutput';
         $DetonatorFrige3Detail->inputable_id = $lakeOutput->id;
         $DetonatorFrige3Detail->input_from = 'مستودع البحرات';
+        $DetonatorFrige3Detail->expiration_date = Carbon::now()->addDays($DetonatorFrige3[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $DetonatorFrige3Detail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -366,7 +377,7 @@ class warehouseServices
     public function inputFromLakeToZero($lakeOutput, $warehouseId)
     {
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $zeroFrige = ZeroFrige::where('warehouse_id', $warehouseId)->get();
+        $zeroFrige = ZeroFrige::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $zeroFrigeDetail = new ZeroFrigeDetail();
         $zeroFrigeDetail->zero_frige_id = $zeroFrige[0]->id;
         $zeroFrigeDetail->weight = $lakeOutput->weight;
@@ -376,6 +387,7 @@ class warehouseServices
         $zeroFrigeDetail->inputable_type = 'App\Models\LakeOutput';
         $zeroFrigeDetail->inputable_id = $lakeOutput->id;
         $zeroFrigeDetail->input_from = 'مستودع البحرات';
+        $zeroFrigeDetail->expiration_date = Carbon::now()->addDays($zeroFrige[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $zeroFrigeDetail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -461,27 +473,28 @@ class warehouseServices
 
     public function outputWeightFromZero($_detail, $outputChoice)
     {
+        $warning_notification = null;
+
         $zero_id = $_detail['zero_id'];
-        
-        $zero = ZeroFrige::find($zero_id);
+        $zero = ZeroFrige::with('warehouse.outPut_Type_Production')->find($zero_id);
         if (is_null($zero->weight) ||  $zero->weight < $_detail['weight'])
             return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
 
         $flag = false;
-        $elementsInZeroDetails = ZeroFrigeDetail::where([['zero_frige_id', $zero_id], ['cur_weight', '!=', 0]])->orderBy('created_at', 'DESC')->get();
+        $elementsInZeroDetails = ZeroFrigeDetail::where([['zero_frige_id', $zero_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
         $tot_weight = $_detail['weight'];
         foreach ($elementsInZeroDetails as $_zero_detail) {
             if ($tot_weight != 0) {
                 if ($tot_weight >= $_zero_detail['cur_weight']) {
                     $tot_weight -= $_zero_detail['cur_weight'];
-                    $_zero_detail->update(['cur_weight' => 0]);
+                    $_zero_detail->update(['cur_output_weight'=>$_zero_detail['cur_output_weight'] + $_zero_detail['cur_weight'], 'cur_weight' => 0]);
                     //INSERT THIS ROW IN NEW INPUT_OUTPUT_zero TABLE
                     $this->insertNewRowInInputOutputZeroTable($_zero_detail['id'], $_zero_detail['weight'], null);
                     //UPDATE OUTBUT DATE IN LAKE DETAIL TABLE
                     $_zero_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
                 } else{
                     
-                        $_zero_detail->update(['cur_weight' => $_zero_detail['cur_weight'] - $tot_weight]);
+                        $_zero_detail->update(['cur_output_weight'=>$_zero_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_zero_detail['cur_weight'] - $tot_weight]);
                         $tot_weight = 0;
                         $flag = true;
                         break;
@@ -525,7 +538,11 @@ class warehouseServices
                 $result = $this->inputFromZeroToManufactoring($zeroOutput, $warehouse->id, $type_id);
             }
 
-            return (["status" => true, "message" => $result]);
+            if($zero->warehouse->stockpile != null && ($zero->warehouse->tot_weight < $zero->warehouse->stockpile)){
+                $warning_notification = $zero->warehouse->outPut_Type_Production;
+            }
+
+            return (["status" => true, "message" => $result, 'notification'=>$warning_notification]);
 
         }
     }
@@ -533,7 +550,7 @@ class warehouseServices
     public function inputFromZeroToLake($zeroOutput, $warehouseId)
     {
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $lake = Lake::where('warehouse_id', $warehouseId)->get();
+        $lake = Lake::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $LakeDetail = new LakeDetail();
         $LakeDetail->lake_id = $lake[0]->id;
         $LakeDetail->weight = $zeroOutput->weight;
@@ -542,7 +559,9 @@ class warehouseServices
         $LakeDetail->cur_amount = $zeroOutput->amount;
         $LakeDetail->inputable_type = 'App\Models\ZeroFrigeOutput';
         $LakeDetail->inputable_id = $zeroOutput->id;
+        $LakeDetail->expiration_date = Carbon::now()->addDays($lake[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $LakeDetail->input_from = 'البراد الصفري';
+        $LakeDetail->cur_output_weight = 0;
         $LakeDetail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -642,20 +661,21 @@ class warehouseServices
     ////////////////////////////// DET 1 ////////////////////////////
 
     public function outputWeightFromDet1($_detail, $outputChoice){
+        $warning_notification = null;
         $det1_id = $_detail['det_id'];
-        $det1 = DetonatorFrige1::find($det1_id);
+        $det1 = DetonatorFrige1::with('warehouse.outPut_Type_Production')->find($det1_id);
         if (is_null($det1->weight) ||  $det1->weight < $_detail['weight'])
             return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
 
+       
         $flag = false;
-        $elementsInDetonatorDetails = DetonatorFrige1Detail::where([['detonator_frige_1_id', $det1_id], ['cur_weight', '!=', 0]])->orderBy('created_at', 'DESC')->get();
+        $elementsInDetonatorDetails = DetonatorFrige1Detail::where([['detonator_frige_1_id', $det1_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
         $tot_weight = $_detail['weight'];
         foreach ($elementsInDetonatorDetails as $_det1_detail) {
             if ($tot_weight != 0) {
                 if ($tot_weight >= $_det1_detail['cur_weight']) {
                     $tot_weight -= $_det1_detail['cur_weight'];
-                    $_det1_detail->update(['cur_weight' => 0]);
-
+                    $_det1_detail->update(['cur_output_weight'=>$_det1_detail['cur_output_weight'] + $_det1_detail['cur_weight'], 'cur_weight' => 0]);
                     //INSERT THIS ROW IN NEW INPUT_OUTPUT_LAKE TABLE
                     $this->insertNewRowInInputOutputDet1Table($_det1_detail['id'], $_det1_detail['weight'], null);
 
@@ -663,7 +683,7 @@ class warehouseServices
                     $_det1_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
                 } else {
 
-                    $_det1_detail->update(['cur_weight' => $_det1_detail['cur_weight'] - $tot_weight]);
+                    $_det1_detail->update(['cur_output_weight'=>$_det1_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_det1_detail['cur_weight'] - $tot_weight]);
                     $tot_weight = 0;
                     $flag = true;
                     break;
@@ -696,7 +716,11 @@ class warehouseServices
             if ($outputChoice == 'تخزين') {
                 $result = $this->inputFromDet1ToStore($det1Output, $warehouse->id);
             } 
-            return (["status" => true, "message" => "تم الإدخال بنجاح"]);
+            if($det1->warehouse->stockpile != null && ($det1->warehouse->tot_weight < $det1->warehouse->stockpile)){
+                $warning_notification = $det1->warehouse->outPut_Type_Production;
+            }
+
+            return (["status" => true, "message" => "تم الإدخال بنجاح", "notification"=> $warning_notification]);
         }
 
     }
@@ -733,7 +757,7 @@ class warehouseServices
 
     public function inputFromDet1ToStore($det1Output, $warehouseId){
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $store = Store::where('warehouse_id', $warehouseId)->get();
+        $store = Store::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $storeDetail = new StoreDetail();
         $storeDetail->store_id = $store[0]->id;
         $storeDetail->weight = $det1Output->weight;
@@ -743,6 +767,7 @@ class warehouseServices
         $storeDetail->inputable_type = 'App\Models\DetonatorFrige1Output';
         $storeDetail->inputable_id = $det1Output->id;
         $storeDetail->input_from = 'مستودع الصاعقة 1';
+        $storeDetail->expiration_date = Carbon::now()->addDays($store[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $storeDetail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -767,20 +792,20 @@ class warehouseServices
     /////////////////////////// DET2 /////////////////////////
     
     public function outputWeightFromDet2($_detail, $outputChoice){
+        $warning_notification = null;
         $det2_id = $_detail['det_id'];
-        $det2 = DetonatorFrige2::find($det2_id);
+        $det2 = DetonatorFrige2::with('warehouse.outPut_Type_Production')->find($det2_id);
         if (is_null($det2->weight) ||  $det2->weight < $_detail['weight'])
             return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
-
+       
         $flag = false;
-        $elementsInDetonatorDetails = DetonatorFrige2Detail::where([['detonator_frige_2_id', $det2_id], ['cur_weight', '!=', 0]])->orderBy('created_at', 'DESC')->get();
+        $elementsInDetonatorDetails = DetonatorFrige2Detail::where([['detonator_frige_2_id', $det2_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
         $tot_weight = $_detail['weight'];
         foreach ($elementsInDetonatorDetails as $_det2_detail) {
             if ($tot_weight != 0) {
                 if ($tot_weight >= $_det2_detail['cur_weight']) {
                     $tot_weight -= $_det2_detail['cur_weight'];
-                    $_det2_detail->update(['cur_weight' => 0]);
-
+                    $_det2_detail->update(['cur_output_weight'=>$_det2_detail['cur_output_weight'] + $_det2_detail['cur_weight'], 'cur_weight' => 0]);
                     //INSERT THIS ROW IN NEW INPUT_OUTPUT_LAKE TABLE
                     $this->insertNewRowInInputOutputDet2Table($_det2_detail['id'], $_det2_detail['weight'], null);
 
@@ -788,7 +813,7 @@ class warehouseServices
                     $_det2_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
                 } else {
 
-                    $_det2_detail->update(['cur_weight' => $_det2_detail['cur_weight'] - $tot_weight]);
+                    $_det2_detail->update(['cur_output_weight'=>$_det2_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_det2_detail['cur_weight'] - $tot_weight]);
                     $tot_weight = 0;
                     $flag = true;
                     break;
@@ -821,7 +846,12 @@ class warehouseServices
             if ($outputChoice == 'تخزين') {
                $result =  $this->inputFromDet2ToStore($det2Output, $warehouse->id);
             } 
-            return (["status" => true, "message" => "تم الإدخال بنجاح"]);
+
+            if($det2->warehouse->stockpile != null && ($det2->warehouse->tot_weight < $det2->warehouse->stockpile)){
+                $warning_notification = $det2->warehouse->outPut_Type_Production;
+            }
+
+            return (["status" => true, "message" => "تم الإدخال بنجاح", "notification"=>$warning_notification]);
         }
 
     }
@@ -858,7 +888,7 @@ class warehouseServices
 
     public function inputFromDet2ToStore($det2Output, $warehouseId){
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $store = Store::where('warehouse_id', $warehouseId)->get();
+        $store = Store::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $storeDetail = new StoreDetail();
         $storeDetail->store_id = $store[0]->id;
         $storeDetail->weight = $det2Output->weight;
@@ -868,6 +898,7 @@ class warehouseServices
         $storeDetail->inputable_type = 'App\Models\DetonatorFrige2Output';
         $storeDetail->inputable_id = $det2Output->id;
         $storeDetail->input_from = 'مستودع الصاعقة 2';
+        $storeDetail->expiration_date = Carbon::now()->addDays($store[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $storeDetail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -892,20 +923,21 @@ class warehouseServices
     /////////////////////// DET3 /////////////////////////////////////
 
     public function outputWeightFromDet3($_detail, $outputChoice){
+        $warning_notification = null;
         $det3_id = $_detail['det_id'];
-        $det3 = DetonatorFrige3::find($det3_id);
+        $det3 = DetonatorFrige3::with('warehouse.outPut_Type_Production')->find($det3_id);
         if (is_null($det3->weight) ||  $det3->weight < $_detail['weight'])
             return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
 
+    
         $flag = false;
-        $elementsInDetonatorDetails = DetonatorFrige3Detail::where([['detonator_frige_3_id', $det3_id], ['cur_weight', '!=', 0]])->orderBy('created_at', 'DESC')->get();
+        $elementsInDetonatorDetails = DetonatorFrige3Detail::where([['detonator_frige_3_id', $det3_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
         $tot_weight = $_detail['weight'];
         foreach ($elementsInDetonatorDetails as $_det3_detail) {
             if ($tot_weight != 0) {
                 if ($_detail['weight'] >= $_det3_detail['cur_weight'] && $_det3_detail['cur_weight'] != 0) {
                     $tot_weight -= $_det3_detail['cur_weight'];
-                    $_det3_detail->update(['cur_weight' => 0]);
-
+                    $_det3_detail->update(['cur_output_weight'=>$_det3_detail['cur_output_weight'] + $_det3_detail['cur_weight'], 'cur_weight' => 0]);
                     //INSERT THIS ROW IN NEW INPUT_OUTPUT_LAKE TABLE
                     $this->insertNewRowInInputOutputDet3Table($_det3_detail['id'], $_det3_detail['weight'], null);
 
@@ -913,7 +945,7 @@ class warehouseServices
                     $_det3_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
                 } elseif($_det3_detail['cur_weight'] != 0) {
 
-                    $_det3_detail->update(['cur_weight' => $_det3_detail['cur_weight'] - $tot_weight]);
+                    $_det3_detail->update(['cur_output_weight'=>$_det3_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_det3_detail['cur_weight'] - $tot_weight]);
                     $tot_weight = 0;
                     $flag = true;
                     break;
@@ -946,7 +978,12 @@ class warehouseServices
             if ($outputChoice == 'تخزين') {
                 $result = $this->inputFromDet3ToStore($det3Output, $warehouse->id);
             } 
-            return (["status" => true, "message" => "تم الإدخال بنجاح"]);
+
+            if($det3->warehouse->stockpile != null && ($det3->warehouse->tot_weight < $det3->warehouse->stockpile)){
+                $warning_notification = $det3->warehouse->outPut_Type_Production;
+            }
+
+            return (["status" => true, "message" => "تم الإدخال بنجاح", "notification"=>$warning_notification]);
         }
 
     }
@@ -983,7 +1020,7 @@ class warehouseServices
 
     public function inputFromDet3ToStore($det3Output, $warehouseId){
         //INSERT NEW ROW IN ZERO DETAIL FRIGE
-        $store = Store::where('warehouse_id', $warehouseId)->get();
+        $store = Store::with('warehouse.outPut_Type_Production')->where('warehouse_id', $warehouseId)->get();
         $storeDetail = new StoreDetail();
         $storeDetail->store_id = $store[0]->id;
         $storeDetail->weight = $det3Output->weight;
@@ -993,6 +1030,7 @@ class warehouseServices
         $storeDetail->inputable_type = 'App\Models\DetonatorFrige3Output';
         $storeDetail->inputable_id = $det3Output->id;
         $storeDetail->input_from = 'مستودع الصاعقة 3';
+        $storeDetail->expiration_date = Carbon::now()->addDays($store[0]->warehouse->outPut_Type_Production->num_expiration_days);
         $storeDetail->save();
 
         //UPDATE THE ONPUTABLE IN LAKE OUTPUT TABLE
@@ -1087,7 +1125,91 @@ class warehouseServices
         }
             return (["status" => false, "message" =>"لم يتم إنهاء عملية الإخراج بعد"]);
         
-    } 
+    }
+    
+    public function checktockPile($warehouse){
+        if($warehouse->stockpile != null && ($warehouse->tot_weight < $warehouse->stockpile)){
+            return $warehouse->outPut_Type_Production;
+        }
+        return null;
+    }
+
+    public function subtractFromWarehouseAfterExpiration($model, $inputable_id, $weight){
+        $outputTypeProduction = null;
+        if($model == 'App\Models\LakeDetail'){
+            $lakeDetail = LakeDetail::with('lake')->find($inputable_id);
+            $lakeId = $lakeDetail->lake->id;
+            $lake = Lake::find($lakeId);
+            $lake->update(['weight'=>$lake->weight - $weight]);
+            $warehouse = Warehouse::find($lake->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+        }
+
+        else if($model == 'App\Models\ZeroFrigeDetail'){
+            $zeroFrigeDetail = ZeroFrigeDetail::with('zeroFrige')->find($inputable_id);
+            $zeroId = $zeroFrigeDetail->zeroFrige->id;
+            $zeroFrige = ZeroFrige::find($zeroId);
+            $zeroFrige->update(['weight'=>$zeroFrige->weight - $weight]);
+            $warehouse = Warehouse::find($zeroFrige->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+        }
+
+        else if($model == 'App\Models\DetonatorFrige1Detail'){
+            $det1FrigeDetail = DetonatorFrige1Detail::with('detonatorFrige1')->find($inputable_id);
+            $det1Id = $det1FrigeDetail->detonatorFrige1->id;
+            $det1Frige = DetonatorFrige1::find($det1Id);
+            $det1Frige->update(['weight'=>$det1Frige->weight - $weight]);
+            $warehouse = Warehouse::find($det1Frige->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+
+        }
+
+        else if($model == 'App\Models\DetonatorFrige2Detail'){
+            $det2FrigeDetail = DetonatorFrige2Detail::with('detonatorFrige2')->find($inputable_id);
+            $det2Id = $det2FrigeDetail->detonatorFrige2->id;
+            $det2Frige = DetonatorFrige2::find($det2Id);
+            $det2Frige->update(['weight'=>$det2Frige->weight - $weight]);
+            $warehouse = Warehouse::find($det2Frige->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+
+        }
+
+        else if($model == 'App\Models\DetonatorFrige3Detail'){
+            $det3FrigeDetail = DetonatorFrige3Detail::with('detonatorFrige3')->find($inputable_id);
+            $det3Id = $det3FrigeDetail->detonatorFrige3->id;
+            $det3Frige = DetonatorFrige3::find($det3Id);
+            $det3Frige->update(['weight'=>$det3Frige->weight - $weight]);
+            $warehouse = Warehouse::find($det3Frige->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+
+        }
+
+        else if($model == 'App\Models\StoreDetail'){
+            $storeDetail = StoreDetail::with('store')->find($inputable_id);
+            $storeId = $storeDetail->store->id;
+            $store = Store::find($storeId);
+            $store->update(['weight'=>$store->weight - $weight]);
+            $warehouse = Warehouse::find($store->warehouse_id);
+            $warehouse->update(['tot_weight'=>$warehouse->tot_weight - $weight]);
+            //check stockpile
+            $outputTypeProduction = $this->checktockPile($warehouse);
+
+        }
+
+        return $outputTypeProduction;
+   
+    }
+
 
 
 }    

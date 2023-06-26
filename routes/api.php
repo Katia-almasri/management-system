@@ -64,4 +64,28 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     //استعراض محتويات المخزن النهائي
     Route::get('display-store-content',[WarehouseController::class, 'displayStoreContent'])->middleware('check-read-content-store');
 
+
+
+    ///////////////////////////// DAILY WAREHOUSE REPORTS //////////////////////////////////
+    // حركة الدخل التي حصلت اليوم إلى المخزن
+    Route::get('daily-input-movements',[WarehouseController::class, 'dailyInputMovements']);
+    //حركة الخرج التي حصلت اليوم المخزن
+    Route::get('daily-output-movements',[WarehouseController::class, 'dailyOutputMovements']);
+    //حركة الإتلاف اليوم
+    Route::get('get-expirations',[WarehouseController::class, 'getExpirations']);
+    //الأوامر المنفذة 
+    Route::get('get-done-commands',[WarehouseController::class, 'getDoneCommands']);
+    //الأوامر الغير المنفذة 
+    Route::get('get-non-done-commands',[WarehouseController::class, 'getNotDoneCommands']);
+    // المواد التي نقصت فيها المخزون الاحتياطي اليوم
+    Route::get('get-warehouse-under-stockpile',[WarehouseController::class, 'getWarehouseUnderStockpile']);
+
+    // المواد التي خرجت اليوم الى الاتلاف و دخلت لمخزن الاتلاف
+    Route::get('get-output-types-to-expiration-warehouse',[WarehouseController::class, 'getOutputTypesInsertedToExpirationWarehouse']);
+
+
+    
+    
+    
+    
 });

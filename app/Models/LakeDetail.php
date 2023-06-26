@@ -21,7 +21,8 @@ class LakeDetail extends Model
        'date_of_destruction',
        'expiration_date',
        'output_slaughter_detail_id',
-       'input_from'
+       'input_from',
+       'cur_output_weight'
     ];
 
     ############################## Begin Relations #############################
@@ -41,6 +42,10 @@ class LakeDetail extends Model
 
     public function zeroDetail(){
         return $this->morphOne('App\Models\ZeroFrigeOutput', 'outputable');
+    }
+
+    public function expiration(){
+        return $this->morphOne('App\Models\Expiration', 'inputable');
     }
 
      ############################# Begin Accessors ##############################endregion

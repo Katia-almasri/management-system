@@ -11,6 +11,7 @@ class ZeroFrigeDetail extends Model
     use HasFactory;
 
     protected $table = 'zero_frige_details';
+   
     protected $primaryKey='id';
     protected $fillable = [
        'zero_frige_id',
@@ -20,7 +21,8 @@ class ZeroFrigeDetail extends Model
        'cur_amount',
        'date_of_destruction',
        'expiration_date',
-       'input_from'
+       'input_from',
+       'cur_output_weight'
     ];
 
     ############################## Begin Relations #############################

@@ -5,25 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model
+class Exipration extends Model
 {
     use HasFactory;
-
-    protected $table = 'notifications';
+    protected $table = 'exiprations';
     protected $primaryKey='id';
     protected $fillable = [
-       'channel',
-       'event',
-       'title',
-       'route',
-       'act_id',
-       'details',
-       'is_seen',
        'weight',
        'output_from',
-       'expiration_id',
-       'reason_of_notification'
+       'output_type_production',
+       'reason_of_expirations'
     ];
 
-    
+    public function inputable(){
+        return $this->morphTo();
+  }
+
 }
