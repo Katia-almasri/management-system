@@ -94,13 +94,24 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         ////////////////////استعراض كافة أسماْ المخازن ///////////////////////
         Route::get('display-warehouses-types',[WarehouseController::class, 'displayWarehousesTypes']);
-        /////// NOTIFICATION PART ////////////////////////////
+
+        /////////////////////////////////// NOTIFICATION PART ////////////////////////////
         //استعراض إشعارات المواد المخرجة إلى الإتلاف
         Route::get('display-expiration-notification',[WarehouseController::class, 'displayExpirationNotification']);
         // استعراض جميع عمليات المواد المخرجة إلى الإتلاف
         Route::get('display-all-output-expiration',[WarehouseController::class, 'displayAlloutputExpiration']);
         // استعراض فقط إشعارات الخرج إلى مستودع الإتلاف التي لم يتم إدخالها إلى المتودع بعد
         Route::get('get-not-input-detructed-types',[WarehouseController::class, 'getNotInputDestructedTypes']);
+
+        // استعراض الإشعارات وتبديل حالتها
+        Route::get('display-all-daily-warehouse-reports-notification',[WarehouseController::class, 'displayAllDailyWarehouseReportsNtification']);
+
+        
+        // استعراض إشعارات التقارير اليومية للمخازن
+        Route::get('display-daily-warehouse-notification-reports',[WarehouseController::class, 'displayDailyWarehouseNotificationReports']);
+
+        
+        ////////////////////////////////// END NOTIFICATION PART /////////////////////////
         //أستعراض تفاصيل مادة سوف تدخل إلى مستودع الإتلاف
         Route::get('display-output-expired-detail/{notification_id}',[WarehouseController::class, 'displayOutputExpiredDetail']);
         //ملء إدخال مادة متلفة إلى مستودع الإتلاف

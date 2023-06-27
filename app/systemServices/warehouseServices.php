@@ -16,6 +16,7 @@ use App\Models\DetonatorFrige3;
 use App\Models\DetonatorFrige3Detail;
 use App\Models\DetonatorFrige3InputOutput;
 use App\Models\DetonatorFrige3Output;
+use App\Models\Exipration;
 use App\Models\FillCommand;
 use App\Models\InputCutting;
 use App\Models\InputManufacturing;
@@ -23,6 +24,7 @@ use App\Models\Lake;
 use App\Models\LakeDetail;
 use App\Models\LakeInputOutput;
 use App\Models\LakeOutput;
+use App\Models\Notification;
 use App\Models\outPut_SlaughterSupervisor_detail;
 use App\Models\Store;
 use App\Models\StoreDetail;
@@ -1209,6 +1211,79 @@ class warehouseServices
         return $outputTypeProduction;
    
     }
+
+    /////////////// DAILY WAREHOUSE REPORTS ////////////////////
+    public function dailyInputMovements(){
+
+        $lakeDetails = LakeDetail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('lake.warehouse.outPut_Type_Production')->get();
+
+        $zeroDetails = ZeroFrigeDetail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('zeroFrige.warehouse.outPut_Type_Production')->get();
+
+        $det1FrigeDetail = DetonatorFrige1Detail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonatorFrige1.warehouse.outPut_Type_Production')->get();
+
+        $det2FrigeDetail = DetonatorFrige2Detail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonatorFrige2.warehouse.outPut_Type_Production')->get();
+
+        $det3FrigeDetail = DetonatorFrige3Detail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonatorFrige3.warehouse.outPut_Type_Production')->get();
+
+        $storeDetail = StoreDetail::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('store.warehouse.outPut_Type_Production')->get();
+
+        return (["lakeDetails"=>$lakeDetails, "zeroDetails"=>$zeroDetails, "det1FrigeDetail"=>$det1FrigeDetail, "det2FrigeDetail"=>$det2FrigeDetail, "det3FrigeDetail"=>$det3FrigeDetail, "storeDetail"=>$storeDetail]);
+    }
+
+    public function dailyOutputMovements(){
+
+        $lakeDetails = LakeOutput::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('lake.warehouse.outPut_Type_Production')->get();
+
+        $zeroDetails = ZeroFrigeOutput::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('zeroFrige.warehouse.outPut_Type_Production')->get();
+
+        $det1FrigeDetail = DetonatorFrige1Output::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonator1.warehouse.outPut_Type_Production')->get();
+
+        $det2FrigeDetail = DetonatorFrige2Output::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonator2.warehouse.outPut_Type_Production')->get();
+
+        $det3FrigeDetail = DetonatorFrige3Output::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('detonator3.warehouse.outPut_Type_Production')->get();
+
+        // $storeDetail = Sto::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('store.warehouse.outPut_Type_Production')->get();
+
+        return (["lakeDetails"=>$lakeDetails, "zeroDetails"=>$zeroDetails, "det1FrigeDetail"=>$det1FrigeDetail, "det2FrigeDetail"=>$det2FrigeDetail, "det3FrigeDetail"=>$det3FrigeDetail]);
+    }
+
+    public function getExpirations(){
+        $expirations = Exipration::whereDate('created_at', Carbon::today()->format('Y-m-d'))->with('inputable')->get();
+        return (["expirations"=>$expirations]);
+    }
+
+    public function getDoneCommands(){
+        $doneCommands = Command::whereDate('created_at', Carbon::today()->format('Y-m-d'))->where('done','=', 1)->with('commandDetails.warehouse.outPut_Type_Production')->get();
+        return (["doneCommands"=>$doneCommands]);
+    }
+
+    public function getNotDoneCommands(){
+        $nonDoneCommands = Command::whereDate('created_at', Carbon::today()->format('Y-m-d'))->where('done', 0)->with('commandDetails.warehouse.outPut_Type_Production')->get();
+        return (["nonDoneCommands"=>$nonDoneCommands]);
+    }
+
+    public function getWarehouseUnderStockpile(){
+        $warehouses = Warehouse::with('outPut_Type_Production')->whereDate('updated_at', Carbon::today()->format('Y-m-d'))->where([['tot_weight', '!=', null], ['tot_weight', '<=', 'stockpile']])->get();
+        return (["warehouses"=>$warehouses]);
+    }
+
+    public function getOutputTypesInsertedToExpirationWarehouse(){
+        $expirations = DB::table('exiprations')
+        ->join('notifications', 'notifications.expiration_id', '=', 'exiprations.id')
+        ->whereDate('exiprations.created_at', Carbon::today()->format('Y-m-d'))
+        ->select('notifications.*', 'exiprations.*')
+        ->get();
+
+        return (["expirations"=>$expirations]);
+    }
+
+    public function getNonInsertedExpiredToExpirationWarehouse(){
+        $notifications = Notification::whereDate('updated_at', Carbon::today()->format('Y-m-d'))->where('expiration_id', '=', null)
+        ->where('channel', 'add-output-to-expiration-warehouse-notification')->get();
+        return (["notifications"=>$notifications]);
+    }
+
+    
 
 
 

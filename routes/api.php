@@ -82,7 +82,9 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
 
     // المواد التي خرجت اليوم الى الاتلاف و دخلت لمخزن الاتلاف
     Route::get('get-output-types-to-expiration-warehouse',[WarehouseController::class, 'getOutputTypesInsertedToExpirationWarehouse']);
-
+    // استعراض التقرير اليومي للمخازن
+    Route::get('get-daily-warehouse-report',[WarehouseController::class, 'readDailyWarehouseReport']);
+    
 
     
     

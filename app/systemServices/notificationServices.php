@@ -70,4 +70,10 @@ class notificationServices
 
     }
 
+    public function generateDailyWarehouseReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-warehouse-report-ready', 'App\\Events\\dailyWarehouseReportReady', $data);
+
+    }
+
 }
