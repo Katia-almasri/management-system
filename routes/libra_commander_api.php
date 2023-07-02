@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LibraController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\ChartController;
 
 Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers']], function () {
     Route::group(['middleware' => 'is-libra-commander-exist'], function () {
@@ -17,6 +18,14 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
             Route::get('get-weight-after-arrival-for-reciept/{recieptId}', [LibraController::class, 'getWeightAfterArrival']);
         });
         Route::get('display-trip-libra', [TripController::class, 'displayTripInLibra']);
+
+        //dashboard
+        Route::get('display-count-poultry', [ChartController::class, 'CountPoultryReceiptDetection']);
+        Route::get('display-count-poultry-where-NotAfter', [ChartController::class, 'CountPoultryReceiptDetectionwhereNotAfter']);
+        Route::get('display-count-trip', [ChartController::class, 'CountTripInRoad']);
+        Route::get('display-chart-Poultry', [ChartController::class, 'ChartPoultryReceiptDetection']);
+
+
 
 
     });

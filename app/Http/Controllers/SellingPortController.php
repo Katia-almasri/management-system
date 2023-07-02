@@ -227,7 +227,6 @@ public function commandAcceptForSellingPortOrder(Request $request, $SellingPortO
 }
 
 
-
 public function refuseOrderDetail(Request $request, $SellingPortOrderId){
     $validator = Validator::make($request->all(), [
         'reason_refuse' => 'required'
@@ -253,6 +252,14 @@ public function refuseOrderDetail(Request $request, $SellingPortOrderId){
 public function displayOutputTypes(Request $request){
     $types = outPut_Type_Production::pluck('type');
     return response()->json($types, 200);
+}
+
+
+public function addRatingToRequest(Request $request, $RequestId){
+    $salesRequest = salesPurchasingRequset::find($RequestId);
+    $salesRequest->rating = $request->rating;
+    $salesRequest->save();
+    return response()->json(["status"=>true, "message"=>"تم إضافة التقييم"]);
 }
 
 }

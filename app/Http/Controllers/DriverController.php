@@ -41,6 +41,11 @@ class DriverController extends Controller
         return response()->json($displayDriver, 200);
     }
 
+    public function displayAvaibaleDriver(Request $request){
+        $displayDriver = Driver::where('state','متاح')->get();
+        return response()->json($displayDriver, 200);
+    }
+
     //حذف سائق
     public function SoftDeleteDriver(Request $request, $DriverId){
         Driver::find($DriverId)->delete();

@@ -21,11 +21,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('add-trucks',[TruckContoller::class, 'AddTruck']);
         ///////////////عرض الشاحنات///////////////////
         Route::get('display-trucks',[TruckContoller::class, 'displayTruck']);
+        /////////////// عرض الشاحنات المتاحة///////////////////
+        Route::get('display-Avaibale-trucks',[TruckContoller::class, 'displayAvaibaleTruck']);
+
 
         Route::group( ['middleware' => 'is-truck-exist'] ,function(){
             /////////////تعديل حالة شاحنة
             Route::post('update-state/{TruckId}',[TruckContoller::class, 'UpdateTruckState']);
-            
+
             //حذف شاحنة
             Route::delete('soft-delete-truck/{TruckId}',[TruckContoller::class, 'SoftDeleteTruck'])->middleware('is-truck-used');
 
@@ -55,6 +58,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('add-driver',[DriverController::class, 'AddDriver']);
         ///////////////عرض سائق///////////////////
         Route::get('display-driver',[DriverController::class, 'displayDriver']);
+        ////////////عرض السائقين المتاحين
+        Route::get('display-Avaibale-driver',[DriverController::class, 'displayAvaibaleDriver']);
         //عرض السائقين المحذوفة
         Route::get('display-driver-trashed',[DriverController::class, 'DriverTrashed']);
         //استعراض الطلبات بعد أمر مدير المشتريات والمبيعات
@@ -84,6 +89,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('count-avaiable-drivers',[ChartController::class, 'CountAvaiableDriver']);
         //شارت للرحلات
         Route::get('count-trips-chart',[ChartController::class, 'CountTrip']);
+
+
+
+        ///الشاحنة المناسبة
+        Route::post('suitable-truck/{SalesId}',[TripController::class, 'SuitableTruck']);
 
 
 

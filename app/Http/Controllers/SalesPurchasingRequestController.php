@@ -22,6 +22,7 @@ use App\Models\Truck;
 use App\Models\Notification;
 use App\Models\Manager;
 use App\Models\PurchaseOffer;
+use App\Models\DetailPurchaseOffer;
 use App\Models\RegisterFarmRequestNotif;
 use App\systemServices\notificationServices;
 
@@ -68,6 +69,7 @@ class SalesPurchasingRequestController extends Controller
                     $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
                     $salesPurchasingRequsetDetail->amount = $_detail['amount'];
                     $salesPurchasingRequsetDetail->type = $_detail['type'];
+                    $salesPurchasingRequsetDetail->price = $_detail['price'];
                     $salesPurchasingRequsetDetail->save();
                 }
 
@@ -184,6 +186,7 @@ class SalesPurchasingRequestController extends Controller
          $totalAmount = $this->calculcateTotalAmount($request);
 
         $findOffer = PurchaseOffer::find($offerId);
+        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id',$offerId)->get()->first();
         //SAVE THE NEW OFFER
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
@@ -201,6 +204,7 @@ class SalesPurchasingRequestController extends Controller
             $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
             $salesPurchasingRequsetDetail->amount = $_detail['amount'];
             $salesPurchasingRequsetDetail->type = $_detail['type'];
+            $salesPurchasingRequsetDetail->price = $findOfferDet->price;
             $salesPurchasingRequsetDetail->save();
         }
         //UPDATE THE is_read IN ADD OFFER TO read

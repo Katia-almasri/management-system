@@ -182,6 +182,7 @@ class FarmController extends Controller
             $detailPurchaseOffer->purchase_offers_id = $offer->id;
             $detailPurchaseOffer->amount = $_detail['amount'];
             $detailPurchaseOffer->type = $_detail['type'];
+            $detailPurchaseOffer->price = $_detail['price'];
             $detailPurchaseOffer->save();
 
             $totalAmount += $_detail['amount'];

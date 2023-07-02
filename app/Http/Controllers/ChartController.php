@@ -12,6 +12,8 @@ use DB;
 
 use App\Models\Manager;
 use App\Models\Truck;
+use App\Models\PoultryReceiptDetection;
+
 use App\Models\Driver;
 use App\Models\Trip;
 
@@ -60,9 +62,44 @@ class ChartController extends Controller
         $Trips = Trip::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
                     ->whereYear('created_at', date('Y'))
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('id','ASC')
+                    ->orderBy('id','desc')
                     ->pluck('count', 'month_name');
         return response()->json($Trips);
+    }
+
+
+    ////////////امر القبان
+
+    ///////عدد الكشوف الكلي هذا الشهر
+    public function CountPoultryReceiptDetection(Request $request){
+        $PoultryReceiptDetection = PoultryReceiptDetection:: whereMonth('created_at', Carbon::now()->month)->get();
+        return response()->json($PoultryReceiptDetection->count());
+    }
+
+    ////////عدد الكشوف التي لم تزان بعد
+    public function CountPoultryReceiptDetectionwhereNotAfter(Request $request){
+        //عدد الكشوف يلي نزانت
+        $PoultryReceiptDetectionwhere = PoultryReceiptDetection::doesnthave('weightAfterArrivalDetection')-> whereMonth('created_at', Carbon::now()->month)->get();
+        return response()->json($PoultryReceiptDetectionwhere->count());
+    }
+
+    /////////////عدد الرحلات التي في الرحلة
+    public function CountTripInRoad(Request $request){
+        $tripInRoad = Trip::where([['status','في الرحلة'],['farm_id','!=',null]])
+        ->whereMonth('created_at', Carbon::now()->month)->get();
+        return response()->json($tripInRoad->count());
+    }
+
+
+
+
+    public function ChartPoultryReceiptDetection(Request $request){
+        $PoultryReceiptDetection = PoultryReceiptDetection::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("month_name"))
+                    ->orderBy('id','desc')
+                    ->pluck('count', 'month_name');
+        return response()->json($PoultryReceiptDetection);
     }
 
 
