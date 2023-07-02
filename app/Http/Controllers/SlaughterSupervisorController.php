@@ -58,6 +58,10 @@ class SlaughterSupervisorController extends Controller
     }
 
     public function addOutputSlaughters(Request $request){
+            // $InputSlaughters = input_slaughter_table::where('output_date',null)->sum('weight');
+            // return response($InputSlaughters);
+        try{
+
             $output = new outPut_SlaughterSupervisor_table();
             $output -> production_date = Carbon::now();
             $output ->save();
@@ -75,7 +79,6 @@ class SlaughterSupervisorController extends Controller
                 $outputDetail->save();
             }
             $outPut_SlaughterSupervisor_detail = outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->get();
-            // return response()->json($findInput, 200);
             foreach ($outPut_SlaughterSupervisor_detail as $_outputDetail) {
                 $type_id = $_outputDetail->type_id;
                 //SEARCH IN WAREHOUSE
@@ -84,6 +87,10 @@ class SlaughterSupervisorController extends Controller
             }
             outPut_SlaughterSupervisor_detail::where('direct_to_bahra',0)->update(['direct_to_bahra'=>1]);
         return response()->json(["status"=>true, "message"=>"تم اضافة خرج"]);
+    }catch (\Exception $exception) {
+        DB::rollback();
+        return response()->json(["status" => false, "message" => $exception->getMessage()]);
+    }
 
     }
 

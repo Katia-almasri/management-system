@@ -15,6 +15,7 @@ use App\Models\salesPurchasingRequsetDetail;
 use App\systemServices\notificationServices;
 use App\Models\Manager;
 use App\Models\outPut_Type_Production;
+use App\Models\Rating;
 
 use Auth;
 use Carbon\Carbon;
@@ -256,9 +257,13 @@ public function displayOutputTypes(Request $request){
 
 
 public function addRatingToRequest(Request $request, $RequestId){
-    $salesRequest = salesPurchasingRequset::find($RequestId);
-    $salesRequest->rating = $request->rating;
-    $salesRequest->save();
+    $SalesPurchasingRequest = salesPurchasingRequset::find($RequestId)->id;
+    $rating = new Rating;
+    $rating->rate = $request->rate;
+    $rating->request_sales_id = $RequestId;
+    $rating->note = $request->note;
+    $rating->save();
+
     return response()->json(["status"=>true, "message"=>"تم إضافة التقييم"]);
 }
 

@@ -136,11 +136,8 @@ class Kernel extends HttpKernel
         'is-weight-under-minimum-in-det-2' => \App\Http\Middleware\isWeightUnderMinimumInDet2::class,
         'is-weight-under-minimum-in-det-3' => \App\Http\Middleware\isWeightUnderMinimumInDet3::class,
         'is-weight-under-minimum-in-warehouses' => \App\Http\Middleware\isWeightUnderMinimumInWarehouse::class,
-        
-        
-        
-
-
+        'check-My-sales-request' => \App\Http\Middleware\check_My_sales_request::class,
+        'check-input-slaughter' => \App\Http\Middleware\check_Input_Slaughter::class,
 
     ];
 }
