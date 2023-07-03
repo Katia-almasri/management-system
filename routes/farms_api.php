@@ -18,6 +18,13 @@ Route::group( ['middleware' => ['auth:farms-api', 'check-scope-farms', 'scopes:f
     ->middleware('is-deleted-offer');
     Route::get('display-row-material',[FarmController::class, 'displayRowMaterial']);
 
+    ///////////// farm profile and editions /////////////////////
+    Route::get('display-my-profile',[FarmController::class, 'displayMyProfile']);
+    //edit profile info
+    Route::post('edit-my-profile',[FarmController::class, 'editMyProfile']);
+    
+
+
 
 });
 

@@ -116,7 +116,7 @@ class FarmController extends Controller
         $farm->username = $request->username;
         $farm->name = $request->name;
         $farm->owner = $request->owner;
-        $farm->password = bcrypt($request->password);
+        $farm->password = encrypt($request->password);
         $farm->location = $request->location;
         $farm->mobile_number = $request->mobile_number;
         $farm->governorate_id = $request->governorate_id;
@@ -146,20 +146,22 @@ class FarmController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-
-        if (auth()->guard('farms')->attempt(['username' => request('username'), 'password' => request('password')])) {
+        $farm = Farm::where('username', $request->username)->get()->first();
+        if ($farm != null && decrypt($farm->password) == $request->password) {
 
             config(['auth.guards.api.provider' => 'farms']);
 
-            $user = Farm::select('*')
-                ->where([['id', '=', auth()->guard('farms')->user()->id]])->get();
-            if ($user[0]->approved_at != Null) {
-                $success = $user[0];
-                $success['token'] = $user[0]->createToken('api-token', ['farms'])->accessToken;
+            // $user = Farm::select('*')
+            //     ->where([['id', '=', auth()->guard('farms')->user()->id]])->get();
+
+            Auth::guard('farms')->login($farm);
+            if ($farm->approved_at != Null) {
+                $success = $farm;
+                $success['token'] = $farm->createToken('api-token', ['farms'])->accessToken;
                 return response()->json($success, 200);
             } else {
                 return response()->json(["status" => false, "message" => "انتظار موافقة المدير"]);
@@ -244,5 +246,56 @@ class FarmController extends Controller
         $offer_details = DetailPurchaseOffer::where('purchase_offers_id', $offer_id)->get();
         return response()->json($offer_details);
     }
+
+    //////////////////////  users profile and editiona /////////////////////
+    public function displayMyProfile(Request $request)
+    {
+        $user = Farm::find($request->user()->id);
+        $myProfileData = [
+            'name' => $user->name,
+            'owner' => $user->owner,
+            'location' => $user->owner,
+            'username' => $user->username,
+            'governorate_id' => $user->governorate_id,
+            'mobile_number' => $user->mobile_number,
+            'password' =>  decrypt($user->password)
+        ];
+
+        return response()->json($myProfileData);
+    }
+
+    public function editMyProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'owner' => 'required',
+            'location' => 'required',
+            'username' => 'required',
+            'mobile_number' => 'required|numeric',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+        $user = Farm::find($request->user()->id);
+        $governate_id = null;
+        if($request->governorate_id!=null){
+            $governate_id = $request->governorate_id;
+        }
+        $user->update([
+            'username' => $request->username,
+            'name' => $request->name,
+            'owner' => $request->owner,
+            'location' => $request->location,
+            'governorate_id' => $governate_id,
+            'mobile_number' => $request->mobile_number,
+            'password' =>  encrypt($request->password)
+        ]);
+        return response()->json(["status"=>true, "message"=>"تم تعديل بياناتك بنجاح"]);
+    }
+
+
+
 
 }

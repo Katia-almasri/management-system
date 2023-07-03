@@ -68,16 +68,16 @@ class SalesPurchasingRequestController extends Controller
         }
 
 
-                $SalesPurchasingRequest->save();
-                //NOW THE DETAILS
-                foreach($request->details as $_detail){
-                    $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
-                    $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
-                    $salesPurchasingRequsetDetail->amount = $_detail['amount'];
-                    $salesPurchasingRequsetDetail->type = $_detail['type'];
-                    $salesPurchasingRequsetDetail->price = $_detail['price'];
-                    $salesPurchasingRequsetDetail->save();
-                }
+        $SalesPurchasingRequest->save();
+        //NOW THE DETAILS
+        foreach ($request->details as $_detail) {
+            $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
+            $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
+            $salesPurchasingRequsetDetail->amount = $_detail['amount'];
+            $salesPurchasingRequsetDetail->type = $_detail['type'];
+            $salesPurchasingRequsetDetail->price = $_detail['price'];
+            $salesPurchasingRequsetDetail->save();
+        }
 
 
         $data = $this->notificationService->makeNotification(
@@ -104,14 +104,17 @@ class SalesPurchasingRequestController extends Controller
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1], ['accept_by_sales', '=', 1], ['id', '=', $RequestId]])
             ->update(['command' => 1]);
         $find = salesPurchasingRequset::find($RequestId);
-        $data = $this->notificationService->makeNotification('add-start-command-notification',
+        $data = $this->notificationService->makeNotification(
+            'add-start-command-notification',
             'App\\Events\\addStartCommandNotif',
             'أمر جديد لمنسق حركة الآليات',
             'http://127.0.0.1:8000//sales-api//command-for-mechanism//2',
             $RequestId, //sales purchaseing table id
             $RequestId . ' تم إعطاء أمر جديد للشحنة', //details
-            $find->total_amount, // weight
-            0, //output_from not important here
+            $find->total_amount,
+            // weight
+            0,
+            //output_from not important here
             ''
         );
         $this->notificationService->addStartCommandNotif($data);
@@ -241,7 +244,7 @@ class SalesPurchasingRequestController extends Controller
         $totalAmount = $this->calculcateTotalAmount($request);
 
         $findOffer = PurchaseOffer::find($offerId);
-        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id',$offerId)->get()->first();
+        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id', $offerId)->get()->first();
         //SAVE THE NEW OFFER
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
@@ -547,5 +550,5 @@ class SalesPurchasingRequestController extends Controller
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
     }
-    
+
 }
