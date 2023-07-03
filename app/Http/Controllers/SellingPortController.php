@@ -15,6 +15,7 @@ use App\Models\salesPurchasingRequsetDetail;
 use App\systemServices\notificationServices;
 use App\Models\Manager;
 use App\Models\outPut_Type_Production;
+use App\Models\Rating;
 
 use Auth;
 use Carbon\Carbon;
@@ -227,7 +228,6 @@ public function commandAcceptForSellingPortOrder(Request $request, $SellingPortO
 }
 
 
-
 public function refuseOrderDetail(Request $request, $SellingPortOrderId){
     $validator = Validator::make($request->all(), [
         'reason_refuse' => 'required'
@@ -253,6 +253,18 @@ public function refuseOrderDetail(Request $request, $SellingPortOrderId){
 public function displayOutputTypes(Request $request){
     $types = outPut_Type_Production::pluck('type');
     return response()->json($types, 200);
+}
+
+
+public function addRatingToRequest(Request $request, $RequestId){
+    $SalesPurchasingRequest = salesPurchasingRequset::find($RequestId)->id;
+    $rating = new Rating;
+    $rating->rate = $request->rate;
+    $rating->request_sales_id = $RequestId;
+    $rating->note = $request->note;
+    $rating->save();
+
+    return response()->json(["status"=>true, "message"=>"تم إضافة التقييم"]);
 }
 
 }

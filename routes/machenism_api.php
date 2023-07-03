@@ -20,7 +20,9 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         ///////////////اضافة شاحنة/////////////////////
         Route::post('add-trucks', [TruckContoller::class, 'AddTruck']);
         ///////////////عرض الشاحنات///////////////////
-        Route::get('display-trucks', [TruckContoller::class, 'displayTruck']);
+        Route::get('display-trucks',[TruckContoller::class, 'displayTruck']);
+        /////////////// عرض الشاحنات المتاحة///////////////////
+        Route::get('display-Avaibale-trucks',[TruckContoller::class, 'displayAvaibaleTruck']);
 
         Route::group(['middleware' => 'is-truck-exist'], function () {
             /////////////تعديل حالة شاحنة
@@ -54,7 +56,9 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         ///////////////اضافة سائق/////////////////////
         Route::post('add-driver', [DriverController::class, 'AddDriver']);
         ///////////////عرض سائق///////////////////
-        Route::get('display-driver', [DriverController::class, 'displayDriver']);
+        Route::get('display-driver',[DriverController::class, 'displayDriver']);
+        ////////////عرض السائقين المتاحين
+        Route::get('display-Avaibale-driver',[DriverController::class, 'displayAvaibaleDriver']);
         //عرض السائقين المحذوفة
         Route::get('display-driver-trashed', [DriverController::class, 'DriverTrashed']);
         //استعراض الطلبات بعد أمر مدير المشتريات والمبيعات
@@ -86,6 +90,11 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
 
         // مع تغيير الحالة استعراض إشعارات أوامر مدير المشتريات والمبيعات لمنسق حركة الآليات
         Route::get('display-command-notification-change-state', [SalesPurchasingRequestController::class, 'displyCommandNotificationChangeState']);
+
+
+        ///الشاحنة المناسبة
+        Route::post('suitable-truck/{SalesId}',[TripController::class, 'SuitableTruck']);
+
 
 
     });

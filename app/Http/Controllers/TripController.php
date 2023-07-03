@@ -11,6 +11,9 @@ use App\Models\salesPurchasingRequsetDetail;
 use App\Models\Trip;
 use App\Models\Truck;
 use App\Models\Driver;
+use App\Models\Farm;
+use App\Models\Governorate;
+
 
 use App\Models\Manager;
 use Auth;
@@ -77,6 +80,23 @@ class TripController extends Controller
         Trip::find($TripId)->delete();
        return  response()->json(["status"=>true, "message"=>"تم حذف الرحلة بنجاح"]);
    }
+
+
+   public function SuitableTruck(Request $request, $SalesId){
+        $SalesPurchasingRequset =  salesPurchasingRequset::where('id',$SalesId)->pluck('total_amount');
+        $truck = Truck::where('storage_capacity','>',$SalesPurchasingRequset)
+        ->where('state','متاحة')->orderBy ('storage_capacity','ASC')->get();
+        $SalesPurchasingRequset1 =  salesPurchasingRequset::where('id',$SalesId)->pluck('farm_id');
+        $farmDis = Farm::pluck('governorate_id');
+        $dis = Governorate::where('id',$farmDis)->pluck('distance')->first();
+        foreach($truck as $_truck){
+            $FuelConsumption = $_truck->oil_consumption * $dis /100;
+            $_truck->FuelConsumption = $FuelConsumption;
+        }
+        return response()->json($truck, 200);
+}
+
+
 
 }
 

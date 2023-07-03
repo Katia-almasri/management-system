@@ -45,6 +45,10 @@ class Farm extends Authenticatable
         return $this->belongsTo('App\Models\Governate', 'governorate_id', 'id');
     }
 
+    public function governorate(){
+        return $this->belongsTo('App\Models\Governorate', 'governorate_id', 'id');
+    }
+
     ############################## End Relations ##############################
 
      ############################# Begin Accessors ##############################endregion
@@ -54,7 +58,7 @@ class Farm extends Authenticatable
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)

@@ -46,6 +46,12 @@ class TruckContoller extends Controller
         $displayTrucks = Truck::get();
         return response()->json($displayTrucks, 200);
     }
+
+    /////عرض الشاحنات المتاحة
+    public function displayAvaibaleTruck(Request $request){
+        $displayTrucks = Truck::where('state','متاحة')->get();
+        return response()->json($displayTrucks, 200);
+    }
     //تغيير حالة شاحنة
     public function UpdateTruckState(UpdateTruckRequest $request, $TruckId)
     {

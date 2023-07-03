@@ -55,6 +55,10 @@ class salesPurchasingRequset extends Model
     public function offer(){
         return $this->belongsTo('App\Models\PurchaseOffer', 'offer_id', 'id');
     }
+
+    public function rating(){
+        return $this->hasOne('App\Models\Rating', 'request_sales_id', 'id');
+    }
     ############################## End Relations ##############################
 
      ############################# Begin Accessors ##############################endregion
@@ -64,7 +68,7 @@ class salesPurchasingRequset extends Model
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)

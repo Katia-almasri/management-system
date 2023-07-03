@@ -24,6 +24,7 @@ use App\Models\Truck;
 use App\Models\Notification;
 use App\Models\Manager;
 use App\Models\PurchaseOffer;
+use App\Models\DetailPurchaseOffer;
 use App\Models\RegisterFarmRequestNotif;
 use App\systemServices\notificationServices;
 
@@ -66,15 +67,17 @@ class SalesPurchasingRequestController extends Controller
             $requestType = 'طلب شراء';
         }
 
-        $SalesPurchasingRequest->save();
-        //NOW THE DETAILS
-        foreach ($request->details as $_detail) {
-            $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
-            $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
-            $salesPurchasingRequsetDetail->amount = $_detail['amount'];
-            $salesPurchasingRequsetDetail->type = $_detail['type'];
-            $salesPurchasingRequsetDetail->save();
-        }
+
+                $SalesPurchasingRequest->save();
+                //NOW THE DETAILS
+                foreach($request->details as $_detail){
+                    $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
+                    $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
+                    $salesPurchasingRequsetDetail->amount = $_detail['amount'];
+                    $salesPurchasingRequsetDetail->type = $_detail['type'];
+                    $salesPurchasingRequsetDetail->price = $_detail['price'];
+                    $salesPurchasingRequsetDetail->save();
+                }
 
 
         $data = $this->notificationService->makeNotification(
@@ -237,7 +240,8 @@ class SalesPurchasingRequestController extends Controller
         //CALCULATE TOTAL AMOUNT OF OFFER
         $totalAmount = $this->calculcateTotalAmount($request);
 
-        $findOffer = PurchaseOffer::with('farm')->find($offerId);
+        $findOffer = PurchaseOffer::find($offerId);
+        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id',$offerId)->get()->first();
         //SAVE THE NEW OFFER
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
@@ -255,6 +259,7 @@ class SalesPurchasingRequestController extends Controller
             $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
             $salesPurchasingRequsetDetail->amount = $_detail['amount'];
             $salesPurchasingRequsetDetail->type = $_detail['type'];
+            $salesPurchasingRequsetDetail->price = $findOfferDet->price;
             $salesPurchasingRequsetDetail->save();
         }
         //send notification to ceo
