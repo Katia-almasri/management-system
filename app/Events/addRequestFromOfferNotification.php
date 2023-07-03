@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class addSalesPurchaseToCeoNotification
+class addRequestFromOfferNotification
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -23,40 +23,40 @@ class addSalesPurchaseToCeoNotification
      public $output_from;
      public $date;
      public $time;
+     
 
-   public function __construct($data)
-   { 
-       if($data['title']!=null)
-           $this->title = $data['title'];
-
-        if($data['route']!=null)
-            $this->route = $data['route'];
-
-       if($data['act_id']!=null)
-           $this->act_id = $data['act_id'];
-
-       if($data['details']!=null)
-           $this->details = $data['details'];
-
-        if($data['weight']!=null)
-            $this->weight = $data['weight'];
+    public function __construct($data)
+    { 
+        if($data['title']!=null)
+            $this->title = $data['title'];
 
         if($data['output_from']!=null)
             $this->output_from = $data['output_from'];
 
-       $this->date = date("Y-m-d", strtotime(Carbon::now()));
-       $this->time = date("h:i A", strtotime(Carbon::now()));
-   }
+        if($data['route']!=null)
+            $this->route = $data['route'];
 
-   
-   public function broadcastOn()
-   {
-       return ['add-sales-purchase-to-ceo-notification'];
-   }
+        if($data['act_id']!=null)
+            $this->act_id = $data['act_id'];
 
-   public function broadcastAs()
-   {
-     return 'add-sales-purchase-to-ceo-notification';
-   }
+        if($data['details']!=null)
+            $this->details = $data['details'];
 
+        if($data['weight']!=null)
+            $this->weight = $data['weight'];
+
+        $this->date = date("Y-m-d", strtotime(Carbon::now()));
+        $this->time = date("h:i A", strtotime(Carbon::now()));
+    }
+
+    
+    public function broadcastOn()
+    {
+        return ['add-request-from-offer-notification'];
+    }
+
+    public function broadcastAs()
+    {
+      return 'add-request-from-offer-notification';
+    }
 }

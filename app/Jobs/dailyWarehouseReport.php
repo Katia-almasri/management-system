@@ -53,7 +53,7 @@ class dailyWarehouseReport implements ShouldQueue
             $getWarehouseUnderStockpile = $this->warehouseService->getWarehouseUnderStockpile();
             $getOutputTypesInsertedToExpirationWarehouse = $this->warehouseService->getOutputTypesInsertedToExpirationWarehouse();
             $getNonInsertedExpiredToExpirationWarehouse = $this->warehouseService->getNonInsertedExpiredToExpirationWarehouse();
-            
+            $getMaterialsHavslistInDestructionWarehouse = $this->warehouseService->getMaterialsHavslistInDestructionWarehouse();
             
     
             $report = [
@@ -64,7 +64,8 @@ class dailyWarehouseReport implements ShouldQueue
                 "getNotDoneCommands"=>$getNotDoneCommands,
                 "getWarehouseUnderStockpile"=>$getWarehouseUnderStockpile,
                 "getOutputTypesInsertedToExpirationWarehouse"=>$getOutputTypesInsertedToExpirationWarehouse,
-                "getNonInsertedExpiredToExpirationWarehouse"=>$getNonInsertedExpiredToExpirationWarehouse
+                "getNonInsertedExpiredToExpirationWarehouse"=>$getNonInsertedExpiredToExpirationWarehouse,
+                "getMaterialsHavslistInDestructionWarehouse"=>$getMaterialsHavslistInDestructionWarehouse
                 
             ];
             

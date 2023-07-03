@@ -30,8 +30,8 @@ class FarmController extends Controller
     }
     public function displayFarms(Request $request)
     {
-        $Farm = Farm::where('approved_at', '!=', null)
-            ->get(array('id', 'name', 'owner', 'mobile_number', 'location'));
+        $Farm = Farm::with('governate')->where('approved_at', '!=', null)->get();
+
         return response()->json($Farm, 200);
     }
 
@@ -44,15 +44,16 @@ class FarmController extends Controller
     }
 
     //2. last 48 h
-    public function displayPurchaseOffersLast48H(Request $request){
+    public function displayPurchaseOffersLast48H(Request $request)
+    {
 
-        $PurchaseOffer =  \DB::table('purchase_offers AS t1')
-                ->select('t1.*', 'farms.username')
-                ->join('farms', 'farms.id', '=', 't1.farm_id')
-                ->leftJoin('sales_purchasing_requests AS t2','t2.offer_id','=','t1.id')
-                ->whereNull('t2.offer_id')
-                ->where('t1.created_at', '>=', Carbon::now()->subHours(48)->toDateTimeString())
-                ->get();
+        $PurchaseOffer = \DB::table('purchase_offers AS t1')
+            ->select('t1.*', 'farms.username')
+            ->join('farms', 'farms.id', '=', 't1.farm_id')
+            ->leftJoin('sales_purchasing_requests AS t2', 't2.offer_id', '=', 't1.id')
+            ->whereNull('t2.offer_id')
+            ->where('t1.created_at', '>=', Carbon::now()->subHours(48)->toDateTimeString())
+            ->get();
 
         return response()->json($PurchaseOffer);
 
@@ -86,7 +87,8 @@ class FarmController extends Controller
                 "password" => "required|min:8|max:15",
                 "location" => "required|max:255",
                 "mobile_number" => "required",
-                "owner" => "required"
+                "owner" => "required",
+                "governorate_id" => "required"
             ]
         );
         if ($validator->fails()) {
@@ -103,6 +105,7 @@ class FarmController extends Controller
         $farm->password = bcrypt($request->password);
         $farm->location = $request->location;
         $farm->mobile_number = $request->mobile_number;
+        $farm->governorate_id = $request->governorate_id;
         $farm->save();
 
         //MAKE NEW NOTIFICATION RECORD
@@ -155,7 +158,6 @@ class FarmController extends Controller
 
     public function commandAcceptForFarm(Request $request, $farmId)
     {
-
         $findRequestFarm = Farm::where([['id', '=', $farmId]])
             ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
 
@@ -222,7 +224,8 @@ class FarmController extends Controller
         $rowMaterial = RowMaterial::pluck('name');
         return response()->json($rowMaterial, 200);
     }
-    public function displayDetailOffer(Request $request, $offer_id){
+    public function displayDetailOffer(Request $request, $offer_id)
+    {
         $offer_details = DetailPurchaseOffer::where('purchase_offers_id', $offer_id)->get();
         return response()->json($offer_details);
     }

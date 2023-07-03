@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Carbon\Carbon;
 use Hash;
 use Illuminate\Http\Request;
@@ -60,7 +61,7 @@ class CEOController extends Controller
         $manager->first_name = $request->first_name;
         $manager->last_name = $request->last_name;
         $password = $request->first_name.'123456';
-        $manager->password = Hash::make($password);
+        $manager->password = encrypt($password);
         $manager->username = $request->username;
         $manager->date_of_hiring = Carbon::now();
         $manager->save();
@@ -97,6 +98,13 @@ class CEOController extends Controller
         return response()->json($users);
     }
 
+    public function displayNumUsersGroupByRoles(Request $request){
+        $usersByRoles = Manager::select('managing_level',  \DB::raw('count(*) as total'))->groupBy('managing_level')->
+        orderBy('managing_level')->
+        get();
+        return response()->json($usersByRoles);
+    }
+
     public function restorUser(Request $request, $userId){
 
         $user = Manager::find($userId);
@@ -111,6 +119,55 @@ class CEOController extends Controller
         return response()->json($_oldManager);
 
     }
+
+    ///////////////////// NOTIFICATION PART ///////////////////
+    public function displayRequestFromOfferNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-request-from-offer-notification'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayRequestFromOfferNotificationAndChangeState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-request-from-offer-notification'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'add-request-from-offer-notification'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
+    public function displaySalesPurchasingRequestNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displaySalesPurchasingRequestNotificationAndChangeState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
+    
 
 
 

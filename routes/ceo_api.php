@@ -54,8 +54,25 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     //استرجاع مستخدم جديد
     Route::post('restore-user/{userId}',[CEOController::class, 'restorUser']);
 
+    //استعراض عدد المستخدمين حسب الأدوار
+    Route::get('display-num-users-group-by-roles',[CEOController::class, 'displayNumUsersGroupByRoles']);
+
     Route::get('count-user',[ChartController::class, 'CountManager']);
 
+    ///////////////////////////// NOTIFICATION PART /////////////////////////
+    // استعراض إشعارات عروض المزارع المؤكدة من قبل مدير المشتريات
+    Route::get('add-request-from-offer-notification',[CEOController::class, 'displayRequestFromOfferNotification']);
+    // استعراض إشعارات عروض المزارع مع تغيير حالة الإشعار
+    Route::get('add-request-from-offer-notification-change-state',[CEOController::class, 'displayRequestFromOfferNotificationAndChangeState']);
+
+    // استعراض إشعارات طلبات البيع والشراء المؤكدة من قبل مدير المشتريات
+    Route::get('display-sales-purchasing-request-notification',[CEOController::class, 'displaySalesPurchasingRequestNotification']);
+    // استعراض إشعارات طلبات البيع والشراء المؤكدة مع تغيير حالة الإشعار
+    Route::get('display-sales-purchasing-request-notification-change-state',[CEOController::class, 'displaySalesPurchasingRequestNotificationAndChangeState']);
+
+    
+    
+    
 
 });
 

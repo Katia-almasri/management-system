@@ -1,6 +1,7 @@
 <?php
 namespace App\systemServices;
 
+use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\Exception;
 use Auth;
@@ -74,6 +75,44 @@ class notificationServices
         $pusher = $this->makePusherConnection();
         $pusher->trigger('daily-warehouse-report-ready', 'App\\Events\\dailyWarehouseReportReady', $data);
 
+    }
+
+    public function addRequestFromOfferNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('add-request-from-offer-notification', 'App\\Events\\addRequestFromOfferNotification', $data);
+
+    }
+
+    public function acceptRefuseSalesPurchaseNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('accept-refuse-sales-purchase-notification', 'App\\Events\\acceptRefuseSalesPurchaseNotification', $data);
+
+    }
+    //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
+    public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){
+        $newNotification = new Notification();
+        $newNotification->channel = $channel;
+        $newNotification->event = $event;
+        $newNotification->title = $title;
+        $newNotification->route = $route;
+        $newNotification->act_id = $act_id;
+        $newNotification->details = $details;
+        $newNotification->is_seen = 0;
+        $newNotification->weight = $weight;
+        $newNotification->output_from = $output_from;
+        $newNotification->reason_of_notification = $reson_of_notification;
+        $newNotification->save();
+
+        $data['title'] = $title;
+        $data['route'] =  $route;
+        $data['act_id'] =  $act_id;
+        $data['details'] = $details;
+        $data['weight'] = $weight;
+        $data['output_from'] = $output_from;
+        $data['date'] = date("Y-m-d", strtotime(Carbon::now()));
+        $data['time'] = date("h:i A", strtotime(Carbon::now()));
+
+        return $data;
     }
 
 }

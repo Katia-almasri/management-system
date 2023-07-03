@@ -881,7 +881,7 @@ class WarehouseController extends Controller
 
     public function displayOutputExpiredDetail(Request $request, $notification_id)
     {
-        $notification = Notification::find($notification_id);
+        $notification = Notification::where('channel', "add-output-to-expiration-warehouse-notification")->find($notification_id);
         return response()->json($notification);
     }
 
@@ -903,6 +903,33 @@ class WarehouseController extends Controller
     
         }
         return response()->json(["status"=>false, "data"=>null, "message"=>"لم يتم توليد التقرير لهذا اليوم بعد"]);
+    }
+    //display previous daily reports
+    public function displayPreviousDailyReports(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "date" => "required"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
+        
+        $newFormat = Carbon::parse($request->date)->format('Y_m_d');
+        if($newFormat > Carbon::now()->format('Y_m_d'))
+            return response()->json(["status"=>false, "message"=>"لا يمكن توليد تقرير ليوم يلي اليوم الحالي!!"]);
+        $filename = 'daily_warehouse_report_' . $newFormat . '.txt';
+        if(Storage::exists($filename)){
+            $report = Storage::get($filename);
+            $data = json_decode($report, true);
+            return response()->json(["status"=>true, "data"=>$data]);
+
+        }
+        return response()->json(["status"=>false, "data"=>"لا يوجد تقرير لهذا اليوم بعد"]);
     }
 
     public function displayDailyWarehouseNotificationReports(Request $request){

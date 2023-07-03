@@ -1283,6 +1283,11 @@ class warehouseServices
         return (["notifications"=>$notifications]);
     }
 
+    public function getMaterialsHavslistInDestructionWarehouse(){
+        $destructionsWarehouse = Exipration::where('weight', '!=', 0)->get();
+        return (["destructionsWarehouse"=>$destructionsWarehouse]);
+    }
+
     
 
 

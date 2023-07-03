@@ -20,6 +20,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('get-purchase-offer',[FarmController::class, 'displayPurchaseOffers']);
         Route::get('get-purchase-offer-last-48h',[FarmController::class, 'displayPurchaseOffersLast48H']);
 
+        //إضافة مزرعة من قبل مدير المشتريات
+        Route::post('add-farm',[SalesPurchasingRequestController::class, 'addFarm']);
+        //‘كمال معلومات مزرعة
+        Route::post('edit-farm-info/{farmId}',[SalesPurchasingRequestController::class, 'editFarmInfo']);
+        // استعراض محتويات مزرعة بعينها
+        Route::get('display-farm/{farmId}',[SalesPurchasingRequestController::class, 'displayFarm']);
+        
+        
         //////////////Selling Port////////////////
         Route::get('get-selling-port',[SellingPortController::class, 'displaySellingPort']);
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
@@ -132,6 +140,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('sort_farm',[ChartSalesController::class, 'sortByTheBestFarm']);
         //افضل  منافذ بيع
         Route::get('sort_selling_port',[ChartSalesController::class, 'sortByTheBestSellingPort']);
+
+        ///////////////////////// NOTIFICATION PART ///////////////////////////
+        //استعراض إشعارات الطلبات المقبولة والمرفوضة من قبل المدير التنفيذي
+        Route::get('display-accepted-refused-notification',[SalesPurchasingRequestController::class, 'displyAcceptedRefusedNotification']);
+        //استعراض إشعارات الطلبات المقبولة والمرفوضة من قبل المدير التنفيذي وتعديل حالة الإشعار
+        Route::get('display-accepted-refused-notification-change-state',[SalesPurchasingRequestController::class, 'displyAcceptedRefusedNotificationAndChangeState']);
+        
+
 
     });
 

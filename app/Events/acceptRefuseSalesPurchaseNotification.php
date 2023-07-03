@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class addSalesPurchaseToCeoNotification
+class acceptRefuseSalesPurchaseNotification
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,19 +24,19 @@ class addSalesPurchaseToCeoNotification
      public $date;
      public $time;
 
-   public function __construct($data)
-   { 
-       if($data['title']!=null)
-           $this->title = $data['title'];
+    public function __construct($data)
+    { 
+        if($data['title']!=null)
+            $this->title = $data['title'];
 
         if($data['route']!=null)
             $this->route = $data['route'];
 
-       if($data['act_id']!=null)
-           $this->act_id = $data['act_id'];
+        if($data['act_id']!=null)
+            $this->act_id = $data['act_id'];
 
-       if($data['details']!=null)
-           $this->details = $data['details'];
+        if($data['details']!=null)
+            $this->details = $data['details'];
 
         if($data['weight']!=null)
             $this->weight = $data['weight'];
@@ -44,19 +44,18 @@ class addSalesPurchaseToCeoNotification
         if($data['output_from']!=null)
             $this->output_from = $data['output_from'];
 
-       $this->date = date("Y-m-d", strtotime(Carbon::now()));
-       $this->time = date("h:i A", strtotime(Carbon::now()));
-   }
+        $this->date = date("Y-m-d", strtotime(Carbon::now()));
+        $this->time = date("h:i A", strtotime(Carbon::now()));
+    }
 
-   
-   public function broadcastOn()
-   {
-       return ['add-sales-purchase-to-ceo-notification'];
-   }
+    
+    public function broadcastOn()
+    {
+        return ['accept-refuse-sales-purchase-notification'];
+    }
 
-   public function broadcastAs()
-   {
-     return 'add-sales-purchase-to-ceo-notification';
-   }
-
+    public function broadcastAs()
+    {
+      return 'accept-refuse-sales-purchase-notification';
+    }
 }

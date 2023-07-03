@@ -44,6 +44,8 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     Route::get('drop-down-from-det1',[Controller::class, 'dropDownFromDet1']);
     Route::get('drop-down-from-det2',[Controller::class, 'dropDownFromDet2']);
     Route::get('drop-down-from-det3',[Controller::class, 'dropDownFromDet3']);
+    Route::get('drop-down-get-governates',[Controller::class, 'getGovernateDropDown']);
+    
 
     ////////////////////عرض خرج الذبح////////////////////////
     Route::get('display-output-slaughter',[SlaughterSupervisorController::class, 'displayOutputSlaughter'])->middleware('check-read-output-slaughter');
@@ -85,8 +87,14 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     // استعراض التقرير اليومي للمخازن
     Route::get('get-daily-warehouse-report',[WarehouseController::class, 'readDailyWarehouseReport']);
     
-
+    // استعلراض تقارير المخازن اليومية لتاريخ معين
+    Route::post('get-previous-daily-warehouse-reports',[WarehouseController::class, 'displayPreviousDailyReports']);
     
+    ////////////////////////////// USERS PROFILES AND EDITIONS ////////////////////
+    //display user profile
+    Route::get('display-my-profile',[Controller::class, 'displayMyProfile']);
+    //edit user profile
+    Route::post('edit-my-profile',[Controller::class, 'editMyProfile']);
     
     
     

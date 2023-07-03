@@ -15,7 +15,8 @@ class TruckContoller extends Controller
     use validationTrait;
 
     //اضافة شاحنة
-    public function AddTruck(TruckRequest $request){
+    public function AddTruck(TruckRequest $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'model' => 'required',
@@ -24,7 +25,7 @@ class TruckContoller extends Controller
             'governorate_name' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
 
@@ -37,38 +38,41 @@ class TruckContoller extends Controller
         $truck->storage_capacity = $request->storage_capacity;
         $truck->state = 'متاحة';
         $truck->save();
-        return  response()->json(["status"=>true, "message"=>"تم اضافة الشاحنة بنجاح"]);
+        return response()->json(["status" => true, "message" => "تم اضافة الشاحنة بنجاح"]);
     }
     //عرض الشاحنات
-    public function displayTruck(Request $request){
+    public function displayTruck(Request $request)
+    {
         $displayTrucks = Truck::get();
         return response()->json($displayTrucks, 200);
     }
     //تغيير حالة شاحنة
-    public function UpdateTruckState(UpdateTruckRequest $request,$TruckId){
+    public function UpdateTruckState(UpdateTruckRequest $request, $TruckId)
+    {
         $validator = Validator::make($request->all(), [
             'state' => 'required',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
         $TrunkState = Truck::find($TruckId);
         $TrunkState->state = $request->state;
         $TrunkState->save();
-        return  response()->json(["status"=>true, "message"=>"تم تعديل حالة الشاحنة بنجاح"]);
+        return response()->json(["status" => true, "message" => "تم تعديل حالة الشاحنة بنجاح"]);
     }
     // حذف شاحنة
-    public function SoftDeleteTruck(Request $request, $TruckId){
-         Truck::find($TruckId)->delete();
-        return  response()->json(["status"=>true, "message"=>"تم حذف الشاحنة بنجاح"]);
+    public function SoftDeleteTruck(Request $request, $TruckId)
+    {
+        Truck::find($TruckId)->delete();
+        return response()->json(["status" => true, "message" => "تم حذف الشاحنة بنجاح"]);
     }
     // استرجاع شاحنة محذوفة
     public function restoreTruck(Request $request, $TruckId)
     {
         Truck::onlyTrashed()->find($TruckId)->restore();
 
-        return  response()->json(["status"=>true, "message"=>"تم استرجاع الشاحنة المحذوفة بنجاح"]);
+        return response()->json(["status" => true, "message" => "تم استرجاع الشاحنة المحذوفة بنجاح"]);
     }
     // عرض الشاحنات المحذوفة
     public function TruckTrashed(Request $request)
@@ -77,12 +81,27 @@ class TruckContoller extends Controller
         return response()->json($TruckTrashed, 200);
     }
 
-    public function getTruckStates(Request $request){
-        return response()->json(["متاحة", "في الرحلة", "في الصيانة"]);
+    public function getTruckStates(Request $request)
+    {
+
+        $truckStates = [
+            (object) ["name" => "متاحة"],
+            (object) ["name" => "في الرحلة"],
+            (object) ["name" => "في الصيانة"]
+        ];
+
+        return response()->json($truckStates);
     }
 
-    public function getDriverStates(Request $request){
-        return response()->json(["متاح", "في الرحلة", "إجازة", "دوام"]);
+    public function getDriverStates(Request $request)
+    {
+        $driverStates = [
+            (object) ["name" => "متاح"],
+            (object) ["name" => "في الرحلة"],
+            (object) ["name" => "إجازة"],
+            (object) ["name" => "دوام"]
+        ];
+        return response()->json($driverStates);
     }
 
 

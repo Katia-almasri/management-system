@@ -15,32 +15,48 @@ class addStartCommandNotif implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $type;
-    public $command_id;
+    public $title;
+    public $route;
+    public $act_id;
+    public $details;
+    public $weight;
+    public $output_from;
     public $date;
     public $time;
 
     public function __construct($data)
     {
 
-       if($data['type']!=null)
-            $this->type = $data['type'];
+        if ($data['title'] != null)
+            $this->title = $data['title'];
 
-       if($data['command_id']!=null)
-           $this->command_id = $data['command_id'];
+        if ($data['route'] != null)
+            $this->route = $data['route'];
 
-       $this->date = date("Y-m-d", strtotime(Carbon::now()));
-       $this->time = date("h:i A", strtotime(Carbon::now()));
+        if ($data['act_id'] != null)
+            $this->act_id = $data['act_id'];
+
+        if ($data['details'] != null)
+            $this->details = $data['details'];
+
+        if ($data['weight'] != null)
+            $this->weight = $data['weight'];
+
+        if ($data['output_from'] != null)
+            $this->output_from = $data['output_from'];
+
+        $this->date = date("Y-m-d", strtotime(Carbon::now()));
+        $this->time = date("h:i A", strtotime(Carbon::now()));
     }
 
 
     public function broadcastOn()
-   {
-       return ['add-start-command-notification'];
-   }
+    {
+        return ['add-start-command-notification'];
+    }
 
-   public function broadcastAs()
-   {
-     return 'add-start-command-notification';
-   }
+    public function broadcastAs()
+    {
+        return 'add-start-command-notification';
+    }
 }

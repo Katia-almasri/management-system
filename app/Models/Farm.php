@@ -24,7 +24,10 @@ class Farm extends Authenticatable
        'location',
        'mobile_number',
        'username',
-       'password'
+       'password',
+       'added_by',
+       'governorate_id'
+
     ];
 
     ############################## Begin Relations #############################
@@ -37,17 +40,9 @@ class Farm extends Authenticatable
         return $this->hasMany('App\Models\salesPurchasingRequset', 'farm_id', 'id');
     }
 
-    public function registerFarmRequestNotif(){
-        return $this->hasOne('App\Models\RegisterFarmRequestNotif', 'from', 'id');
-    }
 
-
-    public function AddOfferNotif(){
-        return $this->hasOne('App\Models\AddOfferNotif', 'from', 'id');
-    }
-
-    public function AddSalesPurchasingNotif(){
-        return $this->hasOne('App\Models\Farm', 'farm_id', 'id');
+    public function governate(){
+        return $this->belongsTo('App\Models\Governate', 'governorate_id', 'id');
     }
 
     ############################## End Relations ##############################
