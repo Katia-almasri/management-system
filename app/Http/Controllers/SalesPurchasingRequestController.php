@@ -547,5 +547,5 @@ class SalesPurchasingRequestController extends Controller
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
     }
-    
+
 }

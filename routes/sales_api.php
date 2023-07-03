@@ -26,13 +26,13 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('edit-farm-info/{farmId}',[SalesPurchasingRequestController::class, 'editFarmInfo']);
         // استعراض محتويات مزرعة بعينها
         Route::get('display-farm/{farmId}',[SalesPurchasingRequestController::class, 'displayFarm']);
-        
-        
+
+
         //////////////Selling Port////////////////
         Route::get('get-selling-port',[SellingPortController::class, 'displaySellingPort']);
         Route::get('get-selling-order',[SellingPortController::class, 'displaySellingOrder']);
         //////////////add request/////////////
-        Route::Post('add-requset-sales-purchasing',[SalesPurchasingRequestController::class, 'AddRequsetSalesPurchasing']);
+        Route::Post('add-requset-sales-purchasing',[SalesPurchasingRequestController::class, 'AddRequsetSalesPurchasing'])->middleware('check-add-request-sales');
         /////////////أمر لمنسق حركة الاليات/////////////////////////
         Route::Post('command-for-mechanism/{RequestId}',[SalesPurchasingRequestController::class, 'commandForMechanismCoordinator'])
         ->middleware('is-request-accept');
@@ -146,7 +146,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-accepted-refused-notification',[SalesPurchasingRequestController::class, 'displyAcceptedRefusedNotification']);
         //استعراض إشعارات الطلبات المقبولة والمرفوضة من قبل المدير التنفيذي وتعديل حالة الإشعار
         Route::get('display-accepted-refused-notification-change-state',[SalesPurchasingRequestController::class, 'displyAcceptedRefusedNotificationAndChangeState']);
-        
+
 
 
     });

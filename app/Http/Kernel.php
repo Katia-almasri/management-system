@@ -128,8 +128,6 @@ class Kernel extends HttpKernel
         'check-read-content-det2' => \App\Http\Middleware\checkReadContentDet2::class,
         'check-read-content-det3' => \App\Http\Middleware\checkReadContentDet3::class,
         'check-read-content-store' => \App\Http\Middleware\checkReadContentStore::class,
-
-        //today
         'is-weight-under-minimum-in-lakes' => \App\Http\Middleware\isWeightUnderMinimumInLakes::class,
         'is-weight-under-minimum-in-zero-friges' => \App\Http\Middleware\isWeightUnderMinimumInZeroFriges::class,
         'is-weight-under-minimum-in-det-1' => \App\Http\Middleware\isWeightUnderMinimumInDet1::class,
@@ -138,6 +136,7 @@ class Kernel extends HttpKernel
         'is-weight-under-minimum-in-warehouses' => \App\Http\Middleware\isWeightUnderMinimumInWarehouse::class,
         'check-My-sales-request' => \App\Http\Middleware\check_My_sales_request::class,
         'check-input-slaughter' => \App\Http\Middleware\check_Input_Slaughter::class,
+        'check-add-request-sales' => \App\Http\Middleware\check_add_request_sales::class,
 
     ];
 }
