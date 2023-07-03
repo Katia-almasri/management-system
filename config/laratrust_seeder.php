@@ -35,6 +35,7 @@ return [
         'Purchasing-and-Sales-manager' => [
             'farms'=>'r,d',
             'note' =>'r,c',
+            'warehouse' => 'r',
             'statement after weight'=>'r'
         ],
 
