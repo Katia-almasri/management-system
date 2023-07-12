@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\calendarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
@@ -96,6 +97,10 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     //edit user profile
     Route::post('edit-my-profile',[Controller::class, 'editMyProfile']);
     
+    /////////////// calendar ////////////////
+    
     
     
 });
+
+Route::get('get-calendar',[calendarController::class, 'getEvents']);
