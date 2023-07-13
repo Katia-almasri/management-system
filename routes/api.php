@@ -66,6 +66,8 @@ Route::group( ['middleware' => ['auth:managers-api'] ],function(){
     Route::get('display-det-3-content',[WarehouseController::class, 'displayDetonatorFrige3Content'])->middleware('check-read-content-det3');
     //استعراض محتويات المخزن النهائي
     Route::get('display-store-content',[WarehouseController::class, 'displayStoreContent'])->middleware('check-read-content-store');
+    //استعراض محتويات مخزن الإتلاف
+    Route::get('display-expiration-warehouse',[WarehouseController::class, 'displayExpirationWarehouse']);
 
 
 
