@@ -11,6 +11,9 @@ use Validator;
 use App\Models\InputCutting;
 use App\Models\output_cutting;
 use App\Models\output_cutting_detail;
+use App\Models\Output_remnat_details;
+use App\Models\Remnat;
+use App\Models\RemnatDetail;
 
 use Carbon\Carbon;
 
@@ -60,6 +63,7 @@ class CuttingController extends Controller
         $findInput = InputCutting::where([['type_id', $type_id],['output_citting_id',null]])
             ->update(['output_citting_id' => $output->id]);
 
+            $totalWeightProduction = 0;
         foreach ($request->details as $_detail) {
             $outputDetail = new output_cutting_detail();
             $outputDetail->weight = $_detail['weight'];
@@ -67,9 +71,59 @@ class CuttingController extends Controller
             $outputDetail->output_cutting_id = $output->id;
             $outputDetail->outputable_id = 0;
             $outputDetail->outputable_type = '';
+            $totalWeightProduction += $_detail['weight'];
             $outputDetail->save();
 
         }
+
+        $totalWeightRemnat = 0;
+        if($request->details_remnat !=null){
+            foreach($request->details_remnat as $_details_remnat){
+                $outputRemnatDetail = new Output_remnat_details();
+                $outputRemnatDetail->weight = $_details_remnat['weight'];
+                $outputRemnatDetail->type_remant_id = $_details_remnat['type_remant_id'];
+                $outputRemnatDetail->output_cutting_id  = $output->id;
+                $totalWeightRemnat += $_details_remnat['weight'];
+                $outputRemnatDetail->save();
+
+
+                $remnatDetail = new RemnatDetail();
+                $remnatType = Remnat::where('type_remant_id',$_details_remnat['type_remant_id'])->get()->first();
+
+                if($remnatType == null){
+
+                    $remnat = new Remnat();
+                    $remnat->type_remant_id = $_details_remnat['type_remant_id'];
+                    $remnat->weight = $_details_remnat['weight'];
+                    $remnat->save();
+
+                    $remnatDetail->remant_id = $remnat->id;
+                }
+                else{
+                    $weightRemnat =0;
+                    $findRemnat =  Remnat::where('type_remant_id',$_details_remnat['type_remant_id'])->get()->first();
+                    $weightRemnat = $findRemnat->weight + $_details_remnat['weight'];
+                    $findRemnat->update(['weight'=>$weightRemnat]);
+                    $remnatDetail->remant_id = $findRemnat->id;
+                }
+
+
+                $remnatDetail->weight = $_details_remnat['weight'];
+                $remnatDetail->output_remnat_det_id = $outputRemnatDetail->id;
+                //remant_id
+                $remnatDetail->save();
+            }
+        }
+
+        $totalWeight = $totalWeightProduction + $totalWeightRemnat;
+            $InputCutting = InputCutting::where('output_citting_id',$output->id)->get();
+            $totalWeightInput = 0;
+            foreach($InputCutting as $_InputCutting){
+                $totalWeightInput += $_InputCutting->weight;
+            }
+            $wastage = $totalWeightInput - ($totalWeightProduction + $totalWeightRemnat);
+            output_cutting::where('id',$output->id)->update(['wastage'=>$wastage]);
+
         return response()->json(["status" => true, "message" => "تم اضافة خرج"]);
 
 

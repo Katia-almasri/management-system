@@ -27,6 +27,7 @@ class outPut_SlaughterSupervisor_detail extends Model
     }
 
 
+
     //MORPH RELATIONSHIP BTN DETAILS AND(SLAUGHTER, .., .., SAWA3E8)
     /////////////////////////////////////// صفري ////////////////////////////////////////
     //الدخل إلى تفاصيل  البحرات
@@ -42,7 +43,7 @@ class outPut_SlaughterSupervisor_detail extends Model
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)

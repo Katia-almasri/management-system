@@ -26,6 +26,9 @@ class output_cutting extends Model
         return $this->hasMany('App\Models\output_cutting_detail', 'output_cutting_id', 'id');
     }
 
+    public function detail_output_remnat(){
+        return $this->hasMany('App\Models\output_remnat_details', 'output_cutting_id', 'id');
+    }
      ############################# Begin Accessors ##############################endregion
      public function getCreatedAtAttribute($date)
      {
@@ -33,7 +36,7 @@ class output_cutting extends Model
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)

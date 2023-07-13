@@ -28,6 +28,10 @@ class outPut_SlaughterSupervisor_table extends Model
         return $this->hasMany('App\Models\outPut_SlaughterSupervisor_detail', 'output_id', 'id');
     }
 
+    public function detail_output_remnat(){
+        return $this->hasMany('App\Models\output_remnat_details', 'output_slaughter_id', 'id');
+    }
+
      ############################# Begin Accessors ##############################endregion
      public function getCreatedAtAttribute($date)
      {
@@ -35,7 +39,7 @@ class outPut_SlaughterSupervisor_table extends Model
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)
