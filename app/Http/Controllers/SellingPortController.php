@@ -143,7 +143,7 @@ class SellingPortController extends Controller
 
    //عرض طلبات منفذي
     public function displayMySellingPortRequest(Request $request){
-        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail')
+        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail','rating')
         ->where('selling_port_id',$request->user()->id)->orderBy('id', 'DESC')->get();
         return response()->json($SellingPortRequest, 200);
     }
