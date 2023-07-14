@@ -124,7 +124,6 @@ class SlaughterSupervisorController extends Controller
                     $remnatDetail->remant_id = $findRemnat->id;
                 }
 
-
                 $remnatDetail->weight = $_details_remnat['weight'];
                 $remnatDetail->output_remnat_det_id = $outputRemnatDetail->id;
                 //remant_id
