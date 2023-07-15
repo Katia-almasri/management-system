@@ -19,6 +19,9 @@ Route::group( ['middleware' => ['auth:selling-port-api', 'check-scope-selling-po
         // ->middleware('is-selling-port-order-delete');
         Route::get('display-types',[SellingPortController::class, 'displayOutputTypes']);
         Route::post('add-rating/{RequestId}',[SellingPortController::class, 'addRatingToRequest'])->middleware('check-My-sales-request');
-
+        ///////////// profiles and editions ////////////////////
+        Route::get('display-my-profile',[SellingPortController::class, 'displayMyProfile']);
+        Route::post('edit-my-profile',[SellingPortController::class, 'editMyProfile']);
+        
 });
 

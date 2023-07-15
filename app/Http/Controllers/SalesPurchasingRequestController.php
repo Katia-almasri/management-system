@@ -49,53 +49,62 @@ class SalesPurchasingRequestController extends Controller
     //اضافة طلب شراء أو مبيع
     public function AddRequsetSalesPurchasing(SalesPurchasingRequest $request)
     {
+        try {
+            DB::beginTransaction();
+            $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
+            $SalesPurchasingRequest = new salesPurchasingRequset();
+            $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
+            $SalesPurchasingRequest->ceo_id = Manager::where('managing_level', 'ceo')->get()->last()->id;
+            $SalesPurchasingRequest->total_amount = $totalAmount['result'];
+            $SalesPurchasingRequest->request_type = $request->request_type; //purchasing from farm_id
+            $SalesPurchasingRequest->accept_by_sales = 1;
+            $SalesPurchasingRequest->command = 0;
+            $requestType = '';
+            if ($request->request_type == 1) {
+                $SalesPurchasingRequest->selling_port_id = $request->selling_port_id;
+                $requestType = 'طلب مبيع';
+            } else if ($request->request_type == 0) {
+                $SalesPurchasingRequest->farm_id = $request->farm_id;
+                $requestType = 'طلب شراء';
+            }
 
-        $totalAmount = $this->SalesPurchasingRequestService->calculcateTotalAmount($request);
-        $SalesPurchasingRequest = new salesPurchasingRequset();
-        $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
-        $SalesPurchasingRequest->ceo_id = Manager::where('managing_level', 'ceo')->get()->last()->id;
-        $SalesPurchasingRequest->total_amount = $totalAmount['result'];
-        $SalesPurchasingRequest->request_type = $request->request_type; //purchasing from farm_id
-        $SalesPurchasingRequest->accept_by_sales = 1;
-        $SalesPurchasingRequest->command = 0;
-        $requestType = '';
-        if ($request->request_type == 1) {
-            $SalesPurchasingRequest->selling_port_id = $request->selling_port_id;
-            $requestType = 'طلب مبيع';
-        } else if ($request->request_type == 0) {
-            $SalesPurchasingRequest->farm_id = $request->farm_id;
-            $requestType = 'طلب شراء';
+
+            $SalesPurchasingRequest->save();
+            //NOW THE DETAILS
+            foreach ($request->details as $_detail) {
+                $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
+                $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
+                $salesPurchasingRequsetDetail->amount = $_detail['amount'];
+                $salesPurchasingRequsetDetail->type = $_detail['type'];
+                $salesPurchasingRequsetDetail->price = $_detail['price'];
+                $salesPurchasingRequsetDetail->save();
+            }
+
+
+            $data = $this->notificationService->makeNotification(
+                'accept-refuse-sales-purchase-notification',
+                'App\\Events\\acceptRefuseSalesPurchaseNotification',
+                ' إضافة ' . $requestType,
+                '',
+                $SalesPurchasingRequest->id,
+                ' تم إضافة ' . $requestType,
+                $SalesPurchasingRequest->total_amount,
+                'من قبل مدير المشتريات والمبيعات',
+                ''
+            );
+
+            $this->notificationService->addSalesPurchaseToCEONotif($data);
+            DB::commit();
+            return response()->json(["status" => true, "message" => "تم إضافة الطلب بنجاح"]);
+
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response()->json(["status" => true, "message" => $ex->getMessage()]);
         }
 
-
-                $SalesPurchasingRequest->save();
-                //NOW THE DETAILS
-                foreach($request->details as $_detail){
-                    $salesPurchasingRequsetDetail = new salesPurchasingRequsetDetail();
-                    $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
-                    $salesPurchasingRequsetDetail->amount = $_detail['amount'];
-                    $salesPurchasingRequsetDetail->type = $_detail['type'];
-                    $salesPurchasingRequsetDetail->price = $_detail['price'];
-                    $salesPurchasingRequsetDetail->save();
-                }
-
-
-        $data = $this->notificationService->makeNotification(
-            'accept-refuse-sales-purchase-notification',
-            'App\\Events\\acceptRefuseSalesPurchaseNotification',
-            ' إضافة ' . $requestType,
-            '',
-            $SalesPurchasingRequest->id,
-            ' تم إضافة ' . $requestType,
-            $SalesPurchasingRequest->total_amount,
-            'من قبل مدير المشتريات والمبيعات',
-            ''
-        );
-
-        $this->notificationService->addSalesPurchaseToCEONotif($data);
         ////////////////// SEND THE NOTIFICATION /////////////////////////
 
-        return response()->json(["status" => true, "message" => "تم إضافة الطلب بنجاح"]);
+
     }
 
 
@@ -104,14 +113,17 @@ class SalesPurchasingRequestController extends Controller
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1], ['accept_by_sales', '=', 1], ['id', '=', $RequestId]])
             ->update(['command' => 1]);
         $find = salesPurchasingRequset::find($RequestId);
-        $data = $this->notificationService->makeNotification('add-start-command-notification',
+        $data = $this->notificationService->makeNotification(
+            'add-start-command-notification',
             'App\\Events\\addStartCommandNotif',
             'أمر جديد لمنسق حركة الآليات',
             'http://127.0.0.1:8000//sales-api//command-for-mechanism//2',
             $RequestId, //sales purchaseing table id
             $RequestId . ' تم إعطاء أمر جديد للشحنة', //details
-            $find->total_amount, // weight
-            0, //output_from not important here
+            $find->total_amount,
+            // weight
+            0,
+            //output_from not important here
             ''
         );
         $this->notificationService->addStartCommandNotif($data);
@@ -241,7 +253,7 @@ class SalesPurchasingRequestController extends Controller
         $totalAmount = $this->calculcateTotalAmount($request);
 
         $findOffer = PurchaseOffer::find($offerId);
-        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id',$offerId)->get()->first();
+        $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id', $offerId)->get()->first();
         //SAVE THE NEW OFFER
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
@@ -548,4 +560,8 @@ class SalesPurchasingRequestController extends Controller
         return response()->json($notifications);
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> afterBranchKatia
