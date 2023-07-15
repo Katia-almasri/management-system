@@ -560,8 +560,4 @@ class SalesPurchasingRequestController extends Controller
         return response()->json($notifications);
     }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> afterBranchKatia
