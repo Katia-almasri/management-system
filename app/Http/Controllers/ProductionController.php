@@ -119,6 +119,8 @@ class ProductionController extends Controller
         $type = new outPut_Type_Production();
         $type -> type = $request->type;
         $type -> by_section = $request->by_section;
+        if($request->num_expiration_days!=null)
+            $type -> num_expiration_days = $request->num_expiration_days;
         $type -> save();
         ///////////ADD THE NEW TYPE IN WAREHOUSE
         $this->warehouseService->addNewTypeInWarehouse($type->id);
