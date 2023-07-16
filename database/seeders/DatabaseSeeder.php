@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\PredictionSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,9 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(LaratrustSeeder::class);
-        $this->call(ManagerTableSeeder::class);
-        $this->call(RoleUserTableSeeder::class);
+        // $this->call(LaratrustSeeder::class);
+        // $this->call(ManagerTableSeeder::class);
+        // $this->call(RoleUserTableSeeder::class);
+        $this->call(PredictionSeeder::class);
+        
         // $this->call(DriverTableSeeder::class);
         // $this->call(TruckTableSeeder::class);
         // $this->call(FarmTableSeeder::class);

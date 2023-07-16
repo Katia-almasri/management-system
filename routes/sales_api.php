@@ -112,6 +112,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //عدد الشحنات الواصلة والتي تم وزنها
         Route::get('get-poultry-reciept-count-notifs',[SalesPurchasingRequestController::class, 'countPoultryRecieptDetectionsNotifs']);
 
+        ////////////// استعراض الإشعارات الغير مقروءة للملاحظات
+        Route::get('get-unread-note-notification',[NoteController::class, 'displayNotReadNotification']);
+
+        //////////////مع تغيير الحالة استعراض الإشعارات الغير مقروءة للملاحظات
+        Route::get('get-unread-note-notification-swotch-state',[NoteController::class, 'displayNotReadNotificationSwitchState']);
 
         Route::post('confirm_offer/{offer_id}',[SalesPurchasingRequestController::class, 'requestFromOffer']);
         //تقارير لطلبات الشراء
