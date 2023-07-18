@@ -37,13 +37,13 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////عرض الملاحظات///////////////////
         Route::get('display-notes',[NoteController::class, 'displayNoteProduction']);
         ///////////حذف ملاحظة/////////////////////////////
-        Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
+        Route::delete('delete-note-by-production/{noteId}',[NoteController::class, 'deleteNoteByProduction'])->middleware('is-note-exist');
 
         //////////////////// أوامر مدير الإنتاج لمشرف المحازن
         //دروب داون لمدير الإنتاج (التقطيع و التصنيع)
         Route::get('drop-down-production-manager',[ProductionController::class, 'dropDownProducationManager']);
 
-        //دروب داون لمدير الإنتاج By section 
+        //دروب داون لمدير الإنتاج By section
         Route::get('drop-down-production-manager-by-section',[ProductionController::class, 'dropDownProducationManagerBySection']);
 
 

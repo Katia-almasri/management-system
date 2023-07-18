@@ -4,6 +4,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\SalesPurchasingRequestController;
+
 
 Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
@@ -31,7 +33,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         // تعديل معلومات مادة في مخزن
         Route::post('edit-warehouse-row-info/{warehouseId}',[WarehouseController::class, 'editWarehouseRowInfo']);
-        
+
         });
 
         ///////////////////////display //////////////////
@@ -106,11 +108,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         // استعراض الإشعارات وتبديل حالتها
         Route::get('display-all-daily-warehouse-reports-notification',[WarehouseController::class, 'displayAllDailyWarehouseReportsNtification']);
 
-        
+
         // استعراض إشعارات التقارير اليومية للمخازن
         Route::get('display-daily-warehouse-notification-reports',[WarehouseController::class, 'displayDailyWarehouseNotificationReports']);
 
-        
+
         ////////////////////////////////// END NOTIFICATION PART /////////////////////////
         //أستعراض تفاصيل مادة سوف تدخل إلى مستودع الإتلاف
         Route::get('display-output-expired-detail/{notification_id}',[WarehouseController::class, 'displayOutputExpiredDetail']);
@@ -140,9 +142,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('destruct-from-store-details/{store_detail_id}',[WarehouseController::class, 'destructFromStoreDetails']);
 
         /////////////////////////// END DESTRUCTION PART /////////////////////////////////
-        
-        
-        
+        Route::get('display-command-sales-request',[SalesPurchasingRequestController::class, 'displayCommandSalesRequest']);
+
     });
 
 

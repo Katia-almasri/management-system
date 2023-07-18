@@ -59,6 +59,10 @@ class salesPurchasingRequset extends Model
     public function rating(){
         return $this->hasOne('App\Models\Rating', 'request_sales_id', 'id');
     }
+
+    public function sales_request(){
+        return $this->hasMany('App\Models\Command_sales', 'sales_request_id', 'id');
+    }
     ############################## End Relations ##############################
 
      ############################# Begin Accessors ##############################endregion

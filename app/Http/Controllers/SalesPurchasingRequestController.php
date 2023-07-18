@@ -26,6 +26,7 @@ use App\Models\Manager;
 use App\Models\PurchaseOffer;
 use App\Models\DetailPurchaseOffer;
 use App\Models\RegisterFarmRequestNotif;
+use App\Models\Command_sales;
 use App\systemServices\notificationServices;
 
 
@@ -119,6 +120,21 @@ class SalesPurchasingRequestController extends Controller
         return response()->json(["status" => true, "message" => "تم اعطاء الامر لمنسق حركة الاليات"]);
     }
 
+
+    public function commandForSalesRequest(Request $request , $RequestId){
+        $this->commandForMechanismCoordinator($request , $RequestId);
+        $commandSales = new Command_sales();
+        $commandSales->sales_request_id = $RequestId;
+        $commandSales->done = 0;
+        $commandSales->save();
+        return response()->json(["status" => true, "message" => " تم اعطاء الامر لمنسق حركة الاليات ولمشرف المخازن"]);
+    }
+
+
+    public function displayCommandSalesRequest(Request $request ){
+        $commandSales = Command_sales::with('sales_request.salesPurchasingRequsetDetail')->get();
+        return response()->json($commandSales, 200);
+    }
     //استعراض الطلبات من قبل منسق حركة الاليات بعد الامر
     public function displaySalesPurchasingRequestFromMachenism(Request $request)
     {
