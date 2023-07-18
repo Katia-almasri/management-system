@@ -51,6 +51,15 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         // Route::get('display-warehouse',[ProductionController::class, 'displayWarehouse']);
         Route::get('display-command-warehouse',[ProductionController::class, 'displayCommandsWarehousToProduction']);
 
+
+
+        /////////////////NOTIFICATION PART ////////////////////////
+        ////////////// استعراض الإشعارات الغير مقروءة للملاحظات
+        Route::get('get-unread-note-notification',[NoteController::class, 'displayNotReadNotification']);
+
+        //////////////مع تغيير الحالة استعراض الإشعارات الغير مقروءة للملاحظات
+        Route::get('get-unread-note-notification-swotch-state',[NoteController::class, 'displayNotReadNotificationSwitchState']);
+
     });
 
 
