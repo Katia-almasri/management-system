@@ -152,6 +152,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //استعراض إشعارات الطلبات المقبولة والمرفوضة من قبل المدير التنفيذي وتعديل حالة الإشعار
         Route::get('display-accepted-refused-notification-change-state',[SalesPurchasingRequestController::class, 'displyAcceptedRefusedNotificationAndChangeState']);
 
+        ///// استعراض إشعارات انطلاق رحلة
+        Route::get('display-trip-notifications',[SalesPurchasingRequestController::class, 'displayTripNotification']);
+
+        /////  مع تغيير الحالة استعراض إشعارات انطلاق رحلة
+        Route::get('display-trip-notifications-change-state',[SalesPurchasingRequestController::class, 'displayTripNotificationSwitchState']);
+
+        
+
 
 
     });

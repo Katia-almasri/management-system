@@ -113,6 +113,7 @@ class SalesPurchasingRequestController extends Controller
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1], ['accept_by_sales', '=', 1], ['id', '=', $RequestId]])
             ->update(['command' => 1]);
         $find = salesPurchasingRequset::find($RequestId);
+        
         $data = $this->notificationService->makeNotification(
             'add-start-command-notification',
             'App\\Events\\addStartCommandNotif',
@@ -555,6 +556,28 @@ class SalesPurchasingRequestController extends Controller
 
         $updatedNotifications = Notification::where([
             ['channel', '=', 'add-start-command-notification'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
+    public function displayTripNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-trip'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+    }
+
+    public function displayTripNotificationSwitchState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-trip'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'add-trip'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);

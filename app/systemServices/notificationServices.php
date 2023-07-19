@@ -100,6 +100,12 @@ class notificationServices
         $pusher->trigger('add-note-notification', 'App\\Events\\addNoteNotification', $data);
 
     }
+
+    public function  addTripNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('add-trip', 'App\\Events\\addTripNotification', $data);
+        
+    }
     //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
     public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){
         $newNotification = new Notification();

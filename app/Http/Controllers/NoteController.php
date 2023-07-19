@@ -124,7 +124,7 @@ class NoteController extends Controller
     public function displayNotReadNotification(Request $request)
     {
         $notifications = Notification::where('channel', 'send-note')->where('is_seen', 0)
-            ->where('act_id', $request->user()->id)->orderBy('created_at', 'DESC')->get();
+            ->where('act_id', '!=', $request->user()->id)->orderBy('created_at', 'DESC')->get();
         return response()->json($notifications);
     }
 
@@ -133,13 +133,13 @@ class NoteController extends Controller
         $notifications = Notification::where([
             ['channel', '=', 'send-note'],
             ['is_seen', '=', 0],
-            ['act_id', '=', $request->user()->id]
+            ['act_id', '!=', $request->user()->id]
         ])->orderBy('created_at', 'DESC')->get();
         
          Notification::where([
             ['channel', '=', 'send-note'],
             ['is_seen', '=', 0],
-            ['act_id', '=', $request->user()->id]
+            ['act_id', '!=', $request->user()->id]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
 
