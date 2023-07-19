@@ -11,6 +11,7 @@ use App\Models\product;
 use App\Models\RowMaterial;
 use App\Models\sellingortype;
 use App\Models\Warehouse;
+use App\Models\RemnantsType;
 use App\Models\outPut_Type_Production;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -204,7 +205,10 @@ class Controller extends BaseController
         return response()->json($governateId);
     }
 
-
+    public function displayRemnantsType(Request $request){
+        $RemnantsType = RemnantsType::get();
+        return response()->json($RemnantsType);
+    }
 
 
 

@@ -38,6 +38,14 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     Route::get('display-commands-to-warehouse', [ProductionController::class, 'displayCommandsToWarehouse'])->middleware('has-display-commands-warehouse-role');
 
     /////////////////////////// DROP DOWNS (DIRECTIONS)/////////////////
+    Route::get('drop-down-from-lakes',[Controller::class, 'dropDownFromLake']);
+    Route::get('drop-down-from-zero',[Controller::class, 'dropDownFromZero']);
+    Route::get('drop-down-from-manufactoring',[Controller::class, 'dropDownFromManufactoring']);
+    Route::get('drop-down-from-cutting',[Controller::class, 'dropDownFromCutting']);
+    Route::get('drop-down-from-det1',[Controller::class, 'dropDownFromDet1']);
+    Route::get('drop-down-from-det2',[Controller::class, 'dropDownFromDet2']);
+    Route::get('drop-down-from-det3',[Controller::class, 'dropDownFromDet3']);
+    Route::get('drop-down-get-governates',[Controller::class, 'getGovernateDropDown']);
     Route::get('drop-down-from-lakes', [Controller::class, 'dropDownFromLake']);
     Route::get('drop-down-from-zero', [Controller::class, 'dropDownFromZero']);
     Route::get('drop-down-from-manufactoring', [Controller::class, 'dropDownFromManufactoring']);
@@ -77,26 +85,46 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     //حركة الخرج التي حصلت اليوم المخزن
     Route::get('daily-output-movements', [WarehouseController::class, 'dailyOutputMovements']);
     //حركة الإتلاف اليوم
+
+    Route::get('get-expirations',[WarehouseController::class, 'getExpirations']);
+    //الأوامر المنفذة
+    Route::get('get-done-commands',[WarehouseController::class, 'getDoneCommands']);
+    //الأوامر الغير المنفذة
+    Route::get('get-non-done-commands',[WarehouseController::class, 'getNotDoneCommands']);
+
     Route::get('get-expirations', [WarehouseController::class, 'getExpirations']);
-    //الأوامر المنفذة 
+    //الأوامر المنفذة
     Route::get('get-done-commands', [WarehouseController::class, 'getDoneCommands']);
-    //الأوامر الغير المنفذة 
+    //الأوامر الغير المنفذة
     Route::get('get-non-done-commands', [WarehouseController::class, 'getNotDoneCommands']);
+
     // المواد التي نقصت فيها المخزون الاحتياطي اليوم
     Route::get('get-warehouse-under-stockpile', [WarehouseController::class, 'getWarehouseUnderStockpile']);
 
     // المواد التي خرجت اليوم الى الاتلاف و دخلت لمخزن الاتلاف
     Route::get('get-output-types-to-expiration-warehouse', [WarehouseController::class, 'getOutputTypesInsertedToExpirationWarehouse']);
     // استعراض التقرير اليومي للمخازن
+
+    Route::get('get-daily-warehouse-report',[WarehouseController::class, 'readDailyWarehouseReport']);
+
+    // استعلراض تقارير المخازن اليومية لتاريخ معين
+    Route::post('get-previous-daily-warehouse-reports',[WarehouseController::class, 'displayPreviousDailyReports']);
+
     Route::get('get-daily-warehouse-report', [WarehouseController::class, 'readDailyWarehouseReport']);
 
     // استعلراض تقارير المخازن اليومية لتاريخ معين
     Route::post('get-previous-daily-warehouse-reports', [WarehouseController::class, 'displayPreviousDailyReports']);
 
+
     ////////////////////////////// USERS PROFILES AND EDITIONS ////////////////////
     //display user profile
     Route::get('display-my-profile', [Controller::class, 'displayMyProfile']);
     //edit user profile
+    Route::post('edit-my-profile',[Controller::class, 'editMyProfile']);
+
+
+    Route::get('drop-down-remnat-type',[Controller::class, 'displayRemnantsType']);
+
     Route::post('edit-my-profile', [Controller::class, 'editMyProfile']);
 
     /////////////// calendar ////////////////

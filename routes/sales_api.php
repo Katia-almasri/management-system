@@ -36,6 +36,9 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////أمر لمنسق حركة الاليات/////////////////////////
         Route::Post('command-for-mechanism/{RequestId}',[SalesPurchasingRequestController::class, 'commandForMechanismCoordinator'])
         ->middleware('is-request-accept');
+        Route::Post('command-for-mechanism-warehouse/{RequestId}',[SalesPurchasingRequestController::class, 'commandForSalesRequest'])
+        ->middleware('is-request-accept');
+
 
 
         //////////////اضافة ملاحظة لمدير الانتاج//////////////////////
@@ -43,7 +46,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////عرض الملاحظات///////////////////
         Route::get('display-notes',[NoteController::class, 'displayNoteSales']);
         ///////////حذف ملاحظة/////////////////////////////
-        Route::delete('delete-note/{noteId}',[NoteController::class, 'deleteNoteBySales'])->middleware('is-note-exist');
+        Route::delete('delete-note-by-sales/{noteId}',[NoteController::class, 'deleteNoteBySales'])->middleware('is-note-exist');
 
         Route::group( ['middleware' => 'is-selling-port-exist'] ,function(){
             //حذف منفذ بيع
