@@ -21,6 +21,7 @@ class SellingPort extends Authenticatable
     protected $fillable = [
        'owner',
        'location',
+       'governorate_id',
        'mobile_number',
        'username',
        'password',
@@ -47,6 +48,10 @@ class SellingPort extends Authenticatable
         return $this->hasOne('App\Models\AddSalesPurchasingNotif', 'selling_port_id', 'id');
     }
 
+    public function governorate(){
+        return $this->belongsTo('App\Models\Governorate', 'governorate_id', 'id');
+    }
+
 
     ############################## End Relations ##############################
 
@@ -57,7 +62,7 @@ class SellingPort extends Authenticatable
              return Carbon::parse($date)->format('Y-m-d H:i');
          return $date;
      }
- 
+
      public function getUpdatedAtAttribute($date)
      {
          if($date!=null)

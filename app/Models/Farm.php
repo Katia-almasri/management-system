@@ -45,9 +45,7 @@ class Farm extends Authenticatable
         return $this->belongsTo('App\Models\Governate', 'governorate_id', 'id');
     }
 
-    public function governorate(){
-        return $this->belongsTo('App\Models\Governorate', 'governorate_id', 'id');
-    }
+
 
     ############################## End Relations ##############################
 

@@ -20,4 +20,8 @@ class Governate extends Model
     public function farms(){
         return $this->hasMany('App\Models\Farm', 'governorate_id', 'id');
     }
+
+    public function sellingPorts(){
+        return $this->hasMany('App\Models\SellingPort', 'governorate_id', 'id');
+    }
 }
