@@ -23,6 +23,6 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         //////////////// DITRCT MANUFACTORING TO ////////////////
         Route::post('direct-manufactoring-to',[ManufacturingController::class, 'directManufactoringTo']);
-
+        Route::get('output-remnat-manufacturing',[ManufacturingController::class, 'displayOutputRemnatmanufacturing']);
     });
 });

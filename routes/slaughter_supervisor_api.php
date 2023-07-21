@@ -21,6 +21,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         ->middleware('is-exist-id-to-direct-bahra');
 
         Route::get('display-inputs',[SlaughterSupervisorController::class, 'displayInputs']);
+        Route::get('display-OutputRemnat-Slaughter',[SlaughterSupervisorController::class, 'displayOutputRemnatSlaughter']);
 
 
     });

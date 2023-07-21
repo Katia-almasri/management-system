@@ -162,4 +162,9 @@ class CuttingController extends Controller
         $output = output_cutting_detail::with('outputTypes')->where('weight','!=',0)->get();
         return response()->json($output, 200);
     }
+
+    public function displayOutputRemnatCutting(Request $request){
+        $outputRemnatCutting = Output_remnat_details::with('type_remnat')->where('output_cutting_id','!=',null)->get();
+        return response()->json($outputRemnatCutting, 200);
+    }
 }
