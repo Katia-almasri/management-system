@@ -15,12 +15,18 @@ class StoreOutput extends Model
     protected $fillable = [
        'output_date',
        'weight',
-       'amount'
+       'amount',
+       'store_id',
+       'output_to'
     ];
 
      ############################## Begin Relations #############################
      public function storeInputsOutputs(){
         return $this->hasMany('App\Models\StoreInputOutput', 'output_id', 'id');
+    }
+
+    public function store(){
+        return $this->belongsTo('App\Models\Store', 'store_id', 'id');
     }
 
     //MORPH RELATIONSHIP BTN DETAILS AND(SLAUGHTER, .., .., SAWA3E8)

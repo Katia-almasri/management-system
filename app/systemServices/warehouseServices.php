@@ -3,6 +3,8 @@ namespace App\systemServices;
 
 use App\Models\Command;
 use App\Models\CommandDetail;
+use App\Models\commandSalesDetail;
+use App\Models\Command_sales;
 use App\Models\DetonatorFrige;
 use App\Models\DetonatorFrige1;
 use App\Models\DetonatorFrige1Detail;
@@ -26,9 +28,14 @@ use App\Models\LakeInputOutput;
 use App\Models\LakeOutput;
 use App\Models\Notification;
 use App\Models\outPut_SlaughterSupervisor_detail;
+use App\Models\outPut_Type_Production;
+use App\Models\salesPurchasingRequsetDetail;
 use App\Models\Store;
 use App\Models\StoreDetail;
+use App\Models\StoreInputOutput;
+use App\Models\StoreOutput;
 use App\Models\Warehouse;
+use App\Models\WarehouseType;
 use App\Models\ZeroFrige;
 use App\Models\ZeroFrigeDetail;
 use App\Models\ZeroFrigeInputOutput;
@@ -163,6 +170,9 @@ class warehouseServices
 
         else if ($outputChoice == 'تصنيع') {
             return 'App\Models\InputManufacturing';
+        }
+        else if ($outputChoice == 'المبيع') {
+            return '';
         }
 
     }
@@ -448,7 +458,93 @@ class warehouseServices
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
-    
+    public function outputWeightFromStore($_detail, $outputChoice){
+        $warning_notification = null;
+
+        $store_id = $_detail['store_id'];
+        $store = Store::with('warehouse.outPut_Type_Production')->find($store_id);
+        if (is_null($store->weight) ||  $store->weight < $_detail['weight'])
+            return (["status" => false, "message" => "لا يوجد وزن كافي في المخزن"]);
+
+        $flag = false;
+        $elementsInStoreDetails = StoreDetail::where([['store_id', $store_id], ['cur_weight', '!=', 0], ['date_of_destruction', '=', null]])->orderBy('created_at', 'DESC')->get();
+        $tot_weight = $_detail['weight'];
+        foreach ($elementsInStoreDetails as $_store_detail) {
+            if ($tot_weight != 0) {
+                if ($tot_weight >= $_store_detail['cur_weight']) {
+                    $tot_weight -= $_store_detail['cur_weight'];
+                    $_store_detail->update(['cur_output_weight'=>$_store_detail['cur_output_weight'] + $_store_detail['cur_weight'], 'cur_weight' => 0]);
+                    //INSERT THIS ROW IN NEW INPUT_OUTPUT_zero TABLE
+                    $this->insertNewRowInInputOutputStoreTable($_store_detail['id'], $_store_detail['weight'], null);
+                    //UPDATE OUTBUT DATE IN LAKE DETAIL TABLE
+                    $_store_detail->update(['date_of_destruction' => Carbon::today()->format('Y-m-d H:i')]);
+                } else{
+                    
+                        $_store_detail->update(['cur_output_weight'=>$_store_detail['cur_output_weight'] + $tot_weight, 'cur_weight' => $_store_detail['cur_weight'] - $tot_weight]);
+                        $tot_weight = 0;
+                        $flag = true;
+                        break;
+                    
+                } 
+
+            } else {
+                $flag = true;
+                break;
+            }
+        }
+
+        if ($tot_weight != 0) {
+            return (["status" => false, "message" => 'الوزن المدخل أكبر من الموجود في المخازن']);
+
+        } else {
+            $model = $this->getModel($outputChoice);
+            //ENOUGH WEIGHT
+            $storeOutput = $this->insertNewRowInOutputStoreTable($_detail['weight'], null, $model, $store_id, $outputChoice);
+            $this->setOutputIdToInputOutputZeroTable($storeOutput->id);
+            //UPDATE THE AMOUNT IN ZERO
+            $store->update(['weight' => $store['weight'] - $_detail['weight']]);
+            //UPDATE THE AMOUNT IN WAREHOUSE  
+            $warehouse = Warehouse::find($store->warehouse_id);
+            $type_id = $warehouse->type_id;
+            $warehouse->update(['tot_weight' => $warehouse['tot_weight'] - $_detail['weight']]);
+            //USE $zeroOutput WHEN INSERT INPUT IN DETONATOR1 FRIGE:
+            /**
+             * now the input from lake to zero
+            */
+            $result = [];
+
+            if($store->warehouse->stockpile != null && ($store->warehouse->tot_weight < $store->warehouse->stockpile)){
+                $warning_notification = $store->warehouse->outPut_Type_Production;
+            }
+
+            return (["status" => true, "message" => $result, 'notification'=>$warning_notification]);
+
+        }
+
+    }
+
+    public function insertNewRowInInputOutputStoreTable($input_id, $weight, $amount){
+        $inputOutputStoreElement = new StoreInputOutput();
+        $inputOutputStoreElement->input_id = $input_id;
+        $inputOutputStoreElement->weight = $weight;
+        $inputOutputStoreElement->amount = $amount;
+        $inputOutputStoreElement->save();
+        return $inputOutputStoreElement->id;
+    }
+    public function insertNewRowInOutputStoreTable($weight, $amount, $model, $store_id, $outputChoice){
+        $storeOutput = new StoreOutput();
+        $storeOutput->output_date = Carbon::today()->format('Y-m-d H:i:s');
+        $storeOutput->outputable_type = $model;
+        $storeOutput->outputable_id = 0;
+        $storeOutput->weight = $weight;
+        $storeOutput->amount = $amount;
+        $storeOutput->output_to = $outputChoice;
+        $storeOutput->store_id = $store_id;
+        $storeOutput->save();
+        return $storeOutput;
+
+    }
+    ///////////////////////// END STORE PART ////////////////////////////////
     public function setOutputIdToInputOutputLakeTable($lakeOutputId)
     {
         $inputOutputLakeElements = LakeInputOutput::where([['output_id', null], ['created_at', Carbon::now()]])->get();
@@ -1128,6 +1224,110 @@ class warehouseServices
             return (["status" => false, "message" =>"لم يتم إنهاء عملية الإخراج بعد"]);
         
     }
+
+    public function checkIsCommandSalesDone($commandId){
+        $flag = true;
+        $commandDetails = commandSalesDetail::where('command_id', $commandId)->get();
+        foreach ($commandDetails as $_command) {
+            if($_command->is_filled == 0){
+                $flag = false;
+                break;
+            }
+            
+        }
+        if($flag == true){
+            $command = Command_sales::find($commandId)->update(['done'=>1]);
+            return (["status" => true, "message" =>"تم انتهاء عمليات إخراج المواد من المخزن إلى الإنتاج"]);
+        }
+            return (["status" => false, "message" =>"لم يتم إنهاء عملية الإخراج بعد"]);
+        
+    }
+    //////////////////////// COMMAND FROM SALES MANAGER /////////////////
+    public function fillCommandFromSalesManager($_detail, $from){
+        $command_sales_detail_id = $_detail['command_sales_detail_id'];
+        $weight = $_detail['weight'];
+        
+        $commandSalesDetail = commandSalesDetail::find($command_sales_detail_id);
+        $salesPurchaseRequestDetails = salesPurchasingRequsetDetail::find($commandSalesDetail->req_detail_id);
+        if($weight> $salesPurchaseRequestDetails->amount)
+            return (["status" => false, "message" =>"الوزن المدخل أكبر من الموجود"]);
+        
+        if($weight + $commandSalesDetail->cur_weight > $salesPurchaseRequestDetails->amount)
+            return (["status" => false, "message" =>"الوزن الحالي سيصبح أكبر من الوزن المطلوب"]);
+
+        $to = 'المبيع';
+        //get warehouse id from name of sales request details
+        $outputTypeId = outPut_Type_Production::where('type', 'like', $salesPurchaseRequestDetails->type)->get()->pluck('id')->first();
+        $warehouse = Warehouse::where('type_id', $outputTypeId)->get()->first();
+        
+        $result = [];
+        if($from=='براد صفري'){
+            $model = 'App\Models\ZeroFrigeOutput';
+            $zeroFrige = ZeroFrige::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $zeroFrigeInfo['zero_id'] = $zeroFrige->id;
+            $zeroFrigeInfo['weight'] = $weight;
+
+            $result = $this->outputWeightFromZero($zeroFrigeInfo, $to);                 
+        }
+
+        else if($from=='بحرات'){
+            $model = 'App\Models\LakeDetail';
+            $lake = Lake::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $lakeInfo['lake_id'] = $lake->id;
+            $lakeInfo['weight'] = $weight;
+
+            $result = $this->outputWeightFromLake($lakeInfo, $to);
+        }
+        else if($from=='صاعقة 1'){
+            $det1 = DetonatorFrige1::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $det1Info['det_id'] = $det1->id;
+            $det1Info['weight'] = $weight;
+
+            $result = $this->outputWeightFromDet1($det1Info, $to);
+        }
+        else if($from=='صاعقة 2'){
+            $det2 = DetonatorFrige2::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $det2Info['det_id'] = $det2->id;
+            $det2Info['weight'] = $weight;
+
+            $result = $this->outputWeightFromDet2($det2Info, $to);
+        }
+        else if($from=='صاعقة 3'){
+            $det3 = DetonatorFrige3::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $det3Info['det_id'] = $det3->id;
+            $det3Info['weight'] = $weight;
+
+            $result = $this->outputWeightFromDet3($det3Info, $to);
+        }
+
+        else if($from=='تخزين'){
+            $store = Store::where('warehouse_id', $warehouse->id)->get()->first();
+
+            $storeInfo['store_id'] = $store->id;
+            $storeInfo['weight'] = $weight;
+
+            $result = $this->outputWeightFromStore($storeInfo, $to);
+        }
+        ///////////// UPDATE THE COMMANDS AND ITS DETAILS AND RETURN THE MESSAGE
+        if($result['status']==true){           
+            //UPDATE COMMAND DETAILS CUR_WEIGHT
+            $commandSalesDetail->update(['cur_weight'=>$commandSalesDetail->cur_weight + $weight, 'from'=>$from]);
+            //check if the cur_weight of the command details == command_weight now (after the addition)
+            if($commandSalesDetail->cur_weight == $salesPurchaseRequestDetails->amount)
+                $commandSalesDetail->update(['is_filled'=>1]);
+
+        }
+        else if($result['status']==false)
+            return (["status" => false, "message" =>$result['message']]);
+        return (["status" => true, "message" =>$result['message']]);
+
+    }
+    ///////////////// END COMMAND FROM SALES MANAGER /////////////////////
     
     public function checktockPile($warehouse){
         if($warehouse->stockpile != null && ($warehouse->tot_weight < $warehouse->stockpile)){

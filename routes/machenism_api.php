@@ -84,6 +84,9 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         //شارت للرحلات
         Route::get('count-trips-chart', [ChartController::class, 'CountTrip']);
 
+                ///الشاحنة المناسبة
+                Route::post('suitable-truck/{SalesId}',[TripController::class, 'SuitableTruck']);
+
         /////////////////////// NOTIFICATION PART /////////////////////
         // استعراض إشعارات أوامر مدير المشتريات والمبيعات لمنسق حركة الآليات
         Route::get('display-command-notification', [SalesPurchasingRequestController::class, 'displyCommandNotification']);
@@ -91,9 +94,13 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         // مع تغيير الحالة استعراض إشعارات أوامر مدير المشتريات والمبيعات لمنسق حركة الآليات
         Route::get('display-command-notification-change-state', [SalesPurchasingRequestController::class, 'displyCommandNotificationChangeState']);
 
+        //استعراض إشعارات إخراج من المخزن بنجاح
+        Route::get('display-done-sales-command-notification',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationMechanism']);
 
-        ///الشاحنة المناسبة
-        Route::post('suitable-truck/{SalesId}',[TripController::class, 'SuitableTruck']);
+        //استعراض إشعارات إخراج من المخزن بنجاح مع تغيير الحالة
+        Route::get('display-done-sales-command-notification-switch-state',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationSwitchStateMechanism']);
+        
+        ////////////////////////// END NOTIFICIATION PART ///////////////////////////////////
 
 
 

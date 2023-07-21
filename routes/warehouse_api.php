@@ -93,7 +93,7 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-det3-output-mov',[WarehouseController::class, 'displayDet3OutMov']);
         //////////////////// حركة المخزن النهائي ///////////////////////
         Route::get('display-store-input-mov',[WarehouseController::class, 'displayStoreInputMov']);
-
+        Route::get('display-store-output-mov',[WarehouseController::class, 'displayStoreOutputMov']);
         ////////////////////استعراض كافة أسماْ المخازن ///////////////////////
         Route::get('display-warehouses-types',[WarehouseController::class, 'displayWarehousesTypes']);
 
@@ -112,6 +112,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         // استعراض إشعارات التقارير اليومية للمخازن
         Route::get('display-daily-warehouse-notification-reports',[WarehouseController::class, 'displayDailyWarehouseNotificationReports']);
 
+        // اتسعراض إشعارات أوامر الإخراج من مدير المشتريات والمبيعات
+        Route::get('display-sales-command-notification',[WarehouseController::class, 'displaySalesCommandNotification']);
+
+        //استعراض أوامر الإخراج من مدير المشتريات والمبيعات مع تغيير الحالة
+        Route::get('display-sales-command-notification-switch-state',[WarehouseController::class, 'displaySalesCommandNotificationSwitchState']);
 
         ////////////////////////////////// END NOTIFICATION PART /////////////////////////
         //أستعراض تفاصيل مادة سوف تدخل إلى مستودع الإتلاف
@@ -142,8 +147,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::post('destruct-from-store-details/{store_detail_id}',[WarehouseController::class, 'destructFromStoreDetails']);
 
         /////////////////////////// END DESTRUCTION PART /////////////////////////////////
+        // استعراض الأوامر من مدير المشتريات
         Route::get('display-command-sales-request',[SalesPurchasingRequestController::class, 'displayCommandSalesRequest']);
-
+        // ملء أمر الإخراج من مدير المشتريات
+        Route::post('fill-sales-command/{command_sales_id}',[WarehouseController::class, 'fillCommandFromSalesManager']);
     });
 
 

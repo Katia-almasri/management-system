@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\addStartCommandNotif;
 use App\Models\AddOfferNotif;
 use App\Models\AddSalesPurchasingNotif;
+use App\Models\commandSalesDetail;
 use App\Models\Farm;
 use App\Models\PoultryReceiptDetection;
 use App\Models\RegisterSellingPortRequestNotif;
@@ -120,12 +121,10 @@ class SalesPurchasingRequestController extends Controller
             'App\\Events\\addStartCommandNotif',
             'أمر جديد لمنسق حركة الآليات',
             'http://127.0.0.1:8000//sales-api//command-for-mechanism//2',
-            $RequestId, //sales purchaseing table id
-            $RequestId . ' تم إعطاء أمر جديد للشحنة', //details
+            $RequestId, 
+            $RequestId . ' تم إعطاء أمر جديد للشحنة',
             $find->total_amount,
-            // weight
             0,
-            //output_from not important here
             ''
         );
         $this->notificationService->addStartCommandNotif($data);
@@ -135,17 +134,52 @@ class SalesPurchasingRequestController extends Controller
 
 
     public function commandForSalesRequest(Request $request , $RequestId){
-        $this->commandForMechanismCoordinator($request , $RequestId);
-        $commandSales = new Command_sales();
-        $commandSales->sales_request_id = $RequestId;
-        $commandSales->done = 0;
-        $commandSales->save();
-        return response()->json(["status" => true, "message" => " تم اعطاء الامر لمنسق حركة الاليات ولمشرف المخازن"]);
+        try {
+            DB::beginTransaction();
+            $this->commandForMechanismCoordinator($request , $RequestId);
+            $commandSales = new Command_sales();
+            $commandSales->sales_request_id = $RequestId;
+            $commandSales->done = 0;
+            $commandSales->save();
+    
+            //now the details for this command
+            $salesPurchaseRequestDetails = salesPurchasingRequsetDetail::where('requset_id', $RequestId)->get();
+            foreach ($salesPurchaseRequestDetails as $_sales_details) {
+                $commandSalesDetail = new commandSalesDetail();
+                $commandSalesDetail->command_id = $commandSales->id;
+                $commandSalesDetail->req_detail_id = $_sales_details->id;
+                $commandSalesDetail->cur_weight = 0.0;
+                $commandSalesDetail->from = '';
+                $commandSalesDetail->to = 'المبيع';
+                $commandSalesDetail->save();
+            }
+    
+            //send notification to warehouse coordinator
+            $data = $this->notificationService->makeNotification(
+                'output-from-warehouse-to-sell',
+                'App\\Events\\outputFromWarehouseToSell',
+                ' إصدار أمر إخراج من المخازن للبيع',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مدير المشتريات والمبيعات',
+                ''
+            );
+    
+            $this->notificationService->addOutputFromWarehouseNotification($data);
+           DB::commit();
+            return response()->json(["status" => true, "message" => " تم اعطاء الامر لمنسق حركة الاليات ولمشرف المخازن"]);
+    
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response()->json(["status" => false, "message" => $ex->getMessage()]);
+        }
     }
 
 
     public function displayCommandSalesRequest(Request $request ){
-        $commandSales = Command_sales::with('sales_request.salesPurchasingRequsetDetail')->get();
+        $commandSales = Command_sales::with('commandSalesDetails.salesPurchaseRequestDetail')->orderBy('created_at', 'DESC')->get();
         return response()->json($commandSales, 200);
     }
     //استعراض الطلبات من قبل منسق حركة الاليات بعد الامر
@@ -598,5 +632,60 @@ class SalesPurchasingRequestController extends Controller
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
     }
+
+    public function displayDoneSalesCommandNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'مدير المشتريات والمبيعات'],
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayDoneSalesCommandNotificationSwitchState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'مدير المشتريات والمبيعات'],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'مدير المشتريات والمبيعات'],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+
+    }
+
+    public function displayDoneSalesCommandNotificationMechanism(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'منسق حركة الآليات'],
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayDoneSalesCommandNotificationSwitchStateMechanism(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'منسق حركة الآليات'],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'command-sales-done'],
+            ['is_seen', '=', 0],
+            ['output_from', '=', 'منسق حركة الآليات'],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+
+    }
+
 
 }

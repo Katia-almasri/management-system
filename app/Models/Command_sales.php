@@ -20,4 +20,8 @@ class Command_sales extends Model
         return $this->belongsTO('App\Models\salesPurchasingRequset', 'sales_request_id', 'id');
     }
 
+    public function commandSalesDetails(){
+        return $this->hasMany('App\Models\commandSalesDetail', 'command_id', 'id');
+    }
+
 }
