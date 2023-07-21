@@ -132,7 +132,7 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     Route::get('get-calendar', [calendarController::class, 'getEvents']);
     Route::get('get-predictions', [calendarController::class, 'getPredictions']);
     Route::get('d', [calendarController::class, 'd']);
-
+    Route::get('display-remnant-content',[WarehouseController::class, 'displayRemnantContent']);
 });
 
 

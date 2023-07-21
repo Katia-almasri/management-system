@@ -144,6 +144,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////////////////// END DESTRUCTION PART /////////////////////////////////
         Route::get('display-command-sales-request',[SalesPurchasingRequestController::class, 'displayCommandSalesRequest']);
 
+
+
     });
 
 

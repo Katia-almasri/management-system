@@ -28,6 +28,7 @@ use App\Models\WarehouseType;
 use App\Models\ZeroFrige;
 use App\Models\ZeroFrigeDetail;
 use App\Models\ZeroFrigeOutput;
+use App\Models\Remnat;
 use App\systemServices\notificationServices;
 use App\systemServices\warehouseServices;
 use Carbon\Carbon;
@@ -385,7 +386,7 @@ class WarehouseController extends Controller
         $zeroMovement = ZeroFrige::with(['warehouse.outPut_Type_Production', 'zeroFrigeDetails.inputable' => function ($query) {
             $query->orderBy('created_at', 'DESC');
                  }])->get();
-                 
+
         return response()->json($zeroMovement);
     }
 
@@ -817,7 +818,7 @@ class WarehouseController extends Controller
             ['channel', '=', 'add-output-to-expiration-warehouse-notification'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'add-output-to-expiration-warehouse-notification'],
             ['is_seen', '=', 0]
@@ -900,7 +901,7 @@ class WarehouseController extends Controller
             $report = Storage::get($filename);
             $data = json_decode($report, true);
             return response()->json(["status"=>true, "data"=>$data]);
-    
+
         }
         return response()->json(["status"=>false, "data"=>null, "message"=>"لم يتم توليد التقرير لهذا اليوم بعد"]);
     }
@@ -918,7 +919,7 @@ class WarehouseController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        
+
         $newFormat = Carbon::parse($request->date)->format('Y_m_d');
         if($newFormat > Carbon::now()->format('Y_m_d'))
             return response()->json(["status"=>false, "message"=>"لا يمكن توليد تقرير ليوم يلي اليوم الحالي!!"]);
@@ -947,7 +948,7 @@ class WarehouseController extends Controller
             ['channel', '=', 'daily-warehouse-report-ready'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'daily-warehouse-report-ready'],
             ['is_seen', '=', 0]
@@ -957,5 +958,10 @@ class WarehouseController extends Controller
     }
 
 
-    
+    public function displayRemnantContent(Request $request){
+        $remnat = Remnat::with('type_remnat')->get();
+        return response()->json($remnat);
+    }
+
+
 }
