@@ -163,4 +163,8 @@ class ManufacturingController extends Controller
         return response()->json($output, 200);
     }
 
+    public function displayOutputRemnatmanufacturing(Request $request){
+        $outputRemnatmanufacturing = Output_remnat_details::with('type_remnat')->where('output_manufacturing_id','!=',null)->get();
+        return response()->json($outputRemnatmanufacturing, 200);
+    }
 }

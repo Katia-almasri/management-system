@@ -158,4 +158,11 @@ class SlaughterSupervisorController extends Controller
         ->orderby('id','desc')->get();
         return response()->json($output, 200);
     }
+
+    public function displayOutputRemnatSlaughter(Request $request){
+        $outputRemnatSlaughter = Output_remnat_details::with('type_remnat')->where('output_slaughter_id','!=',null)->get();
+        return response()->json($outputRemnatSlaughter, 200);
+    }
+
+
 }

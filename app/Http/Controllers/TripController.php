@@ -14,6 +14,7 @@ use App\Models\Truck;
 use App\Models\Driver;
 use App\Models\Farm;
 use App\Models\Governorate;
+use App\Models\SellingPort;
 
 
 use App\Models\Manager;
@@ -63,7 +64,7 @@ class TripController extends Controller
                 $findTruck = Truck::find($request->truck_id)->update(array('state' => 'في الرحلة'));
                 $findDriver = Driver::find($request->driver_id)->update(array('state' => 'في الرحلة'));
                 $DetailTrip->save();
-    
+
                 //send notification to sales manager
                 $data = $this->notificationService->makeNotification(
                     'add-trip',
@@ -76,16 +77,16 @@ class TripController extends Controller
                     '',
                     ''
                 );
-        
-    
+
+
                 $this->notificationService->addTripNotif($data);
-        
+
                 DB::commit();
                 return  response()->json(["status"=>true, "message"=>"تم اضافة تفاصيل الرحلة بنجاح"]);
             }
             else
             return  response()->json(["status"=>false, "message"=>"لم يعطى الامر من قبل مدير المشتريات والمبيعات"]);
-    
+
         } catch (\Throwable $ex) {
             DB::rollBack();
             return  response()->json(["status"=>false, "message"=>$ex->getMessage()]);
@@ -121,8 +122,19 @@ class TripController extends Controller
         $truck = Truck::where('storage_capacity','>',$SalesPurchasingRequset)
         ->where('state','متاحة')->orderBy ('storage_capacity','ASC')->get();
         $SalesPurchasingRequset1 =  salesPurchasingRequset::where('id',$SalesId)->pluck('farm_id');
-        $farmDis = Farm::pluck('governorate_id');
-        $dis = Governorate::where('id',$farmDis)->pluck('distance')->first();
+
+        if($SalesPurchasingRequset1[0] != null){
+            $farmDis = Farm::pluck('governorate_id');
+            $dis = Governorate::where('id',$farmDis)->pluck('distance')->first();
+            // return response()->json($SalesPurchasingRequset1, 200);
+        }
+        $SalesPurchasingRequset2 =  salesPurchasingRequset::where('id',$SalesId)->pluck('selling_port_id');
+        if($SalesPurchasingRequset2[0] != null){
+            $sellingPortDis = SellingPort::pluck('governorate_id');
+            $dis = Governorate::where('id',$sellingPortDis)->pluck('distance')->first();
+            // return response()->json($SalesPurchasingRequset2, 200);
+        }
+
         foreach($truck as $_truck){
             $FuelConsumption = $_truck->oil_consumption * $dis /100;
             $_truck->FuelConsumption = $FuelConsumption;

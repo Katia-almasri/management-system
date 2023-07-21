@@ -23,6 +23,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////// OUTPUT FROM CUTTINHG SECTION //////////////////
         Route::post('direct-cutting-to',[CuttingController::class, 'directCuttingTo']);
 
+        Route::get('display-output-Remnat-cutting',[CuttingController::class, 'displayOutputRemnatCutting']);
+
+
+
     });
 
 
