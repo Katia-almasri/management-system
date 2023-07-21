@@ -106,6 +106,18 @@ class notificationServices
         $pusher->trigger('add-trip', 'App\\Events\\addTripNotification', $data);
         
     }
+
+    public function addOutputFromWarehouseNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('output-from-warehouse-to-sell', 'App\\Events\\outputFromWarehouseToSell', $data);
+
+    }
+
+    public function commandSalesDoneNotif($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('command-sales-done', 'App\\Events\\commandSalesDoneNotif', $data);
+
+    }
     //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
     public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){
         $newNotification = new Notification();

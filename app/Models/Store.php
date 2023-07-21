@@ -27,6 +27,10 @@ class Store extends Model
         return $this->hasMany('App\Models\StoreDetail', 'store_id', 'id');
     }
 
+    public function storeOutputs(){
+        return $this->hasMany('App\Models\StoreOutput', 'store_id', 'id');
+    }
+
      ############################# Begin Accessors ##############################endregion
      public function getCreatedAtAttribute($date)
      {

@@ -23,6 +23,10 @@ class salesPurchasingRequsetDetail extends Model
         return $this->belongsTo('App\Models\salesPurchasingRequset', 'request-id', 'id');
     }
 
+    public function commandSalesDetail(){
+        return $this->hasOne('App\Models\commandSalesDetail', 'req_detail_id', 'id');
+    }
+
     ############################## End Relations ##############################
 
      ############################# Begin Accessors ##############################endregion

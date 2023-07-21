@@ -161,7 +161,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////  مع تغيير الحالة استعراض إشعارات انطلاق رحلة
         Route::get('display-trip-notifications-change-state',[SalesPurchasingRequestController::class, 'displayTripNotificationSwitchState']);
 
+        //استعراض إشعارات إخراج من المخزن بنجاح
+        Route::get('display-done-sales-command-notification',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotification']);
         
+        //استعراض إشعارات إخراج من المخزن بنجاح مع تغيير الحالة
+        Route::get('display-done-sales-command-notification-switch-state',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationSwitchState']);
 
 
 

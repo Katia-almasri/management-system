@@ -7,6 +7,7 @@ use App\Models\AddStockpileNotif;
 use App\Models\Command;
 use App\Exceptions\Exception;
 use App\Models\CommandDetail;
+use App\Models\Command_sales;
 use App\Models\DetonatorFrige1;
 use App\Models\DetonatorFrige1Detail;
 use App\Models\DetonatorFrige1Output;
@@ -23,6 +24,7 @@ use App\Models\LakeOutput;
 use App\Models\Notification;
 use App\Models\Store;
 use App\Models\StoreDetail;
+use App\Models\StoreOutput;
 use App\Models\Warehouse;
 use App\Models\WarehouseType;
 use App\Models\ZeroFrige;
@@ -361,6 +363,76 @@ class WarehouseController extends Controller
         $warehouse = Warehouse::where([['tot_weight', '!=', 0], ['tot_weight', '!=', null]])->with(['outPut_Type_Production', 'zeroFrige', 'lake', 'detonatorFrige1', 'detonatorFrige2', 'detonatorFrige3', 'store'])->get();
         return response()->json($warehouse);
     }
+    /////////////////////// COMMAND FROM SALES MANAGER ///////////
+    public function fillCommandFromSalesManager(Request $request, $commandId)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "details.*.weight" => "required|numeric|gt:0"
+            ]
+        );
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
+        $from = $request['from'];
+        try {
+            DB::beginTransaction();
+            foreach ($request['details'] as $_detail) {
+                $result = $this->warehouseService->fillCommandFromSalesManager($_detail, $from);
+                if ($result['status'] != true)
+                    throw new \ErrorException($result['message']);
+            }
+            DB::commit();
+            $message = 'تمت العملية بنجاح';
+            $doneCommand = $this->warehouseService->checkIsCommandSalesDone($commandId);
+            if ($doneCommand['status'] == true){
+                $message = $message . ' و' . $doneCommand['message'];
+                //send notification to mechanism coordinator
+                //1. get the request tot aomount 
+                $commandRequest = Command_sales::with('sales_request')->find($commandId);
+                $data = $this->notificationService->makeNotification(
+                    'command-sales-done',
+                    'App\\Events\\commandSalesDoneNotif',
+                    'تم إخراج المواد من المخزن بنجاح',
+                    '',
+                    $request->user()->id,
+                    '',
+                    $commandRequest->sales_request->total_amount,
+                    'مدير المشتريات والمبيعات',
+                    ''
+                );
+        
+                $this->notificationService->commandSalesDoneNotif($data);
+
+                //send notification to sales manager
+                $data = $this->notificationService->makeNotification(
+                    'command-sales-done',
+                    'App\\Events\\commandSalesDoneNotif',
+                    'تم إخراج المواد من المخزن بنجاح',
+                    '',
+                    $request->user()->id,
+                    '',
+                    $commandRequest->sales_request->total_amount,
+                    'منسق حركة الآليات',
+                    ''
+                );
+        
+                $this->notificationService->commandSalesDoneNotif($data);
+        
+            }
+                
+                
+            return response()->json(["status" => true, "message" => $message]);
+        } catch (\Exception $exception) {
+            DB::rollback();
+            return response()->json(["status" => false, "message" => $exception->getMessage()]);
+        }
+
+    }
     /////////////////////// LAKE MOVEMENT (I/O) //////////////////
     //I
     public function displayLakeInputMov(Request $request)
@@ -439,6 +511,12 @@ class WarehouseController extends Controller
     public function displayStoreInputMov(Request $request)
     {
         $storeMovement = Store::with(['warehouse.outPut_Type_Production', 'storeDetails.inputable'])->get();
+        return response()->json($storeMovement);
+    }
+
+    public function displayStoreOutputMov(Request $request)
+    {
+        $storeMovement = StoreOutput::with(['store.warehouse.outPut_Type_Production', 'outputable'])->orderBy('created_at', 'DESC')->get();
         return response()->json($storeMovement);
     }
     /////////////////// END MOVEMENTS /////////////////////////////////
@@ -890,6 +968,30 @@ class WarehouseController extends Controller
     {
         $expirations = Exipration::with('inputable')->get();
         return response()->json($expirations);
+    }
+
+
+    // sales commands notification
+    public function displaySalesCommandNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+    }
+
+    public function displaySalesCommandNotificationSwitchState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['is_seen', '=', 0],
+        ])->orderBy('created_at', 'DESC')->get();
+        
+         Notification::where([
+            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['is_seen', '=', 0],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
     }
 
     ///////////////////////// DAILY STATISTICS (in jobs) //////////////////////
