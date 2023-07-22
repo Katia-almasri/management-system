@@ -22,6 +22,7 @@ use App\Models\Lake;
 use App\Models\LakeDetail;
 use App\Models\LakeOutput;
 use App\Models\Notification;
+use App\Models\Remnat;
 use App\Models\Store;
 use App\Models\StoreDetail;
 use App\Models\StoreOutput;
@@ -274,7 +275,15 @@ class WarehouseController extends Controller
         return response()->json($store);
 
     }
+    //////////////////// remnant content ///////////////////////
 
+    public function displayRemnantContent()
+    {
+        $store = Remnat::where('weight', '!=', 0)->with('type_remnat')
+            ->get();
+        return response()->json($store);
+
+    }
 
 
 
@@ -388,7 +397,7 @@ class WarehouseController extends Controller
             DB::commit();
             $message = 'تمت العملية بنجاح';
             $doneCommand = $this->warehouseService->checkIsCommandSalesDone($commandId);
-            if ($doneCommand['status'] == true){
+            if ($doneCommand['status'] == true) {
                 $message = $message . ' و' . $doneCommand['message'];
                 //send notification to mechanism coordinator
                 //1. get the request tot aomount 
@@ -404,7 +413,7 @@ class WarehouseController extends Controller
                     'مدير المشتريات والمبيعات',
                     ''
                 );
-        
+
                 $this->notificationService->commandSalesDoneNotif($data);
 
                 //send notification to sales manager
@@ -419,12 +428,12 @@ class WarehouseController extends Controller
                     'منسق حركة الآليات',
                     ''
                 );
-        
+
                 $this->notificationService->commandSalesDoneNotif($data);
-        
+
             }
-                
-                
+
+
             return response()->json(["status" => true, "message" => $message]);
         } catch (\Exception $exception) {
             DB::rollback();
@@ -454,10 +463,13 @@ class WarehouseController extends Controller
     /////////////////////// ZERO MOVEMENT (I/O) //////////////////
     public function displayZeroInputMov(Request $request)
     {
-        $zeroMovement = ZeroFrige::with(['warehouse.outPut_Type_Production', 'zeroFrigeDetails.inputable' => function ($query) {
-            $query->orderBy('created_at', 'DESC');
-                 }])->get();
-                 
+        $zeroMovement = ZeroFrige::with([
+            'warehouse.outPut_Type_Production',
+            'zeroFrigeDetails.inputable' => function ($query) {
+                $query->orderBy('created_at', 'DESC');
+            }
+        ])->get();
+
         return response()->json($zeroMovement);
     }
 
@@ -582,7 +594,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\LakeDetail', $lake_detail_id, $lakeDetail->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
         } catch (\Throwable $th) {
@@ -642,7 +654,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\ZeroFrigeDetail', $zero_frige_detail_id, $zeroFrigeDetail->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
 
@@ -653,7 +665,8 @@ class WarehouseController extends Controller
 
     }
 
-    public function destructFromDet1FrigeDetails(Request $request, $det1_frige_detail_id){
+    public function destructFromDet1FrigeDetails(Request $request, $det1_frige_detail_id)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -702,7 +715,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\DetonatorFrige1Detail', $det1_frige_detail_id, $det1FrigeDetail->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
         } catch (\Throwable $th) {
@@ -712,7 +725,8 @@ class WarehouseController extends Controller
 
     }
 
-    public function destructFromDet2FrigeDetails(Request $request, $det2_frige_detail_id){
+    public function destructFromDet2FrigeDetails(Request $request, $det2_frige_detail_id)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -761,7 +775,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\DetonatorFrige2Detail', $det2_frige_detail_id, $det2FrigeDetail->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
         } catch (\Throwable $th) {
@@ -771,7 +785,8 @@ class WarehouseController extends Controller
 
     }
 
-    public function destructFromDet3FrigeDetails(Request $request, $det3_frige_detail_id){
+    public function destructFromDet3FrigeDetails(Request $request, $det3_frige_detail_id)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -820,7 +835,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\DetonatorFrige3Detail', $det3_frige_detail_id, $det3FrigeDetail->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
         } catch (\Throwable $th) {
@@ -830,7 +845,8 @@ class WarehouseController extends Controller
 
     }
 
-    public function destructFromStoreDetails(Request $request, $store_detail_id){
+    public function destructFromStoreDetails(Request $request, $store_detail_id)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -879,7 +895,7 @@ class WarehouseController extends Controller
             $outputTypeProduction = $this->warehouseService->subtractFromWarehouseAfterExpiration('App\Models\StoreDetail', $store_detail_id, $storeDetails->cur_weight);
 
             DB::commit();
-            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification'=>$outputTypeProduction]);
+            return response()->json(["status" => true, "message" => 'تم إخراج المادة للإتلاف بنجاح', 'notification' => $outputTypeProduction]);
 
 
         } catch (\Throwable $th) {
@@ -895,7 +911,7 @@ class WarehouseController extends Controller
             ['channel', '=', 'add-output-to-expiration-warehouse-notification'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'add-output-to-expiration-warehouse-notification'],
             ['is_seen', '=', 0]
@@ -904,7 +920,8 @@ class WarehouseController extends Controller
 
     }
 
-    public function getNotInputDestructedTypes(Request $request){
+    public function getNotInputDestructedTypes(Request $request)
+    {
         $notifications = Notification::where([
             ['channel', '=', 'add-output-to-expiration-warehouse-notification'],
             ['expiration_id', '=', null]
@@ -931,7 +948,7 @@ class WarehouseController extends Controller
             $expiration->reason_of_expirations = $notification->reason_of_notification;
             $expiration->save();
 
-            $notification->update(['expiration_id'=>$expiration->id]);
+            $notification->update(['expiration_id' => $expiration->id]);
             DB::commit();
 
             if ($difWeight == 0)
@@ -970,8 +987,10 @@ class WarehouseController extends Controller
     }
 
 
+
     // sales commands notification
-    public function displaySalesCommandNotification(Request $request){
+    public function displaySalesCommandNotification(Request $request)
+    {
         $notifications = Notification::where([
             ['channel', '=', 'output-from-warehouse-to-sell'],
             ['is_seen', '=', 0]
@@ -980,13 +999,14 @@ class WarehouseController extends Controller
         return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
     }
 
-    public function displaySalesCommandNotificationSwitchState(Request $request){
+    public function displaySalesCommandNotificationSwitchState(Request $request)
+    {
         $notifications = Notification::where([
             ['channel', '=', 'output-from-warehouse-to-sell'],
             ['is_seen', '=', 0],
         ])->orderBy('created_at', 'DESC')->get();
-        
-         Notification::where([
+
+        Notification::where([
             ['channel', '=', 'output-from-warehouse-to-sell'],
             ['is_seen', '=', 0],
         ])->update(['is_seen' => 1]);
@@ -995,19 +1015,21 @@ class WarehouseController extends Controller
 
     ///////////////////////// DAILY STATISTICS (in jobs) //////////////////////
 
-    public function readDailyWarehouseReport(Request $request){
+    public function readDailyWarehouseReport(Request $request)
+    {
         $filename = 'daily_warehouse_report_' . date('Y_m_d') . '.txt';
-        if(Storage::exists($filename)){
+        if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);
             $data = json_decode($report, true);
-            return response()->json(["status"=>true, "data"=>$data]);
-    
+            return response()->json(["status" => true, "data" => $data]);
+
         }
-        return response()->json(["status"=>false, "data"=>null, "message"=>"لم يتم توليد التقرير لهذا اليوم بعد"]);
+        return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
     }
     //display previous daily reports
-    public function displayPreviousDailyReports(Request $request){
+    public function displayPreviousDailyReports(Request $request)
+    {
         $validator = Validator::make(
             $request->all(),
             [
@@ -1020,21 +1042,22 @@ class WarehouseController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        
+
         $newFormat = Carbon::parse($request->date)->format('Y_m_d');
-        if($newFormat > Carbon::now()->format('Y_m_d'))
-            return response()->json(["status"=>false, "message"=>"لا يمكن توليد تقرير ليوم يلي اليوم الحالي!!"]);
+        if ($newFormat > Carbon::now()->format('Y_m_d'))
+            return response()->json(["status" => false, "message" => "لا يمكن توليد تقرير ليوم يلي اليوم الحالي!!"]);
         $filename = 'daily_warehouse_report_' . $newFormat . '.txt';
-        if(Storage::exists($filename)){
+        if (Storage::exists($filename)) {
             $report = Storage::get($filename);
             $data = json_decode($report, true);
-            return response()->json(["status"=>true, "data"=>$data]);
+            return response()->json(["status" => true, "data" => $data]);
 
         }
-        return response()->json(["status"=>false, "data"=>"لا يوجد تقرير لهذا اليوم بعد"]);
+        return response()->json(["status" => false, "data" => "لا يوجد تقرير لهذا اليوم بعد"]);
     }
 
-    public function displayDailyWarehouseNotificationReports(Request $request){
+    public function displayDailyWarehouseNotificationReports(Request $request)
+    {
         $notifications = Notification::where([
             ['channel', '=', 'daily-warehouse-report-ready'],
             ['is_seen', '=', 0]
@@ -1044,12 +1067,13 @@ class WarehouseController extends Controller
 
     }
 
-    public function displayAllDailyWarehouseReportsNtification(Request $request){
+    public function displayAllDailyWarehouseReportsNtification(Request $request)
+    {
         $notifications = Notification::where([
             ['channel', '=', 'daily-warehouse-report-ready'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'daily-warehouse-report-ready'],
             ['is_seen', '=', 0]
@@ -1059,5 +1083,5 @@ class WarehouseController extends Controller
     }
 
 
-    
+
 }

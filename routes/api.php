@@ -77,7 +77,8 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     //استعراض محتويات مخزن الإتلاف
     Route::get('display-expiration-warehouse', [WarehouseController::class, 'displayExpirationWarehouse']);
 
-
+    // استعراض محتويات مخزن المخلفات
+    Route::get('display-remnant-content', [WarehouseController::class, 'displayRemnantContent']);
 
     ///////////////////////////// DAILY WAREHOUSE REPORTS //////////////////////////////////
     // حركة الدخل التي حصلت اليوم إلى المخزن
