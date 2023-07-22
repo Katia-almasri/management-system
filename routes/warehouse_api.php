@@ -149,8 +149,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         /////////////////////////// END DESTRUCTION PART /////////////////////////////////
         // استعراض الأوامر من مدير المشتريات
         Route::get('display-command-sales-request',[SalesPurchasingRequestController::class, 'displayCommandSalesRequest']);
+
+
         // ملء أمر الإخراج من مدير المشتريات
         Route::post('fill-sales-command/{command_sales_id}',[WarehouseController::class, 'fillCommandFromSalesManager']);
+
     });
 
 

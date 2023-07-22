@@ -470,6 +470,7 @@ class WarehouseController extends Controller
             }
         ])->get();
 
+
         return response()->json($zeroMovement);
     }
 
@@ -1022,7 +1023,7 @@ class WarehouseController extends Controller
 
             $report = Storage::get($filename);
             $data = json_decode($report, true);
-            return response()->json(["status" => true, "data" => $data]);
+            return response()->json(["status"=>true, "data"=>$data]);
 
         }
         return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
