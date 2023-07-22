@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Database\Seeders\PredictionSeeder;
+use Database\Seeders\remnantTypeSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +19,8 @@ class DatabaseSeeder extends Seeder
         // $this->call(ManagerTableSeeder::class);
         // $this->call(RoleUserTableSeeder::class);
         $this->call(PredictionSeeder::class);
+        $this->call(remnantTypeSeeder::class);
+        
         
         // $this->call(DriverTableSeeder::class);
         // $this->call(TruckTableSeeder::class);
