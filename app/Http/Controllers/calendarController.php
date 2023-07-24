@@ -55,7 +55,10 @@ class calendarController extends Controller
             $formattedDate = Carbon::parse($_prediction->year_month)->format('Y-m');
             $_prediction->year_month = $formattedDate;
         }
-        return response()->json(['status'=>true, 'message'=>$predictions]);
+        $data = [];
+        $data['predictions'] = $predictions;
+        $data['year_month'] = $predictions[0]->year_month;
+        return response()->json(['status'=>true, 'message'=>$data]);
         
 
 
