@@ -87,7 +87,7 @@ class CEOController extends Controller
             $managing_name_arabic = 'مشرف تصنيع';
         if($request->managing_level=='warehouse_supervisor')
             $managing_name_arabic = 'مشرف مخازن';
-            
+
         return response()->json([
             'message' =>' تم إضافة '.$managing_name_arabic.' جديد'
           ]);
@@ -136,7 +136,7 @@ class CEOController extends Controller
             ['channel', '=', 'add-request-from-offer-notification'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'add-request-from-offer-notification'],
             ['is_seen', '=', 0]
@@ -159,7 +159,7 @@ class CEOController extends Controller
             ['channel', '=', 'accept-refuse-sales-purchase-notification'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
-        
+
         $updatedNotifications = Notification::where([
             ['channel', '=', 'accept-refuse-sales-purchase-notification'],
             ['is_seen', '=', 0]
@@ -167,8 +167,13 @@ class CEOController extends Controller
         return response()->json($notifications);
     }
 
-    
 
+    /////////////**********dashboard *////////////////////////
+
+    public function numberUsers(Request $request){
+        $number = Manager::where('date_of_leave',null)->get()->count();
+        return response()->json($number);
+    }
 
 
 

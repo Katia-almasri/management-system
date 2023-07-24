@@ -70,9 +70,11 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     // استعراض إشعارات طلبات البيع والشراء المؤكدة مع تغيير حالة الإشعار
     Route::get('display-sales-purchasing-request-notification-change-state',[CEOController::class, 'displaySalesPurchasingRequestNotificationAndChangeState']);
 
-    
-    
-    
+    ////////////////////////dashboard/////////////////////////////
+    Route::get('number-user',[CEOController::class, 'numberUsers']);
+
+
+
 
 });
 
