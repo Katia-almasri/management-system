@@ -28,7 +28,7 @@ class check_Input_Slaughter
         if($InputSlaughters <= 0 )
             return  $this -> returnError('error', 'لا يوجد دخل');
         if($totalWeight > $InputSlaughters )
-            return  $this -> returnError('error', 'الدخل أكبر من الخرج');
+            return  $this -> returnError('error', 'الخرج اكبر من الدخل');
         return $next($request);
     }
 }

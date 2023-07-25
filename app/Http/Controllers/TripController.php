@@ -121,16 +121,16 @@ class TripController extends Controller
         $SalesPurchasingRequset =  salesPurchasingRequset::where('id',$SalesId)->pluck('total_amount');
         $truck = Truck::where('storage_capacity','>',$SalesPurchasingRequset)
         ->where('state','متاحة')->orderBy ('storage_capacity','ASC')->get();
-        
+
         $SalesPurchasingRequset1 =  salesPurchasingRequset::where('id',$SalesId)->pluck('farm_id');
         if($SalesPurchasingRequset1[0] != null){
-            $farmDis = Farm::pluck('governorate_id');
+            $farmDis = Farm::where('id',$SalesPurchasingRequset1)->pluck('governorate_id');
             $dis = Governorate::where('id',$farmDis)->pluck('distance')->first();
-            
+
         }
         $SalesPurchasingRequset2 =  salesPurchasingRequset::where('id',$SalesId)->pluck('selling_port_id');
         if($SalesPurchasingRequset2[0] != null){
-            $sellingPortDis = SellingPort::pluck('governorate_id');
+            $sellingPortDis = SellingPort::where('id',$SalesPurchasingRequset2)->pluck('governorate_id');
             $dis = Governorate::where('id',$sellingPortDis)->pluck('distance')->first();
             // return response()->json($SalesPurchasingRequset2, 200);
         }
