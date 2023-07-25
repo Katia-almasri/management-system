@@ -58,7 +58,7 @@ class calendarController extends Controller
         $data = [];
         $data['predictions'] = $predictions;
         $data['year_month'] = $predictions[0]->year_month;
-        return response()->json(['status'=>true, 'message'=>$data]);
+        return response()->json(['status'=>true, 'message'=>$predictions]);
         
 
 
