@@ -72,6 +72,14 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
 
     ////////////////////////dashboard/////////////////////////////
     Route::get('number-user',[CEOController::class, 'numberUsers']);
+    Route::get('number-sales-request',[CEOController::class, 'numberOfSalesRequest']);
+    Route::get('number-sales-request-approved',[CEOController::class, 'numberOfSalesRequestِApproved']);
+    Route::get('number-purchas-request',[CEOController::class, 'numberOfPurchasRequest']);
+    Route::get('number-purchas-request-approved',[CEOController::class, 'numberOfPurchasRequestApproved']);
+    Route::get('chart-amount-sales',[CEOController::class, 'ChartOfAmountSales']);
+    Route::get('chart-amount-purchase',[CEOController::class, 'ChartOfAmountPurchase']);
+    Route::get('purchase-price-for-this-mounth',[CEOController::class, 'PurchasePriceforThisMonth']);
+    Route::get('sales-price-for-this-mounth',[CEOController::class, 'SalesPriceforThisMonth']);
 
 
 

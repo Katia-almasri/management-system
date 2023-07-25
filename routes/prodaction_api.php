@@ -60,6 +60,14 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////مع تغيير الحالة استعراض الإشعارات الغير مقروءة للملاحظات
         Route::get('get-unread-note-notification-swotch-state',[NoteController::class, 'displayNotReadNotificationSwitchState']);
 
+
+        //////////////////////////dashboard /////////////////////
+        Route::get('chart-input-production',[ProductionController::class, 'chartInputProduction']);
+        Route::get('chart-output-production',[ProductionController::class, 'chartOutputSlaughter']);
+        Route::get('chart-output-cutting',[ProductionController::class, 'chartOutputCutting']);
+        Route::get('chart-output-manufacturing',[ProductionController::class, 'chartOutputManufacturing']);
+        Route::get('perfect-production',[ProductionController::class, 'theBestOfProductProduction']);
+
     });
 
 

@@ -19,6 +19,11 @@ use App\Models\outPut_SlaughterSupervisor_detail;
 use App\Models\InputCutting;
 use App\Models\InputManufacturing;
 use App\Models\DirectToOutputSlaughter;
+use App\Models\outPut_SlaughterSupervisor_table;
+use App\Models\output_cutting;
+use App\Models\output_cutting_detail;
+use App\Models\OutputManufacturing;
+use App\Models\OutputManufacturingDetails;
 use App\Models\Warehouse;
 
 
@@ -228,5 +233,104 @@ class ProductionController extends Controller
     public function displayCommandsWarehousToProduction(Request $request){
         $command = Command::with('commandDetails')->get();
         return response()->json($command, 200);
+    }
+
+
+    public function chartInputProduction(Request $request){
+        $inputProduction = input_slaughter_table::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(created_at) as month_name"))
+        ->whereYear('created_at', date('Y'))
+        ->groupBy(DB::raw("month_name"))
+        ->orderBy('id','Desc')
+        ->pluck('sum', 'month_name');
+
+        $labels = $inputProduction->keys();
+        $data = $inputProduction->values();
+        return response()->json([
+        'labels' => $labels,
+        'data' => $data,
+        ]);
+    }
+
+
+    public function chartOutputSlaughter(Request $request){
+        $outputSlaughter = outPut_SlaughterSupervisor_table::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(output_slaughtersupervisors.created_at) as month_name"))
+        ->join('output_slaughtersupervisors_details','output_slaughtersupervisors_details.output_id','=','output_slaughtersupervisors.id')
+        ->whereYear('output_slaughtersupervisors.created_at', date('Y'))
+        ->groupBy(DB::raw("month_name"))
+        ->orderBy('output_slaughtersupervisors.id','Desc')
+        ->pluck('sum', 'month_name');
+        $labels = $outputSlaughter->keys();
+        $data = $outputSlaughter->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+
+    public function chartOutputCutting(Request $request){
+        $outputCutting = output_cutting::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(output_cuttings.created_at) as month_name"))
+        ->join('output_cutting_details','output_cutting_details.output_cutting_id','=','output_cuttings.id')
+        ->whereYear('output_cuttings.created_at', date('Y'))
+        ->groupBy(DB::raw("month_name"))
+        ->orderBy('output_cuttings.id','Desc')
+        ->pluck('sum', 'month_name');
+        $labels = $outputCutting->keys();
+        $data = $outputCutting->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+    public function chartOutputManufacturing(Request $request){
+        $outputManufacturing = OutputManufacturing::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(output_manufacturings.created_at) as month_name"))
+        ->join('output_manufacturing_details','output_manufacturing_details.output_manufacturing_id','=','output_manufacturings.id')
+        ->whereYear('output_manufacturings.created_at', date('Y'))
+        ->groupBy(DB::raw("month_name"))
+        ->orderBy('output_manufacturings.id','Desc')
+        ->pluck('sum', 'month_name');
+        //  return response()->json($outputManufacturing, 200);
+        $labels = $outputManufacturing->keys();
+        $data = $outputManufacturing->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+
+    public function theBestOfProductProduction(Request $request){
+        $PerfectProductofCutting = output_cutting_detail::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
+        ->join('output_production_types','output_cutting_details.type_id','=','output_production_types.id')
+        ->whereMonth('output_cutting_details.created_at', Carbon::now()->month)
+        ->groupBy('type')
+        ->orderBy('sum','desc')
+        ->limit(5)->pluck('sum','type');
+
+        $PerfectProductofManufacturing = OutputManufacturingDetails::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
+        ->join('output_production_types','output_manufacturing_details.type_id','=','output_production_types.id')
+        ->whereMonth('output_manufacturing_details.created_at', Carbon::now()->month)
+        ->groupBy('type')
+        ->orderBy('sum','desc')
+        ->limit(5)->pluck('sum','type');
+
+        $PerfectProductofSlaughter = outPut_SlaughterSupervisor_detail::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
+        ->join('output_production_types','output_slaughtersupervisors_details.type_id','=','output_production_types.id')
+        ->whereMonth('output_slaughtersupervisors_details.created_at', Carbon::now()->month)
+        ->groupBy('type')
+        ->orderBy('sum','desc')
+        ->limit(5)->pluck('sum','type');
+
+
+        $max = array($PerfectProductofCutting,$PerfectProductofManufacturing,$PerfectProductofSlaughter);
+        return response()->json($max, 200);
+
+        $labels = $PerfectProductofSlaughter->keys();
+        $data = $PerfectProductofSlaughter->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
     }
 }

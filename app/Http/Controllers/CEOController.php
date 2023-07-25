@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Carbon\Carbon;
 use Hash;
+use DB;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
 use Validator;
 use App\Models\Manager;
+use App\Models\salesPurchasingRequset;
 use Auth;
 
 class CEOController extends Controller
@@ -175,6 +177,77 @@ class CEOController extends Controller
         return response()->json($number);
     }
 
+    public function numberOfSalesRequest(Request $request){
+        $numberSales = salesPurchasingRequset::where('request_type',1)->get()->count();
+        return response()->json($numberSales);
+    }
+
+    public function numberOfSalesRequestِApproved(Request $request){
+        $numberSales = salesPurchasingRequset::where([['request_type',1],['accept_by_ceo',1]])->get()->count();
+        return response()->json($numberSales);
+    }
+
+    public function numberOfPurchasRequest(Request $request){
+        $numberOfPurchas = salesPurchasingRequset::where('request_type',0)->get()->count();
+        return response()->json($numberOfPurchas);
+    }
+
+    public function numberOfPurchasRequestApproved(Request $request){
+        $numberOfPurchas = salesPurchasingRequset::where([['request_type',0],['accept_by_ceo',1]])->get()->count();
+        return response()->json($numberOfPurchas);
+    }
+
+
+    public function ChartOfAmountSales(Request $request){
+        $AmountSales = salesPurchasingRequset::select(DB::raw("SUM(amount) as sum"), DB::raw("MONTHNAME(sales_purchasing_requests.created_at) as month_name"))
+                    ->join('sales-purchasing-requset-details','sales-purchasing-requset-details.requset_id','=','sales_purchasing_requests.id')
+                    ->whereYear('sales_purchasing_requests.created_at', date('Y'))
+                    ->where([['request_type',1],['accept_by_sales',1],['accept_by_ceo',1]])
+                    ->groupBy(DB::raw("month_name"))
+                    ->orderBy('sales_purchasing_requests.id','Desc')
+                    ->pluck('sum', 'month_name');
+        $labels = $AmountSales->keys();
+        $data = $AmountSales->values();
+        return response()->json([
+        'labels' => $labels,
+        'data' => $data,
+        ]);
+    }
+
+
+    public function ChartOfAmountPurchase(Request $request){
+        $AmountPurchase = salesPurchasingRequset::select(DB::raw("SUM(amount) as sum"), DB::raw("MONTHNAME(sales_purchasing_requests.created_at) as month_name"))
+                    ->join('sales-purchasing-requset-details','sales-purchasing-requset-details.requset_id','=','sales_purchasing_requests.id')
+                    ->whereYear('sales_purchasing_requests.created_at', date('Y'))
+                    ->where([['request_type',0],['accept_by_sales',1],['accept_by_ceo',1]])
+                    ->groupBy(DB::raw("month_name"))
+                    ->orderBy('sales_purchasing_requests.id','Desc')
+                    ->pluck('sum', 'month_name');
+        $labels = $AmountPurchase->keys();
+        $data = $AmountPurchase->values();
+        return response()->json([
+        'labels' => $labels,
+        'data' => $data,
+        ]);
+    }
+
+    public function PurchasePriceforThisMonth(Request $request){
+        $PurchasePriceforThisMonth = salesPurchasingRequset::select(DB::raw("SUM(price) as sum"))
+                    ->join('sales-purchasing-requset-details','sales-purchasing-requset-details.requset_id','=','sales_purchasing_requests.id')
+                    ->whereMonth('sales_purchasing_requests.created_at', date('m'))
+                    ->where([['request_type',0],['accept_by_sales',1],['accept_by_ceo',1]])
+                    ->pluck('sum');
+        return response()->json($PurchasePriceforThisMonth, 200);
+    }
+
+    public function SalesPriceforThisMonth(Request $request){
+        $SalesPriceforThisMonth = salesPurchasingRequset::select(DB::raw("SUM(price) as sum"))
+                    ->join('sales-purchasing-requset-details','sales-purchasing-requset-details.requset_id','=','sales_purchasing_requests.id')
+                    ->whereMonth('sales_purchasing_requests.created_at', date('m'))
+                    ->where([['request_type',1],['accept_by_sales',1],['accept_by_ceo',1]])
+                    ->pluck('sum');
+        return response()->json($SalesPriceforThisMonth, 200);
+    }
 
 
 }
