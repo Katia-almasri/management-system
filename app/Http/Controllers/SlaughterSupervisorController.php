@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\Warehouse;
 use App\systemServices\warehouseServices;
 use Illuminate\Support\Facades\DB;
@@ -138,9 +139,13 @@ class SlaughterSupervisorController extends Controller
             }
             $wastage = $totalWeightInput - ($totalWeightProduction + $totalWeightRemnat);
             outPut_SlaughterSupervisor_table::where('id',$output->id)->update(['wastage'=>$wastage]);
+            $notification = null;
+            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){    
+               $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
 
+            }
 
-        return response()->json(["status"=>true, "message"=>"تم اضافة خرج"]);
+        return response()->json(["status"=>true, "message"=>"تم اضافة خرج", "notification"=>$notification]);
     }catch (\Exception $exception) {
         DB::rollback();
         return response()->json(["status" => false, "message" => $exception->getMessage()]);
@@ -162,6 +167,32 @@ class SlaughterSupervisorController extends Controller
     public function displayOutputRemnatSlaughter(Request $request){
         $outputRemnatSlaughter = Output_remnat_details::with('type_remnat')->where('output_slaughter_id','!=',null)->get();
         return response()->json($outputRemnatSlaughter, 200);
+    }
+
+    /////////////// NOTIFICATION PART ///////////////////
+    public function displayReachedInputToSlaughter(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayReachedInputToSlaughterChangeState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['is_seen', '=', 0],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        Notification::where([
+            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['is_seen', '=', 0],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+
+
     }
 
 

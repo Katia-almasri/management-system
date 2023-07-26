@@ -1018,7 +1018,8 @@ class WarehouseController extends Controller
 
     public function readDailyWarehouseReport(Request $request)
     {
-        $filename = 'daily_warehouse_report_' . date('Y_m_d') . '.txt';
+        // $filename = 'daily_warehouse_report_' . date('Y_m_d') . '.txt';
+        $filename = 'daily_warehouse_report_2023_06_27.txt';
         if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);

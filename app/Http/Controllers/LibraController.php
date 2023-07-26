@@ -56,11 +56,21 @@ class LibraController extends Controller
             $finalResult = $this->weightAfterArrivalService->weightAfterArrive($request, $recieptId);
             $recieptWeighted = PoultryReceiptDetection::where('id', $recieptId)->update(['is_weighted_after_arrive'=>1]);
             if ($finalResult['status'] == true){
-                 //إرسال إشعار للمدير التنفيذي بوصول الشحنة ووزنها
-                $data['type'] = 'وزن الشحنة بعد وصولها';
-                $data['reciept_id'] = $recieptId;
-                $this->notificationService->addWeightRecieptAfterArriveNotif($data);
                 // ////////////////// SEND THE NOTIFICATION /////////////////////////
+
+                $data = $this->notificationService->makeNotification(
+                    'add-reciept-after-arrive-notification',
+                    'App\\Events\\addWeightRecieptAfterArriveNotif',
+                    'وزن الشحنة بعد وصولها',
+                    '',
+                    $request->user()->id,
+                    '',
+                    $recieptId,
+                    'آمر القبان',
+                    ''
+                );
+
+                $this->notificationService->addWeightRecieptAfterArriveNotif($data);
 
 
                 return ["status" => true, "message" => "  تم وزن الشحنة بعد وصولها بنجاح وارسالها لقسم الذبح"];

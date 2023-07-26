@@ -124,7 +124,14 @@ class CuttingController extends Controller
             $wastage = $totalWeightInput - ($totalWeightProduction + $totalWeightRemnat);
             output_cutting::where('id',$output->id)->update(['wastage'=>$wastage]);
 
-        return response()->json(["status" => true, "message" => "تم اضافة خرج"]);
+            $notification = null;
+            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){    
+               $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
+
+            }
+
+
+        return response()->json(["status" => true, "message" => "تم اضافة خرج", "notification"=>$notification]);
 
 
     }

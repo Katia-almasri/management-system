@@ -106,7 +106,6 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     Route::get('get-output-types-to-expiration-warehouse', [WarehouseController::class, 'getOutputTypesInsertedToExpirationWarehouse']);
     // استعراض التقرير اليومي للمخازن
 
-    Route::get('get-daily-warehouse-report',[WarehouseController::class, 'readDailyWarehouseReport']);
 
     // استعلراض تقارير المخازن اليومية لتاريخ معين
     Route::post('get-previous-daily-warehouse-reports',[WarehouseController::class, 'displayPreviousDailyReports']);

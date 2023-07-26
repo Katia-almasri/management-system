@@ -23,7 +23,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-inputs',[SlaughterSupervisorController::class, 'displayInputs']);
         Route::get('display-OutputRemnat-Slaughter',[SlaughterSupervisorController::class, 'displayOutputRemnatSlaughter']);
 
-
+        ////////////////     notification part ////////////////////
+        //استعراض الشحنة الداخلة إلى الذبح
+        Route::get('display-reached-input-to-slaughter',[SlaughterSupervisorController::class, 'displayReachedInputToSlaughter']);
+        //استعراض الشحنة الداخلة إلى الذبح و تغيير الحالة
+        Route::get('display-reached-input-to-slaughter-change-state',[SlaughterSupervisorController::class, 'displayReachedInputToSlaughterChangeState']);
     });
 
 

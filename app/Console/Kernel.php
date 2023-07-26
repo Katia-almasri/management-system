@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->job(new checkExpirationDate)->dailyAt('13:00');
         // $schedule->job(new checkExpirationDate)->everyFiveMinutes();
-        // $schedule->job(new dailyWarehouseReport)->everyFiveMinutes();
+        $schedule->job(new dailyWarehouseReport)->everyFiveMinutes();
         // $schedule->job(new predictions)->monthlyOn(28, '12:00');
         // $schedule->job(new predictions)->everyFiveMinutes();
         // $schedule->job(new dailyWarehouseReport)->dailyAt('20:00');
