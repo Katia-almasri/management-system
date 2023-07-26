@@ -13,7 +13,8 @@ class outPut_Type_Production extends Model
     protected $primaryKey='id';
     protected $fillable = [
        'type',
-       'num_expiration_days'
+       'num_expiration_days',
+       'by_section'
     ];
 
      ############################## Begin Relations #############################

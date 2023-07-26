@@ -26,6 +26,11 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-output-Remnat-cutting',[CuttingController::class, 'displayOutputRemnatCutting']);
 
 
+        /////////////////////////dashboard//////////////////////////////
+        Route::get('count-type-production-cutting',[CuttingController::class, 'CountTypeProductionCutting']);
+        Route::get('chart-input-Cutting-this-month',[CuttingController::class, 'chartInputCuttingThisMonth']);
+        Route::get('chart-output-Cutting-this-month',[CuttingController::class, 'chartOutputCuttingThisMonth']);
+
 
     });
 

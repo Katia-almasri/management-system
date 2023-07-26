@@ -249,5 +249,4 @@ class CEOController extends Controller
         return response()->json($SalesPriceforThisMonth, 200);
     }
 
-
 }

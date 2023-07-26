@@ -18,6 +18,7 @@ use App\Models\Output_remnat;
 use App\Models\Output_remnat_details;
 use App\Models\Remnat;
 use App\Models\RemnatDetail;
+use App\Models\OutputManufacturingDetails;
 
 class SlaughterSupervisorController extends Controller
 {
@@ -162,6 +163,44 @@ class SlaughterSupervisorController extends Controller
     public function displayOutputRemnatSlaughter(Request $request){
         $outputRemnatSlaughter = Output_remnat_details::with('type_remnat')->where('output_slaughter_id','!=',null)->get();
         return response()->json($outputRemnatSlaughter, 200);
+    }
+
+
+    ///////////////////////////////dashboard///////////////////////
+    public function CountTypeProductionSlaughter(Request $request){
+        $CountTypeSlaughter = outPut_Type_Production::where('by_section','قسم الذبح')->get()->count();
+        return response()->json($CountTypeSlaughter, 200);
+    }
+
+    public function chartInputSlaughter(Request $request){
+        $inputSlaughter = input_slaughter_table::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(created_at) as month_name"))
+        ->whereYear('created_at', date('Y'))
+        ->groupBy(DB::raw("month_name"))
+        ->orderBy('id','Desc')
+        ->pluck('sum', 'month_name');
+        $labels = $inputSlaughter->keys();
+        $data = $inputSlaughter->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+
+    public function chartOutputSlaughterThisMonth(Request $request){
+        $outputSlaughter = outPut_SlaughterSupervisor_detail::select(DB::raw("SUM(weight) as sum"), DB::raw("type as type_name"))
+        ->join('output_production_types','output_production_types.id','=','output_slaughtersupervisors_details.type_id')
+        ->whereYear('output_slaughtersupervisors_details.created_at', date('Y'))
+        ->whereMonth('output_slaughtersupervisors_details.created_at', date('m'))
+        ->groupBy(DB::raw("type_name"))
+        ->orderBy('output_slaughtersupervisors_details.id','Desc')
+        ->pluck('sum', 'type_name');
+        $labels = $outputSlaughter->keys();
+        $data = $outputSlaughter->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
     }
 
 
