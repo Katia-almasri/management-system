@@ -64,10 +64,12 @@ class calendarController extends Controller
             $formattedDate = Carbon::parse($_prediction->year_month)->format('Y-m');
             $_prediction->year_month = $formattedDate;
         }
-        return response()->json($predictions);
-        // $data = [];
-        // $data['predictions'] = $predictions;
-        // $data['year_month'] = $predictions[0]->year_month;
+
+        $data = [];
+        $data['predictions'] = $predictions;
+        $data['year_month'] = $predictions[0]->year_month;
+        return response()->json(["status" => true, "message" => $data]);
+      
 
 
 
@@ -82,6 +84,7 @@ class calendarController extends Controller
         ->whereMonth('created_at', date('m'))
         ->groupBy('date')
         ->get();
+
         return response()->json($totalPriceFromFarms);
 
 

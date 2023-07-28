@@ -102,7 +102,7 @@ class SalesPurchasingRequestServices
     ////////////////////////////// DAILY REPORT //////////////////////
     // sales today
     public function salesToday(){
-        $salesToday = salesPurchasingRequset::with('farm', 'sellingPort')->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
+        $salesToday = salesPurchasingRequset::with('farm', 'sellingPort', 'salesPurchasingRequsetDetail')->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
         ->whereHas('trips')
         ->whereMonth('created_at', date('m'))
         ->get();
@@ -113,7 +113,7 @@ class SalesPurchasingRequestServices
 
     //purchases today
     public function PurchaseToday(){
-        $PurchaseToday = salesPurchasingRequset::with('farm', 'sellingPort')->where([['request_type', 1], ['accept_by_ceo', 1], ['command', 1]])
+        $PurchaseToday = salesPurchasingRequset::with('farm', 'sellingPort', 'salesPurchasingRequsetDetail')->where([['request_type', 1], ['accept_by_ceo', 1], ['command', 1]])
         ->whereHas('trips')
         ->whereMonth('created_at', date('m'))
         ->get();
@@ -126,6 +126,7 @@ class SalesPurchasingRequestServices
         ->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
         ->whereHas('trips')
         ->whereMonth('created_at', date('m'))
+        ->groupBy('date')
         ->get();
         return(["totalPriceFromFarms"=>$totalPriceFromFarms]);
     }
@@ -135,6 +136,7 @@ class SalesPurchasingRequestServices
         ->where([['request_type', 1], ['accept_by_ceo', 1], ['command', 1]])
         ->whereHas('trips')
         ->whereMonth('created_at', date('m'))
+        ->groupBy('date')
         ->get();
         return(["totalPriceFromSellingPorts"=>$totalPriceFromSellingPorts]);
     }

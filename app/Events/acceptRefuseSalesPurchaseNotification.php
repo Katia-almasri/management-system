@@ -51,11 +51,11 @@ class acceptRefuseSalesPurchaseNotification
     
     public function broadcastOn()
     {
-        return ['accept-refuse-sales-purchase-notification'];
+        return ['ceo-channel'];
     }
 
     public function broadcastAs()
     {
-      return 'accept-refuse-sales-purchase-notification';
+      return 'ceo-channel';
     }
 }

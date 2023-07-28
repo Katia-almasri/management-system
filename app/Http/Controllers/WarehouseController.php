@@ -340,11 +340,28 @@ class WarehouseController extends Controller
                 if ($result['status'] != true)
                     throw new \ErrorException($result['message']);
             }
-            DB::commit();
             $message = 'تمت العملية بنجاح';
             $doneCommand = $this->warehouseService->checkIsCommandDone($commandId);
-            if ($doneCommand['status'] == true)
+            if ($doneCommand['status'] == true){
                 $message = $message . ' و' . $doneCommand['message'];
+                $data = $this->notificationService->makeNotification(
+                    'production-channel',
+                    'App\\Events\\productionNotification',
+                    $commandId.' ملء أمر الإنتاج',
+                    '',
+                    $request->user()->id,
+                    '',
+                    0,
+                    'مشرف التصنيع',
+                    ''
+                );
+    
+                $this->notificationService->productionNotification($data);
+
+            }
+            //send notification to production manager and the supervisor
+            
+            DB::commit();
             return response()->json(["status" => true, "message" => $message]);
         } catch (\Exception $exception) {
             DB::rollback();
@@ -403,9 +420,9 @@ class WarehouseController extends Controller
                 //1. get the request tot aomount 
                 $commandRequest = Command_sales::with('sales_request')->find($commandId);
                 $data = $this->notificationService->makeNotification(
-                    'command-sales-done',
-                    'App\\Events\\commandSalesDoneNotif',
-                    'تم إخراج المواد من المخزن بنجاح',
+                    'sales-channel',
+                    'App\\Events\\salesNotification',
+                    'تم إخراج المواد من المخزن بنجاح للبيع',
                     '',
                     $request->user()->id,
                     '',
@@ -414,13 +431,13 @@ class WarehouseController extends Controller
                     ''
                 );
 
-                $this->notificationService->commandSalesDoneNotif($data);
+                $this->notificationService->salesNotification($data);
 
                 //send notification to sales manager
                 $data = $this->notificationService->makeNotification(
-                    'command-sales-done',
-                    'App\\Events\\commandSalesDoneNotif',
-                    'تم إخراج المواد من المخزن بنجاح',
+                    'mechanism-channel',
+                    'App\\Events\\addStartCommandNotif',
+                    'تم إخراج المواد من المخزن بنجاح للبيع',
                     '',
                     $request->user()->id,
                     '',
@@ -429,7 +446,7 @@ class WarehouseController extends Controller
                     ''
                 );
 
-                $this->notificationService->commandSalesDoneNotif($data);
+                $this->notificationService->addSalesPurchaseToCEONotif($data);
 
             }
 
@@ -993,7 +1010,7 @@ class WarehouseController extends Controller
     public function displaySalesCommandNotification(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['channel', '=', 'warehouse-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -1003,12 +1020,12 @@ class WarehouseController extends Controller
     public function displaySalesCommandNotificationSwitchState(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['channel', '=', 'warehouse-channel'],
             ['is_seen', '=', 0],
         ])->orderBy('created_at', 'DESC')->get();
 
         Notification::where([
-            ['channel', '=', 'output-from-warehouse-to-sell'],
+            ['channel', '=', 'warehouse-channel'],
             ['is_seen', '=', 0],
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);

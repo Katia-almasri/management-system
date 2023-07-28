@@ -14,6 +14,7 @@ use App\Models\SellingPort;
 use \Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 use App\Http\Requests\SalesPurchasingRequest;
 use App\systemServices\SalesPurchasingRequestServices;
@@ -84,7 +85,7 @@ class SalesPurchasingRequestController extends Controller
 
 
             $data = $this->notificationService->makeNotification(
-                'accept-refuse-sales-purchase-notification',
+                'ceo-channel',
                 'App\\Events\\acceptRefuseSalesPurchaseNotification',
                 ' إضافة ' . $requestType,
                 '',
@@ -117,7 +118,7 @@ class SalesPurchasingRequestController extends Controller
         $find = salesPurchasingRequset::find($RequestId);
         
         $data = $this->notificationService->makeNotification(
-            'add-start-command-notification',
+            'mechanism-channel',
             'App\\Events\\addStartCommandNotif',
             'أمر جديد لمنسق حركة الآليات',
             'http://127.0.0.1:8000//sales-api//command-for-mechanism//2',
@@ -156,8 +157,8 @@ class SalesPurchasingRequestController extends Controller
     
             //send notification to warehouse coordinator
             $data = $this->notificationService->makeNotification(
-                'output-from-warehouse-to-sell',
-                'App\\Events\\outputFromWarehouseToSell',
+                'warehouse-channel',
+                'App\\Events\\warehouNotification',
                 ' إصدار أمر إخراج من المخازن للبيع',
                 '',
                 $request->user()->id,
@@ -167,7 +168,22 @@ class SalesPurchasingRequestController extends Controller
                 ''
             );
     
-            $this->notificationService->addOutputFromWarehouseNotification($data);
+            $this->notificationService->warehouNotification($data);
+
+            $data = $this->notificationService->makeNotification(
+                'mechanism-channel',
+                'App\\Events\\addStartCommandNotif',
+                ' إصدار أمر إخراج من المخازن للبيع',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مدير المشتريات والمبيعات',
+                ''
+            );
+    
+            $this->notificationService->addStartCommandNotif($data);
+
            DB::commit();
             return response()->json(["status" => true, "message" => " تم اعطاء الامر لمنسق حركة الاليات ولمشرف المخازن"]);
     
@@ -217,8 +233,8 @@ class SalesPurchasingRequestController extends Controller
         }
 
         $data = $this->notificationService->makeNotification(
-            'accept-refuse-sales-purchase-notification',
-            'App\\Events\\acceptRefuseSalesPurchaseNotification',
+            'sales-channel',
+            'App\\Events\\salesNotification',
             ' قبول  ' . $requestType,
             '',
             $find->id,
@@ -229,7 +245,7 @@ class SalesPurchasingRequestController extends Controller
 
         );
 
-        $this->notificationService->acceptRefuseSalesPurchaseNotif($data);
+        $this->notificationService->salesNotification($data);
 
         return response()->json(["status" => true, "message" => "تمت الموافقة على الطلب بنجاح"]);
     }
@@ -261,8 +277,8 @@ class SalesPurchasingRequestController extends Controller
         }
 
         $data = $this->notificationService->makeNotification(
-            'accept-refuse-sales-purchase-notification',
-            'App\\Events\\acceptRefuseSalesPurchaseNotification',
+            'sales-channel',
+            'App\\Events\\salesNotification',
             ' رفض  ' . $requestType,
             '',
             $find->id,
@@ -272,7 +288,7 @@ class SalesPurchasingRequestController extends Controller
             $find->reason_refuse_by_ceo
 
         );
-        $this->notificationService->acceptRefuseSalesPurchaseNotif($data);
+        $this->notificationService->salesNotification($data);
         return response()->json(["status" => true, "message" => "تم رفض الطلبية "]);
     }
 
@@ -369,7 +385,7 @@ class SalesPurchasingRequestController extends Controller
     public function countStartCommandsNotifs(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'add-start-command-notification'],
+            ['channel', '=', 'mechanism-channel'],
             ['is_seen', '=', 0]
         ])->get();
         $notificationsCount = $notifications->count();
@@ -566,7 +582,7 @@ class SalesPurchasingRequestController extends Controller
     public function displyAcceptedRefusedNotification(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -576,12 +592,12 @@ class SalesPurchasingRequestController extends Controller
     public function displyAcceptedRefusedNotificationAndChangeState(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -590,7 +606,7 @@ class SalesPurchasingRequestController extends Controller
     public function displyCommandNotification(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'add-start-command-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -600,12 +616,12 @@ class SalesPurchasingRequestController extends Controller
     public function displyCommandNotificationChangeState(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'add-start-command-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'add-start-command-notification'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -613,7 +629,7 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayTripNotification(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-trip'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -622,12 +638,12 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayTripNotificationSwitchState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-trip'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'add-trip'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -635,7 +651,7 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayDoneSalesCommandNotification(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0],
             ['output_from', '=', 'مدير المشتريات والمبيعات'],
         ])->orderBy('created_at', 'DESC')->get();
@@ -646,13 +662,13 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayDoneSalesCommandNotificationSwitchState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0],
             ['output_from', '=', 'مدير المشتريات والمبيعات'],
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'sales-channel'],
             ['is_seen', '=', 0],
             ['output_from', '=', 'مدير المشتريات والمبيعات'],
         ])->update(['is_seen' => 1]);
@@ -662,9 +678,8 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayDoneSalesCommandNotificationMechanism(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'mechanism-channel'],
             ['is_seen', '=', 0],
-            ['output_from', '=', 'منسق حركة الآليات'],
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
         return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
@@ -673,19 +688,33 @@ class SalesPurchasingRequestController extends Controller
 
     public function displayDoneSalesCommandNotificationSwitchStateMechanism(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'mechanism-channel'],
             ['is_seen', '=', 0],
-            ['output_from', '=', 'منسق حركة الآليات'],
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'command-sales-done'],
+            ['channel', '=', 'mechanism-channel'],
             ['is_seen', '=', 0],
-            ['output_from', '=', 'منسق حركة الآليات'],
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
 
     }
+
+    //////////////////////// DAILY REPORT //////////////////////////////
+    public function readDailySalesReport(Request $request)
+    {
+        $filename = 'daily_sales_report_' . date('Y_m_d') . '.txt';
+        
+        if (Storage::exists($filename)) {
+
+            $report = Storage::get($filename);
+            $data = json_decode($report, true);
+            return response()->json(["status"=>true, "data"=>$data]);
+
+        }
+        return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
+    }
+    
 
 
 }

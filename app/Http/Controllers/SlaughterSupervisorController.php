@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\Warehouse;
+use App\systemServices\notificationServices;
 use App\systemServices\warehouseServices;
 use Illuminate\Support\Facades\DB;
 Use \Carbon\Carbon;
@@ -25,10 +26,12 @@ class SlaughterSupervisorController extends Controller
 {
     use validationTrait;
     protected $warehouseService;
+    protected $notificationService;
 
     public function __construct()
     {
         $this->warehouseService  = new warehouseServices();
+        $this->notificationService  = new notificationServices();
     }
     public function displayInputSlaughters(request $request){
         $InputSlaughters = input_slaughter_table::where('output_date',null)->get();
@@ -66,7 +69,7 @@ class SlaughterSupervisorController extends Controller
             // $InputSlaughters = input_slaughter_table::where('output_date',null)->sum('weight');
             // return response($InputSlaughters);
         try{
-
+            DB::beginTransaction();
             $output = new outPut_SlaughterSupervisor_table();
             $output -> production_date = Carbon::now();
             $output ->save();
@@ -145,7 +148,33 @@ class SlaughterSupervisorController extends Controller
                $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
 
             }
+            //notification to warehouse supervisor because its now in lakes
+            $data = $this->notificationService->makeNotification(
+                'warehouse-channel',
+                'App\\Events\\warehouseNotification',
+                'وصل خرج الذبح إلى البحرات',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مشرف الذبح',
+                ''
+            );
+            $this->notificationService->warehouNotification($data);
 
+            $data = $this->notificationService->makeNotification(
+                'production-channel',
+                'App\\Events\\productionNotification',
+                'وصل خرج الذبح إلى البحرات',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مشرف الذبح',
+                ''
+            );
+            $this->notificationService->productionNotification($data);
+            DB::commit();
         return response()->json(["status"=>true, "message"=>"تم اضافة خرج", "notification"=>$notification]);
     }catch (\Exception $exception) {
         DB::rollback();
@@ -173,7 +202,7 @@ class SlaughterSupervisorController extends Controller
     /////////////// NOTIFICATION PART ///////////////////
     public function displayReachedInputToSlaughter(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['channel', '=', 'slaughter-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -183,12 +212,12 @@ class SlaughterSupervisorController extends Controller
 
     public function displayReachedInputToSlaughterChangeState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['channel', '=', 'slaughter-channel'],
             ['is_seen', '=', 0],
         ])->orderBy('created_at', 'DESC')->get();
 
         Notification::where([
-            ['channel', '=', 'add-reciept-after-arrive-notification'],
+            ['channel', '=', 'slaughter-channel'],
             ['is_seen', '=', 0],
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);

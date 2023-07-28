@@ -31,5 +31,10 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('chart-input-manufacturing-this-month',[ManufacturingController::class, 'chartInputManufacturingThisMonth']);
         Route::get('chart-output-manufacturing-this-month',[ManufacturingController::class, 'chartOutputManufacturingThisMonth']);
 
+        ///////////////////// NOTIFICATION PART //////////////
+        Route::get('display-notification',[ManufacturingController::class, 'displayNotification']);
+        Route::get('display-notification2',[ManufacturingController::class, 'displayNotification2']);
+        
+        
     });
 });

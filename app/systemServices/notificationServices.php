@@ -47,7 +47,7 @@ class notificationServices
 
     public function addSalesPurchaseToCEONotif($data){
         $pusher = $this->makePusherConnection();
-        $pusher->trigger('add-sales-purchase-to-ceo-notification', 'App\\Events\\addSalesPurchaseToCeoNotification', $data);
+        $pusher->trigger('ceo-channel', 'App\\Events\\acceptRefuseSalesPurchaseNotification', $data);
 
     }
 
@@ -55,7 +55,7 @@ class notificationServices
         $pusher = $this->makePusherConnection();
         $data['date'] = date("Y-m-d", strtotime(Carbon::now()));
         $data['time'] = date("h:i A", strtotime(Carbon::now()));
-        $pusher->trigger('add-start-command-notification', 'App\\Events\\addStartCommandNotif', $data);
+        $pusher->trigger('mechanism-channel', 'App\\Events\\addStartCommandNotif', $data);
 
     }
 
@@ -83,9 +83,9 @@ class notificationServices
 
     }
 
-    public function acceptRefuseSalesPurchaseNotif($data){
+    public function salesNotification($data){
         $pusher = $this->makePusherConnection();
-        $pusher->trigger('accept-refuse-sales-purchase-notification', 'App\\Events\\acceptRefuseSalesPurchaseNotification', $data);
+        $pusher->trigger('sales-channel', 'App\\Events\\salesNotification', $data);
 
     }
 
@@ -147,6 +147,30 @@ class notificationServices
         $pusher = $this->makePusherConnection();
         $pusher->trigger('daily-sales-report-ready', 'App\\Events\\dailySalesReportReady', $data);
 
+    }
+
+    public function productionNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('production-channel', 'App\\Events\\productionNotification', $data);
+        
+    }
+
+    public function warehouNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('warehouse-channel', 'App\\Events\\warehouNotification', $data);
+        
+    }
+
+    public function slaughterNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('slaughter-channel', 'App\\Events\\slaughterNotification', $data);
+
+    }
+
+    public function manufactoringNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('manufactoring-channel', 'App\\Events\\manufactoringNotification', $data);
+        
     }
     //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
     public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){

@@ -168,6 +168,8 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-done-sales-command-notification-switch-state',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationSwitchState']);
 
 
+        //////////////////// DAILY REPORT //////////////////////////
+        Route::get('read-daily-sales-report',[SalesPurchasingRequestController::class, 'readDailySalesReport']);
 
     });
 

@@ -35,8 +35,8 @@ class NoteController extends Controller
 
         //add notification to sales manager
         $data = $this->notificationService->makeNotification(
-            'send-note',
-            'App\\Events\\sendNoteNotification',
+            'production-channel',
+            'App\\Events\\productionNotification',
             'تم إضافة ملاحظة من قبل مدير المشتريات والمبيعات',
             '',
             $request->user()->id,
@@ -48,7 +48,7 @@ class NoteController extends Controller
 
 
 
-        $this->notificationService->addNoteNotif($data);
+        $this->notificationService->productionNotification($data);
 
         return response()->json(["status" => true, "message" => "تمت اضافة ملاحظة لمدير الانتاج بنجاح"]);
     }
@@ -89,8 +89,8 @@ class NoteController extends Controller
         //add notification to production manager
 
         $data = $this->notificationService->makeNotification(
-            'send-note',
-            'App\\Events\\sendNoteNotification',
+            'sales-channel',
+            'App\\Events\\salesNotification',
             'تم إضافة ملاحظة من قبل مدير الإنتاج ',
             '',
             $request->user()->id,
@@ -102,7 +102,7 @@ class NoteController extends Controller
 
 
 
-        $this->notificationService->addNoteNotif($data);
+        $this->notificationService->salesNotification($data);
 
         return response()->json(["status" => true, "message" => "تمت اضافة ملاحظة لمدير المستريات والمبيعات"]);
 

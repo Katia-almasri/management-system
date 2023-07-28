@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
+use App\systemServices\notificationServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
@@ -26,10 +28,12 @@ class ManufacturingController extends Controller
     use validationTrait;
 
     protected $productionService;
+    protected $notificationService;
 
     public function __construct()
     {
         $this->productionService  = new productionServices();
+        $this->notificationService  = new notificationServices();
     }
 
     public function displayInputManufacturing(Request $request)
@@ -150,7 +154,37 @@ class ManufacturingController extends Controller
                     throw new \ErrorException($result['message']);
 
             }
+            //send notification
+            $data = $this->notificationService->makeNotification(
+                'warehouse-channel',
+                'App\\Events\\warehouNotification',
+                'توجيه خرج التصنيع إلى المخازن ',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مشرف التصنيع',
+                ''
+            );
+
+            $this->notificationService->warehouNotification($data);
+
+            $data = $this->notificationService->makeNotification(
+                'production-channel',
+                'App\\Events\\productionNotification',
+                'توجيه خرج التصنيع إلى المخازن ',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'مشرف التصنيع',
+                ''
+            );
+
+            $this->notificationService->productionNotification($data);
+
             DB::commit();
+
             return response()->json(["status" => true, "message" => $result['message']]);
         } catch (\Exception $exception) {
             DB::rollback();
@@ -215,4 +249,33 @@ class ManufacturingController extends Controller
             'data' => $data,
         ]);
     }
+
+    /////////////////// NOTIFICATION PART///////////////////////
+
+    public function displayNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'manufactoring-channel'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayNotification2(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'manufactoring-channel'],
+            ['is_seen', '=', 0],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        Notification::where([
+            ['channel', '=', 'manufactoring-channel'],
+            ['is_seen', '=', 0],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+
+
+    }
+
+    
 }

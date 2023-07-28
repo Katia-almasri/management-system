@@ -109,7 +109,8 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
 
         ////////////////////////// END NOTIFICIATION PART ///////////////////////////////////
 
-
+        ///////////// DAILY REPORT ////////////////////////////////////////
+        Route::get('read-daily-mechanism-report',[TripController::class, 'readDailyMechanismReport']);
         
         
         

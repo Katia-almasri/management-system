@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\outPut_Type_Production;
+use App\systemServices\notificationServices;
 use App\systemServices\productionServices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -25,10 +26,12 @@ class CuttingController extends Controller
     use validationTrait;
 
     protected $productionService;
+    protected $notificationService;
 
     public function __construct()
     {
         $this->productionService  = new productionServices();
+        $this->notificationService  = new notificationServices();
     }
 
     public function displayInputCutting(Request $request)
@@ -143,7 +146,7 @@ class CuttingController extends Controller
     /////////////////////////////////// katia //////////////////////
     public function directCuttingTo(Request $request)
     {
-        // try {
+        try {
             DB::beginTransaction();
             foreach ($request->details as $_detail) {
                 $result = $this->productionService->outputWeightFromCutting($_detail, $request['outputChoice']);
@@ -151,12 +154,75 @@ class CuttingController extends Controller
                     throw new \ErrorException($result['message']);
 
             }
+            //notification depends on direction
+            if($request->outputChoice=='تصنيع'){
+                //send notification to cutting supervisor
+                $data = $this->notificationService->makeNotification(
+                    'manufactoring-channel',
+                    'App\\Events\\manufactoringNotification',
+                    'توجيه خرج التقطيع إلى التصنيع ',
+                    '',
+                    $request->user()->id,
+                    '',
+                    0,
+                    'مشرف التقطيع',
+                    ''
+                );
+    
+                $this->notificationService->manufactoringNotification($data);
+
+                $data = $this->notificationService->makeNotification(
+                    'production-channel',
+                    'App\\Events\\productionNotification',
+                    'توجيه خرج التقطيع إلى التصنيع ',
+                    '',
+                    $request->user()->id,
+                    '',
+                    0,
+                    'مشرف التقطيع',
+                    ''
+                );
+    
+                $this->notificationService->productionNotification($data);
+            }
+
+            else{
+                //send notification to cutting supervisor
+                $data = $this->notificationService->makeNotification(
+                    'warehouse-channel',
+                    'App\\Events\\warehouNotification',
+                    'توجيه خرج التقطيع إلى البراد الصفري ',
+                    '',
+                    $request->user()->id,
+                    '',
+                    0,
+                    'مشرف التقطيع',
+                    ''
+                );
+    
+                $this->notificationService->warehouNotification($data);
+
+                $data = $this->notificationService->makeNotification(
+                    'production-channel',
+                    'App\\Events\\productionNotification',
+                    'توجيه خرج التقطيع إلى البراد الصفري',
+                    '',
+                    $request->user()->id,
+                    '',
+                    0,
+                    'مشرف التقطيع',
+                    ''
+                );
+    
+                $this->notificationService->productionNotification($data);
+            }
+            
             DB::commit();
             return response()->json(["status" => true, "message" => $result['message']]);
-        // } catch (\Exception $exception) {
-        //     DB::rollback();
-        //     return response()->json(["status" => false, "message" => $exception->getMessage()]);
-        // }
+        } catch (\Exception $exception) {
+            DB::rollback();
+            return response()->json(["status" => false, "message" => $exception->getMessage()]);
+        }
     }
 
     public function displayTypeCuttingOutput(Request $request){

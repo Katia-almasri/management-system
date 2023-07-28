@@ -6,6 +6,7 @@ use App\Models\Command;
 use App\Models\CommandDetail;
 use App\Models\Notification;
 use App\Models\outPut_Type_Production;
+use App\systemServices\notificationServices;
 use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
@@ -39,10 +40,12 @@ class ProductionController extends Controller
     use validationTrait;
 
     protected $warehouseService;
+    protected $notificationService;
 
     public function __construct()
     {
         $this->warehouseService  = new warehouseServices();
+        $this->notificationService  = new notificationServices();
     }
     public function displayLibraCommanderOutPut(Request $request){
         // $commander =weightAfterArrivalDetection::
@@ -203,6 +206,20 @@ class ProductionController extends Controller
                 $command_detail->to = $request['outputChoice'];
                 $command_detail->save();
             }
+
+            $data = $this->notificationService->makeNotification(
+                'warehouse-channel',
+                'App\\Events\\warehouseNotification',
+                'تم إصدار أمر من قبل مدير الإنتاج',
+                '',
+                $request->user()->id,
+                '',
+                0,
+                'من قبل مدير الإنتاج',
+                ''
+            );
+
+            $this->notificationService->warehouNotification($data);
             DB::commit();
             return response()->json(["status" => true, "message" => "تمت إضافة الأمر بنجاح"]);
     } catch (\Exception $exception) {
@@ -363,7 +380,7 @@ class ProductionController extends Controller
     public function displayDailyProductionNotificationReports(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'daily-production-report-ready'],
+            ['channel', '=', 'production-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -374,12 +391,12 @@ class ProductionController extends Controller
     public function displayAllDailyProductionReportsNtification(Request $request)
     {
         $notifications = Notification::where([
-            ['channel', '=', 'daily-production-report-ready'],
+            ['channel', '=', 'production-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'daily-production-report-ready'],
+            ['channel', '=', 'production-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);

@@ -40,19 +40,7 @@ class dailySalesReport implements ShouldQueue
                 $totalPriceFromFarms,
             ];
             Storage::put($filename, json_encode($report));
-            $data = $this->notificationService->makeNotification(
-                'daily-sales-report-ready',
-                'App\\Events\\dailySalesReportReady',
-                'التقرير اليومي لمدير المشتريات والمبيعات ',
-                '',
-                0,
-                '',
-                0,
-                '',
-                ''
-            );
-
-            $this->notificationService->generateDailySalesReport($data);
+           
 
             DB::commit();
         } catch (\Exception $ex) {

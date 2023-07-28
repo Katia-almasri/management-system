@@ -72,8 +72,8 @@ class TripController extends Controller
 
                 //send notification to sales manager
                 $data = $this->notificationService->makeNotification(
-                    'add-trip',
-                    'App\\Events\\addTripNotification',
+                    'sales-channel',
+                    'App\\Events\\salesNotification',
                     'تم إعطاء أمر بانطلاق رحلة ',
                     '',
                     $request->user()->id,
@@ -84,7 +84,7 @@ class TripController extends Controller
                 );
 
 
-                $this->notificationService->addTripNotif($data);
+                $this->notificationService->salesNotification($data);
 
                 DB::commit();
                 return response()->json(["status" => true, "message" => "تم اضافة تفاصيل الرحلة بنجاح"]);

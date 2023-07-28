@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\Trip;
+use App\Models\Driver;
+use App\Models\Truck;
 use App\systemServices\notificationServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\PoultryRecieptDetectionRequest;
@@ -53,15 +55,24 @@ class LibraController extends Controller
     public function addWeightAfterArrivalDetection(WeightAfterArrivalRequest $request, $recieptId)
     {
         try {
+            DB::beginTransaction();
             //وزن السحنة بعد الوصول فقط(وزن كلي و ووزن فارغ)
             $finalResult = $this->weightAfterArrivalService->weightAfterArrive($request, $recieptId);
             $recieptWeighted = PoultryReceiptDetection::where('id', $recieptId)->update(['is_weighted_after_arrive'=>1]);
+            //get poultry reciept detection
+            $poultry = PoultryReceiptDetection::find($recieptId);
+            //get trip id
+            $trip = Trip::find($poultry->trip_id);
+            //get driver id and change state to availbavle
+            $driver = Driver::where('id', $trip->driver_id)->update(['state'=>'متاح']);
+            //get truck id and change state to availbavle
+            $driver = Truck::where('id', $trip->truck_id)->update(['state'=>'متاحة']);
             if ($finalResult['status'] == true){
                 // ////////////////// SEND THE NOTIFICATION /////////////////////////
 
                 $data = $this->notificationService->makeNotification(
-                    'add-reciept-after-arrive-notification',
-                    'App\\Events\\addWeightRecieptAfterArriveNotif',
+                    'slaughter-channel',
+                    'App\\Events\\slaughterNotification',
                     'وزن الشحنة بعد وصولها',
                     '',
                     $request->user()->id,
@@ -71,8 +82,22 @@ class LibraController extends Controller
                     ''
                 );
 
-                $this->notificationService->addWeightRecieptAfterArriveNotif($data);
+                $this->notificationService->slaughterNotification($data);
 
+                $data = $this->notificationService->makeNotification(
+                    'production-channel',
+                    'App\\Events\\productionNotification',
+                    'وزن الشحنة بعد وصولها',
+                    '',
+                    $request->user()->id,
+                    '',
+                    $recieptId,
+                    'آمر القبان',
+                    ''
+                );
+
+                $this->notificationService->productionNotification($data);
+                DB::commit();
 
                 return ["status" => true, "message" => "  تم وزن الشحنة بعد وصولها بنجاح وارسالها لقسم الذبح"];
             }
@@ -80,6 +105,7 @@ class LibraController extends Controller
                 throw new \ErrorException($finalResult['message']);
 
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json(["status" => false, "message" => $exception->getMessage()]);
         }
     }

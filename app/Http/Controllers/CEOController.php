@@ -125,7 +125,7 @@ class CEOController extends Controller
     ///////////////////// NOTIFICATION PART ///////////////////
     public function displayRequestFromOfferNotification(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-request-from-offer-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -135,12 +135,12 @@ class CEOController extends Controller
 
     public function displayRequestFromOfferNotificationAndChangeState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'add-request-from-offer-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'add-request-from-offer-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -148,7 +148,7 @@ class CEOController extends Controller
 
     public function displaySalesPurchasingRequestNotification(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -158,12 +158,12 @@ class CEOController extends Controller
 
     public function displaySalesPurchasingRequestNotificationAndChangeState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'accept-refuse-sales-purchase-notification'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -172,7 +172,7 @@ class CEOController extends Controller
     //daily report with read and change state
     public function displayDailtReportNotification(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'daily-ceo-report-ready'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
         $notificationsCount = $notifications->count();
@@ -182,12 +182,12 @@ class CEOController extends Controller
 
     public function displayDailtReportNotificationAndChangeState(Request $request){
         $notifications = Notification::where([
-            ['channel', '=', 'daily-ceo-report-ready'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->orderBy('created_at', 'DESC')->get();
 
         $updatedNotifications = Notification::where([
-            ['channel', '=', 'daily-ceo-report-ready'],
+            ['channel', '=', 'ceo-channel'],
             ['is_seen', '=', 0]
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
@@ -277,7 +277,8 @@ class CEOController extends Controller
 
     /////////////////// DAILY CEO REPORT ///////////////////////
     public function readDailyCEOReport(Request $request){
-        $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';
+        // $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';
+        $filename = 'daily_ceo_report_2023_07_26.txt';
         if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);
