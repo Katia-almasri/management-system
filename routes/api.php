@@ -12,6 +12,8 @@ use App\Http\Controllers\ManufacturingController;
 use App\Http\Controllers\WarehouseController;
 
 Route::post('login', [Controller::class, 'Login'])->name('Login');
+Route::get('display-warehouse-content', [Controller::class, 'displayWarehouseContent']);
+
 Route::get('get', [Controller::class, 'get']);
 
 Route::group(['middleware' => ['auth:managers-api']], function () {
@@ -33,7 +35,6 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     //استعراض وزن الشحنة بعد الوصول لكشف معين
     Route::get('get-weight-after-arrivel-detection/{recieptId}', [Controller::class, 'getWeightAfterArrival'])->middleware(['is-user-has-permission-to-read-poultry-detection', 'check-reciept-id', 'check-reciept-weighted']);
     //استعراض محتوى المخازن
-    Route::get('display-warehouse-content', [Controller::class, 'displayWarehouseContent'])->middleware('has-display-warehouse-role');
     //استعراض الأوامر من مدير الإنتاج إلى المخازن
     Route::get('display-commands-to-warehouse', [ProductionController::class, 'displayCommandsToWarehouse'])->middleware('has-display-commands-warehouse-role');
 

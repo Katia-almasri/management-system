@@ -154,6 +154,9 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         // ملء أمر الإخراج من مدير المشتريات
         Route::post('fill-sales-command/{command_sales_id}',[WarehouseController::class, 'fillCommandFromSalesManager']);
 
+
+        Route::get('chart-inputs-warehouse',[WarehouseController::class, 'chartInputWareHouse']);
+        Route::get('chart-outputs-warehouse',[WarehouseController::class, 'chartOutputWareHouse']);
     });
 
 

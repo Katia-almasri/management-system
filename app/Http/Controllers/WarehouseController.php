@@ -400,7 +400,7 @@ class WarehouseController extends Controller
             if ($doneCommand['status'] == true) {
                 $message = $message . ' و' . $doneCommand['message'];
                 //send notification to mechanism coordinator
-                //1. get the request tot aomount 
+                //1. get the request tot aomount
                 $commandRequest = Command_sales::with('sales_request')->find($commandId);
                 $data = $this->notificationService->makeNotification(
                     'command-sales-done',
@@ -1085,5 +1085,109 @@ class WarehouseController extends Controller
     }
 
 
+
+
+    public function chartInputWareHouse(Request $request){
+
+        $lake = "البحرات";
+        $lakeMovement = Lake::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+        $zero = "الصفري";
+                    $ZeroMovement = ZeroFrige::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+        $DetonatorFrige1 = "الصواعق 1";
+                    $DetonatorFrige1Movement = DetonatorFrige1::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $DetonatorFrige2 = "الصواعق 2";
+                    $DetonatorFrige2Movement = DetonatorFrige2::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $DetonatorFrige3 = "الصواعق 3";
+                    $DetonatorFrige3Movement = DetonatorFrige3::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $Store = "المخزن النهائي";
+                    $StoreMovement = Store::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $data = array("$lakeMovement","$ZeroMovement","$DetonatorFrige1Movement","$DetonatorFrige2Movement","$DetonatorFrige3Movement","$StoreMovement");
+                    $lable = array($lake,$zero,$DetonatorFrige1,$DetonatorFrige2,$DetonatorFrige3,$Store);
+        return response()->json([
+
+            'labels' => $lable,
+            'data' => $data,
+    ]);
+    }
+
+
+    public function chartOutputWareHouse(Request $request){
+
+        $lake = "البحرات";
+        $lakeMovement = LakeOutput::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+        $zero = "الصفري";
+                    $ZeroMovement = ZeroFrigeOutput::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+        $DetonatorFrige1 = "الصواعق 1";
+                    $DetonatorFrige1Movement = DetonatorFrige1Output::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $DetonatorFrige2 = "الصواعق 2";
+                    $DetonatorFrige2Movement = DetonatorFrige2Output::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $DetonatorFrige3 = "الصواعق 3";
+                    $DetonatorFrige3Movement = DetonatorFrige3Output::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $Store = "المخزن النهائي";
+                    $StoreMovement = StoreOutput::select(DB::raw("sum(weight) as sum"))
+                    ->whereYear('created_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->orderBy('id','ASC')
+                    ->pluck('sum')->first();
+
+                    $data = array("$lakeMovement","$ZeroMovement","$DetonatorFrige1Movement","$DetonatorFrige2Movement","$DetonatorFrige3Movement","$StoreMovement");
+                    $lable = array($lake,$zero,$DetonatorFrige1,$DetonatorFrige2,$DetonatorFrige3,$Store);
+        return response()->json([
+
+            'labels' => $lable,
+            'data' => $data,
+    ]);
+    }
 
 }
