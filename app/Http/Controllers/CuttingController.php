@@ -174,4 +174,46 @@ class CuttingController extends Controller
         $outputRemnatCutting = Output_remnat_details::with('type_remnat')->where('output_cutting_id','!=',null)->get();
         return response()->json($outputRemnatCutting, 200);
     }
+
+
+    ///////////////////////////////dashboard///////////////////////
+    public function CountTypeProductionCutting(Request $request){
+        $CountTypeCutting = outPut_Type_Production::where('by_section','قسم التقطيع')->get()->count();
+        return response()->json($CountTypeCutting, 200);
+    }
+
+
+    public function chartInputCuttingThisMonth(Request $request){
+        $inputCutting = InputCutting::select(DB::raw("SUM(weight) as sum"), DB::raw("type as type_name"))
+        ->join('output_production_types','output_production_types.id','=','input_cuttings.type_id')
+        ->whereYear('input_cuttings.created_at', date('Y'))
+        ->whereMonth('input_cuttings.created_at', date('m'))
+        ->groupBy(DB::raw("type_name"))
+        ->orderBy('input_cuttings.id','Desc')
+        ->pluck('sum', 'type_name');
+        $labels = $inputCutting->keys();
+        $data = $inputCutting->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+
+
+    public function chartOutputCuttingThisMonth(Request $request){
+        $outputCutting = output_cutting_detail::select(DB::raw("SUM(weight) as sum"), DB::raw("type as type_name"))
+        ->join('output_production_types','output_production_types.id','=','output_cutting_details.type_id')
+        ->whereYear('output_cutting_details.created_at', date('Y'))
+        ->whereMonth('output_cutting_details.created_at', date('m'))
+        ->groupBy(DB::raw("type_name"))
+        ->orderBy('output_cutting_details.id','Desc')
+        ->pluck('sum', 'type_name');
+        $labels = $outputCutting->keys();
+        $data = $outputCutting->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
 }

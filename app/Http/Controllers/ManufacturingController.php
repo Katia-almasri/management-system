@@ -173,4 +173,46 @@ class ManufacturingController extends Controller
         $outputRemnatmanufacturing = Output_remnat_details::with('type_remnat')->where('output_manufacturing_id','!=',null)->get();
         return response()->json($outputRemnatmanufacturing, 200);
     }
+
+
+    ///////////////////////////////dashboard///////////////////////
+    public function CountTypeProductionManufacturing(Request $request){
+        $CountTypeManufacturing = outPut_Type_Production::where('by_section','قسم التصنيع')->get()->count();
+        return response()->json($CountTypeManufacturing, 200);
+    }
+
+
+    public function chartInputManufacturingThisMonth(Request $request){
+        $inputManufacturing = InputManufacturing::select(DB::raw("SUM(weight) as sum"), DB::raw("type as type_name"))
+        ->join('output_production_types','output_production_types.id','=','input_manufacturings.type_id')
+        ->whereYear('input_manufacturings.created_at', date('Y'))
+        ->whereMonth('input_manufacturings.created_at', date('m'))
+        ->groupBy(DB::raw("type_name"))
+        ->orderBy('input_manufacturings.id','Desc')
+        ->pluck('sum', 'type_name');
+        $labels = $inputManufacturing->keys();
+        $data = $inputManufacturing->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
+
+
+    public function chartOutputManufacturingThisMonth(Request $request){
+        $outputManufacturing = OutputManufacturingDetails::select(DB::raw("SUM(weight) as sum"), DB::raw("type as type_name"))
+        ->join('output_production_types','output_production_types.id','=','output_manufacturing_details.type_id')
+        ->whereYear('output_manufacturing_details.created_at', date('Y'))
+        ->whereMonth('output_manufacturing_details.created_at', date('m'))
+        ->groupBy(DB::raw("type_name"))
+        ->orderBy('output_manufacturing_details.id','Desc')
+        ->pluck('sum', 'type_name');
+        $labels = $outputManufacturing->keys();
+        $data = $outputManufacturing->values();
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
 }

@@ -4,6 +4,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlaughterSupervisorController;
+use App\Http\Controllers\ProductionController;
 
 Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'scopes:managers'] ],function(){
 
@@ -28,6 +29,13 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('display-reached-input-to-slaughter',[SlaughterSupervisorController::class, 'displayReachedInputToSlaughter']);
         //استعراض الشحنة الداخلة إلى الذبح و تغيير الحالة
         Route::get('display-reached-input-to-slaughter-change-state',[SlaughterSupervisorController::class, 'displayReachedInputToSlaughterChangeState']);
+
+
+        ///////////////////////////dashboard/////////////////////////
+        Route::get('count-type-slaughter',[SlaughterSupervisorController::class, 'CountTypeProductionSlaughter']);
+        Route::get('chart-output-slaughter',[SlaughterSupervisorController::class, 'chartOutputSlaughterThisMonth']);
+        Route::get('chart-input-slaughter',[SlaughterSupervisorController::class, 'chartInputSlaughter']);
+
     });
 
 

@@ -274,6 +274,7 @@ class CEOController extends Controller
         return response()->json($SalesPriceforThisMonth, 200);
     }
 
+
     /////////////////// DAILY CEO REPORT ///////////////////////
     public function readDailyCEOReport(Request $request){
         $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';

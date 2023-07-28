@@ -24,5 +24,12 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////// DITRCT MANUFACTORING TO ////////////////
         Route::post('direct-manufactoring-to',[ManufacturingController::class, 'directManufactoringTo']);
         Route::get('output-remnat-manufacturing',[ManufacturingController::class, 'displayOutputRemnatmanufacturing']);
+
+
+        /////////////////////////dashboard//////////////////////////////
+        Route::get('count-type-production-manufacturing',[ManufacturingController::class, 'CountTypeProductionManufacturing']);
+        Route::get('chart-input-manufacturing-this-month',[ManufacturingController::class, 'chartInputManufacturingThisMonth']);
+        Route::get('chart-output-manufacturing-this-month',[ManufacturingController::class, 'chartOutputManufacturingThisMonth']);
+
     });
 });
