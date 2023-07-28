@@ -326,7 +326,7 @@ class ProductionController extends Controller
         ->whereMonth('output_cutting_details.created_at', Carbon::now()->month)
         ->groupBy('type')
         ->orderBy('sum','desc')
-        ->limit(5)->pluck('sum','type');
+        ->limit(5)->get('sum','type');
 
         $PerfectProductofManufacturing = OutputManufacturingDetails::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
         ->join('output_production_types','output_manufacturing_details.type_id','=','output_production_types.id')
@@ -344,7 +344,7 @@ class ProductionController extends Controller
 
 
         $max = array($PerfectProductofCutting,$PerfectProductofManufacturing,$PerfectProductofSlaughter);
-        return response()->json($max, 200);
+        return response()->json($PerfectProductofCutting, 200);
 
         $labels = $PerfectProductofSlaughter->keys();
         $data = $PerfectProductofSlaughter->values();
@@ -376,7 +376,7 @@ class ProductionController extends Controller
         return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
     }
 
-    //////////////////////   NOTIFICATION PART //////////////////// 
+    //////////////////////   NOTIFICATION PART ////////////////////
     public function displayDailyProductionNotificationReports(Request $request)
     {
         $notifications = Notification::where([

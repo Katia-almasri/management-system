@@ -21,8 +21,6 @@ use App\Models\Trip;
 class ChartController extends Controller
 {
     use validationTrait;
-
-
     // public function CountManager()
     // {
     //     $users = Manager::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
@@ -53,10 +51,12 @@ class ChartController extends Controller
         $Drivers = Driver::get();
         return response()->json($Drivers->count());
     }
+
     public function CountAvaiableDriver(Request $request){
         $DriverAvaiable = Driver::where('state','متاح')->get();
         return response()->json($DriverAvaiable->count());
     }
+
     public function CountTrip()
     {
         $Trips = Trip::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
@@ -64,6 +64,13 @@ class ChartController extends Controller
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','desc')
                     ->pluck('count', 'month_name');
+        $labels = $Trips->keys();
+        $data = $Trips->values();
+        return response()->json([
+
+            'labels' => $labels,
+            'data' => $data,
+    ]);
         return response()->json($Trips);
     }
 
@@ -91,14 +98,21 @@ class ChartController extends Controller
     }
 
 
-
-
     public function ChartPoultryReceiptDetection(Request $request){
         $PoultryReceiptDetection = PoultryReceiptDetection::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
                     ->whereYear('created_at', date('Y'))
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','desc')
                     ->pluck('count', 'month_name');
+
+                    $labels = $PoultryReceiptDetection->keys();
+                    $data = $PoultryReceiptDetection->values();
+                    return response()->json([
+
+                        'labels' => $labels,
+                        'data' => $data,
+                ]);
+
         return response()->json($PoultryReceiptDetection);
     }
 
