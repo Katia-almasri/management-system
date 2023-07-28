@@ -64,6 +64,15 @@ class ChartController extends Controller
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','desc')
                     ->pluck('count', 'month_name');
+
+        $labels = $Trips->keys();
+        $data = $Trips->values();
+        return response()->json([
+
+            'labels' => $labels,
+            'data' => $data,
+    ]);
+
         return response()->json($Trips);
     }
 
@@ -99,6 +108,15 @@ class ChartController extends Controller
                     ->groupBy(DB::raw("month_name"))
                     ->orderBy('id','desc')
                     ->pluck('count', 'month_name');
+
+                    $labels = $PoultryReceiptDetection->keys();
+                    $data = $PoultryReceiptDetection->values();
+                    return response()->json([
+
+                        'labels' => $labels,
+                        'data' => $data,
+                ]);
+
         return response()->json($PoultryReceiptDetection);
     }
 
