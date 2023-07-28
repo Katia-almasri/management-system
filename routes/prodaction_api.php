@@ -60,6 +60,12 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         //////////////مع تغيير الحالة استعراض الإشعارات الغير مقروءة للملاحظات
         Route::get('get-unread-note-notification-swotch-state',[NoteController::class, 'displayNotReadNotificationSwitchState']);
 
+        //استعراض إشعارات التقرر اليومي
+        Route::get('display-daily-production-notification-report',[ProductionController::class, 'displayDailyProductionNotificationReports']);
+
+        //استعراض إشعارات التقرر اليومي مع تغيير الحالة
+        Route::get('display-daily-production-notification-report-change-state',[ProductionController::class, 'displayAllDailyProductionReportsNtification']);
+        
 
         //////////////////////////dashboard /////////////////////
         Route::get('chart-input-production',[ProductionController::class, 'chartInputProduction']);
@@ -68,6 +74,9 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
         Route::get('chart-output-manufacturing',[ProductionController::class, 'chartOutputManufacturing']);
         Route::get('perfect-production',[ProductionController::class, 'theBestOfProductProduction']);
 
+        ////////////////////// DAILY REPORT /////////////////////
+        Route::get('read-daily-prduction-report',[ProductionController::class, 'readDailyProductionReport']);
+        
     });
 
 

@@ -70,6 +70,12 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     // استعراض إشعارات طلبات البيع والشراء المؤكدة مع تغيير حالة الإشعار
     Route::get('display-sales-purchasing-request-notification-change-state',[CEOController::class, 'displaySalesPurchasingRequestNotificationAndChangeState']);
 
+    // استعراض إشعارات التقرير اليومي
+    Route::get('display-daily-report-notification',[CEOController::class, 'displayDailtReportNotification']);
+
+
+    // استعراض إشعارات التقرير اليومي مع تغيير الحالة
+    Route::get('display-daily-report-notification-change-state',[CEOController::class, 'displayDailtReportNotificationAndChangeState']);
     ////////////////////////dashboard/////////////////////////////
     Route::get('number-user',[CEOController::class, 'numberUsers']);
     Route::get('number-sales-request',[CEOController::class, 'numberOfSalesRequest']);
@@ -81,7 +87,9 @@ Route::group( ['prefix' => 'ceo','middleware' => ['auth:managers-api'] ],functio
     Route::get('purchase-price-for-this-mounth',[CEOController::class, 'PurchasePriceforThisMonth']);
     Route::get('sales-price-for-this-mounth',[CEOController::class, 'SalesPriceforThisMonth']);
 
-
+    /////////////// DAILY REPORT ////////////////////////////////////
+    //  استعراض التقرير اليومي
+    Route::get('get-daily-ceo-report',[CEOController::class, 'readDailyCEOReport']);
 
 
 });

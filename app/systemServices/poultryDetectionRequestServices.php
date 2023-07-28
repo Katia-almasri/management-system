@@ -1,6 +1,7 @@
 <?php
 namespace App\systemServices;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PoultryRecieptDetectionRequest;
 use App\Models\CageDetail;
@@ -136,6 +137,35 @@ class poultryDetectionRequestServices
             "message" => "detection details successfully",
         ]);
 
+    }
+
+    /////////////////// DAILY REPORT ////////////////////////
+    public function dailyNotWeightedReciepts(){
+        $notWeighterReciepts = PoultryReceiptDetection::with('farm', 'PoultryReceiptDetectionDetails.rowMaterial')->where('is_weighted_after_arrive', 0)
+        ->whereMonth('created_at', date('m'))
+        ->get();
+        return(["notWeighterReciepts"=>$notWeighterReciepts]);
+        
+    }
+
+    public function dailyWeightedReciepts(){
+        $weighterReciepts = PoultryReceiptDetection::with('weightAfterArrivalDetection', 'farm', 'PoultryReceiptDetectionDetails.rowMaterial')->where('is_weighted_after_arrive', 1)
+        ->whereMonth('created_at', date('m'))
+        ->get();
+        return(["weighterReciepts"=>$weighterReciepts]);
+        
+    }
+
+    public function dailyStatistisReciepts(){
+        $dailyStatis = PoultryReceiptDetection::select(DB::raw('DATE_FORMAT(poultry_receipt_detections.created_at,"%Y %M %D") as date'), DB::raw('sum(poultry_receipt_detections.tot_weight) as tot_weight'), DB::raw('sum(poultry_receipt_detections.net_weight) as net_weight'), DB::raw('sum(weight_after_arrival_detections.tot_weight_after_arrival) as tot_weight_after_arrival'), DB::raw('sum(weight_after_arrival_detections.net_weight_after_arrival) as net_weight_after_arrival'))
+        ->where('poultry_receipt_detections.is_weighted_after_arrive', 1)
+        ->join('weight_after_arrival_detections', 'weight_after_arrival_detections.polutry_detection_id', '=', 'poultry_receipt_detections.id')
+        ->groupBy('date')
+        ->whereDate('poultry_receipt_detections.created_at', Carbon::today()->format('Y-m-d'))
+        ->get();
+
+
+        return(["dailyStatis"=>$dailyStatis]);
     }
 
 }

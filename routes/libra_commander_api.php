@@ -26,7 +26,16 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         Route::get('display-chart-Poultry', [ChartController::class, 'ChartPoultryReceiptDetection']);
 
 
+        ////////// NOTIFICATION PART //////////////////
+        // استعراض إشعارات التقرير اليومي
+        Route::get('display-daily-report-notification',[LibraController::class, 'displayDailtReportNotification']);
 
+
+        // استعراض إشعارات التقرير اليومي مع تغيير الحالة
+        Route::get('display-daily-report-notification-change-state',[LibraController::class, 'displayDailtReportNotificationAndChangeState']);
+        
+        
+        
 
     });
 });

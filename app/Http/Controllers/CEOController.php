@@ -8,6 +8,7 @@ use Hash;
 use DB;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 use App\Models\Manager;
 use App\Models\salesPurchasingRequset;
@@ -118,7 +119,6 @@ class CEOController extends Controller
         return response()->json([
             'message' =>' تم استرجاع '.$user->first_name
           ]);
-        return response()->json($_oldManager);
 
     }
 
@@ -168,6 +168,31 @@ class CEOController extends Controller
         ])->update(['is_seen' => 1]);
         return response()->json($notifications);
     }
+
+    //daily report with read and change state
+    public function displayDailtReportNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-ceo-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayDailtReportNotificationAndChangeState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-ceo-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'daily-ceo-report-ready'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
 
 
     /////////////**********dashboard *////////////////////////
@@ -247,6 +272,19 @@ class CEOController extends Controller
                     ->where([['request_type',1],['accept_by_sales',1],['accept_by_ceo',1]])
                     ->pluck('sum');
         return response()->json($SalesPriceforThisMonth, 200);
+    }
+
+    /////////////////// DAILY CEO REPORT ///////////////////////
+    public function readDailyCEOReport(Request $request){
+        $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';
+        if (Storage::exists($filename)) {
+
+            $report = Storage::get($filename);
+            $data = json_decode($report, true);
+            return response()->json(["status"=>true, "data"=>$data]);
+
+        }
+        return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
     }
 
 

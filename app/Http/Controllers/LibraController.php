@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\Trip;
 use App\systemServices\notificationServices;
 use Illuminate\Http\Request;
@@ -98,6 +99,31 @@ class LibraController extends Controller
         ])->where('id', '=', $recieptId)->get();
         return response()->json($poultryRecieptDetection);
     }
+
+    ////////////////////////////     NOTIFICATION PART /////////////////////////
+    public function displayDailtReportNotification(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-libra-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayDailtReportNotificationAndChangeState(Request $request){
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-libra-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'daily-libra-report-ready'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
 
 
 }

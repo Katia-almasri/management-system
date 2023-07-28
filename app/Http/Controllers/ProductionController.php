@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Command;
 use App\Models\CommandDetail;
+use App\Models\Notification;
 use App\Models\outPut_Type_Production;
 use App\systemServices\warehouseServices;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 use App\Models\weightAfterArrivalDetection;
 use App\Models\InputProduction;
@@ -236,6 +238,7 @@ class ProductionController extends Controller
     }
 
 
+    //////////////// dashboard part ///////////////////////
     public function chartInputProduction(Request $request){
         $inputProduction = input_slaughter_table::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(created_at) as month_name"))
         ->whereYear('created_at', date('Y'))
@@ -333,4 +336,56 @@ class ProductionController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function dailyOutputSlaughter(Request $request){
+        $outputSlaughter = outPut_SlaughterSupervisor_table::select(DB::raw("SUM(weight) as sum"), "output_slaughtersupervisors.*")
+        ->join('output_slaughtersupervisors_details','output_slaughtersupervisors_details.output_id','=','output_slaughtersupervisors.id')
+        ->whereDate('output_slaughtersupervisors.created_at', Carbon::today()->format('Y-m-d'))
+        ->groupBy('dailyOutputSlaughter.created_at')
+        ->orderBy('output_slaughtersupervisors.id','Desc')
+        ->get();
+       return response()->json($outputSlaughter);
+    }
+
+    public function readDailyProductionReport(Request $request){
+        $filename = 'daily_production_report_' . date('Y_m_d') . '.txt';
+        if (Storage::exists($filename)) {
+
+            $report = Storage::get($filename);
+            $data = json_decode($report, true);
+            return response()->json(["status"=>true, "data"=>$data]);
+
+        }
+        return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
+    }
+
+    //////////////////////   NOTIFICATION PART //////////////////// 
+    public function displayDailyProductionNotificationReports(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-production-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+
+    }
+
+    public function displayAllDailyProductionReportsNtification(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'daily-production-report-ready'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+
+        $updatedNotifications = Notification::where([
+            ['channel', '=', 'daily-production-report-ready'],
+            ['is_seen', '=', 0]
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+
+    }
+
+
+
 }

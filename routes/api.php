@@ -112,9 +112,6 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
 
     Route::get('get-daily-warehouse-report', [WarehouseController::class, 'readDailyWarehouseReport']);
 
-    // استعلراض تقارير المخازن اليومية لتاريخ معين
-    Route::post('get-previous-daily-warehouse-reports', [WarehouseController::class, 'displayPreviousDailyReports']);
-
 
     ////////////////////////////// USERS PROFILES AND EDITIONS ////////////////////
     //display user profile

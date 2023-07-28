@@ -97,4 +97,46 @@ class SalesPurchasingRequestServices
         fputcsv($handle, $data);
         fclose($handle);
     }
+
+
+    ////////////////////////////// DAILY REPORT //////////////////////
+    // sales today
+    public function salesToday(){
+        $salesToday = salesPurchasingRequset::with('farm', 'sellingPort')->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
+        ->whereHas('trips')
+        ->whereMonth('created_at', date('m'))
+        ->get();
+
+        return(["salesToday"=>$salesToday]);
+
+    }
+
+    //purchases today
+    public function PurchaseToday(){
+        $PurchaseToday = salesPurchasingRequset::with('farm', 'sellingPort')->where([['request_type', 1], ['accept_by_ceo', 1], ['command', 1]])
+        ->whereHas('trips')
+        ->whereMonth('created_at', date('m'))
+        ->get();
+
+        return(["PurchaseToday"=>$PurchaseToday]);
+
+    }
+    public function totPriceFromFarms(){
+        $totalPriceFromFarms = salesPurchasingRequset::select(DB::raw('DATE_FORMAT(created_at,"%YYYY %M %D") as date'), DB::raw('sum(total_amount) as tot'))
+        ->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
+        ->whereHas('trips')
+        ->whereMonth('created_at', date('m'))
+        ->get();
+        return(["totalPriceFromFarms"=>$totalPriceFromFarms]);
+    }
+    
+    public function totPriceFromSellingPort(){
+        $totalPriceFromSellingPorts = salesPurchasingRequset::select(DB::raw('DATE_FORMAT(created_at,"%YYYY %M %D") as date'), DB::raw('sum(total_amount) as tot'))
+        ->where([['request_type', 1], ['accept_by_ceo', 1], ['command', 1]])
+        ->whereHas('trips')
+        ->whereMonth('created_at', date('m'))
+        ->get();
+        return(["totalPriceFromSellingPorts"=>$totalPriceFromSellingPorts]);
+    }
+
 }

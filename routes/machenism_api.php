@@ -100,10 +100,19 @@ Route::group(['middleware' => ['auth:managers-api', 'check-scope-managers', 'sco
         //استعراض إشعارات إخراج من المخزن بنجاح مع تغيير الحالة
         Route::get('display-done-sales-command-notification-switch-state',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationSwitchStateMechanism']);
         
+        // استعراض إشعارات التقرير اليومي
+        Route::get('display-daily-report-notification',[TripController::class, 'displayDailtReportNotification']);
+
+
+        // استعراض إشعارات التقرير اليومي مع تغيير الحالة
+        Route::get('display-daily-report-notification-change-state',[TripController::class, 'displayDailtReportNotificationAndChangeState']);
+
         ////////////////////////// END NOTIFICIATION PART ///////////////////////////////////
 
 
-
+        
+        
+        
 
 
     });

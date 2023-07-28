@@ -118,6 +118,36 @@ class notificationServices
         $pusher->trigger('command-sales-done', 'App\\Events\\commandSalesDoneNotif', $data);
 
     }
+
+    public function generateDailyCEOReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-ceo-report-ready', 'App\\Events\\dailyCEOReportReady', $data);
+        
+    }
+
+    public function generateDailyProductionReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-production-report-ready', 'App\\Events\\dailyProductionReportReady', $data);
+        
+    }
+
+    public function generateDailyMechanismReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-mechanism-report-ready', 'App\\Events\\dailyMechanismReportReady', $data);
+        
+    }
+
+    public function generateDailyLibraReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-libra-report-ready', 'App\\Events\\dailyLibraReportReady', $data);
+        
+    }
+
+    public function generateDailySalesReport($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('daily-sales-report-ready', 'App\\Events\\dailySalesReportReady', $data);
+
+    }
     //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
     public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){
         $newNotification = new Notification();
