@@ -33,9 +33,9 @@ class dailyCEOReport implements ShouldQueue
             $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';
             DB::beginTransaction();
             $numberSales = $this->ceoService->dailyNumberOfSalesRequest();
-            $acceptedNumberSales = $this->ceoService->dailyNumberOfSalesRequestِApproved();
+            $acceptedNumberSales = $this->ceoService->dailySalesRequestِApproved();
             $numberOfPurchas = $this->ceoService->dailyNumberOfPurchasRequest();
-            $acceptedNumberOfPurchas = $this->ceoService->dailyNumberOfPurchasRequestApproved();
+            $acceptedNumberOfPurchas = $this->ceoService->dailyPurchasRequestApproved();
             $PurchasePriceforThisDay = $this->ceoService->dailyPurchasePriceforThisDay();
             $SalesPriceforThisDay = $this->ceoService->dailySalesPriceforThisDay();
 
@@ -50,19 +50,19 @@ class dailyCEOReport implements ShouldQueue
             ];
 
             Storage::put($filename, json_encode($report));
-            $data = $this->notificationService->makeNotification(
-                'daily-ceo-report-ready',
-                'App\\Events\\dailyCEOReportReady',
-                'التقرير اليومي للمدير التنفيذي',
-                '',
-                0,
-                '',
-                0,
-                '',
-                ''
-            );
+            // $data = $this->notificationService->makeNotification(
+            //     'daily-ceo-report-ready',
+            //     'App\\Events\\dailyCEOReportReady',
+            //     'التقرير اليومي للمدير التنفيذي',
+            //     '',
+            //     0,
+            //     '',
+            //     0,
+            //     '',
+            //     ''
+            // );
 
-            $this->notificationService->generateDailyCEOReport($data);
+            // $this->notificationService->generateDailyCEOReport($data);
             DB::commit();
             
         } catch (\Exception $ex) {

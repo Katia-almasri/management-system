@@ -365,7 +365,8 @@ class ProductionController extends Controller
     }
 
     public function readDailyProductionReport(Request $request){
-        $filename = 'daily_production_report_' . date('Y_m_d') . '.txt';
+        // $filename = 'daily_production_report_' . date('Y_m_d') . '.txt';
+        $filename = 'daily_production_report_2023_07_30.txt';
         if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);

@@ -703,8 +703,8 @@ class SalesPurchasingRequestController extends Controller
     //////////////////////// DAILY REPORT //////////////////////////////
     public function readDailySalesReport(Request $request)
     {
-        $filename = 'daily_sales_report_' . date('Y_m_d') . '.txt';
-        
+        // $filename = 'daily_sales_report_' . date('Y_m_d') . '.txt';
+        $filename = 'daily_sales_report_2023_07_30.txt';
         if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);

@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
         // $schedule->job(new checkExpirationDate)->dailyAt('13:00');
         // $schedule->job(new checkExpirationDate)->everyFiveMinutes();
         // $schedule->job(new dailyWarehouseReport)->everyFiveMinutes();
-        // $schedule->job(new dailyCEOReport)->everyFiveMinutes();
-        // $schedule->job(new dailyProductionReport)->everyFiveMinutes();
+        $schedule->job(new dailyCEOReport)->everyFiveMinutes();
+        $schedule->job(new dailyProductionReport)->everyFiveMinutes();
         
         // $schedule->job(new dailyMechanismReport)->everyFiveMinutes();
         // $schedule->job(new dailyLibraRepoer)->everyFiveMinutes();

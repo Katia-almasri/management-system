@@ -69,7 +69,7 @@ class calendarController extends Controller
         $data['predictions'] = $predictions;
         $data['year_month'] = $predictions[0]->year_month;
         return response()->json(["status" => true, "message" => $data]);
-      
+
 
 
 
@@ -78,15 +78,12 @@ class calendarController extends Controller
     public function d(Request $request)
     {
 
-        $totalPriceFromFarms = salesPurchasingRequset::select(DB::raw('DATE_FORMAT(created_at,"%YYYY %M %D") as date'), DB::raw('sum(total_amount) as tot'))
-        ->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
+        $salesToday = salesPurchasingRequset::with('farm', 'sellingPort', 'salesPurchasingRequsetDetail')->where([['request_type', 0], ['accept_by_ceo', 1], ['command', 1]])
         ->whereHas('trips')
         ->whereMonth('created_at', date('m'))
-        ->groupBy('date')
         ->get();
+            return response()->json($salesToday);
 
-        return response()->json($totalPriceFromFarms);
-
-
+        
     }
 }

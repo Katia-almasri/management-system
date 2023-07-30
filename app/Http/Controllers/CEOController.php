@@ -278,7 +278,7 @@ class CEOController extends Controller
     /////////////////// DAILY CEO REPORT ///////////////////////
     public function readDailyCEOReport(Request $request){
         // $filename = 'daily_ceo_report_' . date('Y_m_d') . '.txt';
-        $filename = 'daily_ceo_report_2023_07_26.txt';
+        $filename = 'daily_ceo_report_2023_07_30.txt';
         if (Storage::exists($filename)) {
 
             $report = Storage::get($filename);

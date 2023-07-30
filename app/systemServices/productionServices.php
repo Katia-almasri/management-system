@@ -212,7 +212,7 @@ class productionServices
     public function dailyInputProduction()
     {
         $inputProduction = input_slaughter_table::
-            whereDate('created_at', Carbon::today()->format('Y-m-d'))
+            whereMonth('created_at', date('m'))
             ->orderBy('id', 'Desc')
             ->get();
 
@@ -223,7 +223,7 @@ class productionServices
     {
         $outputSlaughter = outPut_SlaughterSupervisor_table::
             with('detail_output_slaughter.productionTypeOutPut')
-            ->whereDate('output_slaughtersupervisors.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_slaughtersupervisors.created_at', date('m'))
             ->get();
 
         return (['outputSlaughter' => $outputSlaughter]);
@@ -233,7 +233,7 @@ class productionServices
         $totWeightOutputSlaughter = outPut_SlaughterSupervisor_table::
         select(DB::raw('DATE_FORMAT(output_slaughtersupervisors.created_at,"%YYYY %M %D") as date'), DB::raw('sum(output_slaughtersupervisors_details.weight) as tot'))
             ->join('output_slaughtersupervisors_details', 'output_slaughtersupervisors_details.output_id', '=', 'output_slaughtersupervisors.id')
-            ->whereDate('output_slaughtersupervisors.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_slaughtersupervisors.created_at', date('m'))
             ->groupBy('date')
             ->get();
         return (['totWeightOutputSlaughter' => $totWeightOutputSlaughter]);
@@ -244,7 +244,7 @@ class productionServices
     {
         $outputCutting = output_cutting::
             with('detail_output_cutiing.outputTypes')
-            ->whereDate('output_cuttings.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_cuttings.created_at', date('m'))
             ->get();
 
         return (['outputCutting' => $outputCutting]);
@@ -255,7 +255,7 @@ class productionServices
         $totWeightOutputCutting = output_cutting::
         select(DB::raw('DATE_FORMAT(output_cuttings.created_at,"%YYYY %M %D") as date'), DB::raw('sum(output_cutting_details.weight) as tot'))
             ->join('output_cutting_details', 'output_cutting_details.output_cutting_id', '=', 'output_cuttings.id')
-            ->whereDate('output_cuttings.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_cuttings.created_at', date('m'))
             ->groupBy('date')
             ->get();
         return (['totWeightOutputCutting' => $totWeightOutputCutting]);
@@ -266,7 +266,7 @@ class productionServices
     {
         $outputManufacturing = OutputManufacturing::
             join('output_manufacturing_details', 'output_manufacturing_details.output_manufacturing_id', '=', 'output_manufacturings.id')
-            ->whereDate('output_manufacturings.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_manufacturings.created_at', date('m'))
             ->get();
 
         return (['outputManufacturing' => $outputManufacturing]);
@@ -276,7 +276,7 @@ class productionServices
         $totWeightOutputManufactoring = OutputManufacturing::
         select(DB::raw('DATE_FORMAT(output_manufacturings.created_at,"%YYYY %M %D") as date'), DB::raw('sum(output_manufacturing_details.weight) as tot'))
             ->join('output_manufacturing_details', 'output_manufacturing_details.output_manufacturing_id', '=', 'output_manufacturings.id')
-            ->whereDate('output_manufacturings.created_at', Carbon::today()->format('Y-m-d'))
+            ->whereMonth('output_manufacturings.created_at', date('m'))
             ->groupBy('date')
             ->get();
         return (['totWeightOutputManufactoring' => $totWeightOutputManufactoring]);
