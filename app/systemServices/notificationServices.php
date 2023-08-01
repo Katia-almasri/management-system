@@ -172,6 +172,18 @@ class notificationServices
         $pusher->trigger('manufactoring-channel', 'App\\Events\\manufactoringNotification', $data);
         
     }
+
+    public function farmNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('farm-channel', 'App\\Events\\farmNotification', $data);
+        
+    }
+
+    public function sellingPortNotification($data){
+        $pusher = $this->makePusherConnection();
+        $pusher->trigger('selling-port-channel', 'App\\Events\\sellingPortNotification', $data);
+        
+    }
     //////////////////////////// NOTIFICATION SERVICE ////////////////////////////
     public function makeNotification($channel, $event, $title, $route, $act_id, $details, $weight, $output_from, $reson_of_notification){
         $newNotification = new Notification();

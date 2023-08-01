@@ -223,13 +223,40 @@ class SalesPurchasingRequestController extends Controller
             $requestType = 'طلب مبيع';
             $fromName = 'منفذ البيع';
             $from = SellingPort::find($find->selling_port_id);
+            $data = $this->notificationService->makeNotification(
+                'selling-port-channel',
+                'App\\Events\\sellingPortNotification',
+                ' قبول  ' . $requestType,
+                '',
+                $find->id,
+                ' تم قبول ' . $requestType . ' من قبل المدير التنفيذي ',
+                $find->total_amount,
+                $fromName,
+                ''
+    
+            );
+    
+            $this->notificationService->sellingPortNotification($data);
         }
         if ($find->request_type == 0) {
             //farm
             $requestType = 'طلب شراء';
             $fromName = 'المزرعة';
             $from = Farm::find($find->farm_id);
-
+            $data = $this->notificationService->makeNotification(
+                'farm-channel',
+                'App\\Events\\farmNotification',
+                ' قبول  ' . $requestType,
+                '',
+                $find->id,
+                ' تم قبول ' . $requestType . ' من قبل المدير التنفيذي ',
+                $find->total_amount,
+                $fromName,
+                ''
+    
+            );
+    
+            $this->notificationService->farmNotification($data);
         }
 
         $data = $this->notificationService->makeNotification(
@@ -267,12 +294,39 @@ class SalesPurchasingRequestController extends Controller
             $requestType = 'طلب مبيع';
             $fromName = 'منفذ البيع';
             $from = SellingPort::find($find->selling_port_id);
+            $data = $this->notificationService->makeNotification(
+                'selling-port-channel',
+                'App\\Events\\sellingPortNotification',
+                ' رفض  ' . $requestType,
+                '',
+                $find->id,
+                ' تم رفض ' . $requestType . ' من قبل المدير التنفيذي ',
+                $find->total_amount,
+                $fromName,
+                $find->reason_refuse_by_ceo
+    
+            );
+            $this->notificationService->sellingPortNotification($data);
+    
         }
         if ($find->request_type == 0) {
             //farm
             $requestType = 'طلب شراء';
             $fromName = 'المزرعة';
             $from = Farm::find($find->farm_id);
+            $data = $this->notificationService->makeNotification(
+                'farm-channel',
+                'App\\Events\\farmNotification',
+                ' رفض  ' . $requestType,
+                '',
+                $find->id,
+                ' تم رفض ' . $requestType . ' من قبل المدير التنفيذي ',
+                $find->total_amount,
+                $fromName,
+                $find->reason_refuse_by_ceo
+    
+            );
+            $this->notificationService->farmNotification($data);
 
         }
 
@@ -354,6 +408,20 @@ class SalesPurchasingRequestController extends Controller
             ''
         );
         $this->notificationService->addRequestFromOfferNotif($data);
+
+         //send notification to ceo
+         $data = $this->notificationService->makeNotification(
+            'farm-channel',
+            'App\\Events\\farmNotification',
+            'تم تأكيد طلب شراء ',
+            '',
+            $offerId,
+            $SalesPurchasingRequest->id,
+            $totalAmount,
+            $findOffer->farm->name,
+            ''
+        );
+        $this->notificationService->farmNotification($data);
 
         return response()->json(["status" => true, "message" => "تم إضافة الطلب بنجاح"]);
     }

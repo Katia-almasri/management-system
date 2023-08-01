@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\RegisterSellingPortRequestNotif;
 use App\Models\RequestToCompanyNotif;
 use Illuminate\Http\Request;
@@ -152,10 +153,11 @@ class SellingPortController extends Controller
         return response()->json($SellingPortTrashed, 200);
     }
 
-   //عرض طلبات منفذي
-    public function displayMySellingPortRequest(Request $request){
-        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail','rating')
-        ->where('selling_port_id',$request->user()->id)->orderBy('id', 'DESC')->get();
+    //عرض طلبات منفذي
+    public function displayMySellingPortRequest(Request $request)
+    {
+        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail', 'rating')
+            ->where('selling_port_id', $request->user()->id)->orderBy('id', 'DESC')->get();
 
         return response()->json($SellingPortRequest, 200);
     }
@@ -193,18 +195,21 @@ class SellingPortController extends Controller
             $salesPurchasingRequsetDetail->save();
         }
 
-        //MAKE NEW NOTIFICATION RECORD
-        $RequestToCompanyNotif = new RequestToCompanyNotif();
-        $RequestToCompanyNotif->from = $request->user()->id;
-        $RequestToCompanyNotif->is_read = 0;
-        $RequestToCompanyNotif->total_amount = $totalAmount;
-        $RequestToCompanyNotif->save();
+        //send notification to sales manager
+        $data = $this->notificationService->makeNotification(
+            'sales-channel',
+            'App\\Events\\salesNotification',
+            'تم تسجيل طلب جديد من منفذ بيع',
+            '',
+            $request->user()->id,
+            '',
+            0,
+            '',
+            ''
+        );
 
-        //SEND NOTIFICATION REGISTER REQUEST TO SALES MANAGER USING PUSHER
-        $data['from'] = $request->user()->id;
-        $data['is_read'] = 0;
-        $data['total_amount'] = $totalAmount;
-        $this->notificationService->addRequestToCompany($data);
+        $this->notificationService->salesNotification($data);
+        
         ////////////////// SEND THE NOTIFICATION /////////////////////////
 
         return response()->json(["status" => true, "message" => "تم إضافة الطلب بنجاح"]);
@@ -223,8 +228,20 @@ class SellingPortController extends Controller
         $findRequest = sellingPort::where([['id', '=', $sellingPortId]])
             ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
 
-        //UPDATE THE is_read IN REGISTER SELLNING PORT REQUEST TO read
-        $RegisterFarmRequestNotif = RegisterSellingPortRequestNotif::where('from', '=', $sellingPortId)->update(['is_read' => 1]);
+        //send notification to ceo
+        $data = $this->notificationService->makeNotification(
+            'selling-port-channel',
+            'App\\Events\\sellingPortNotification',
+            'تم انضمامك للتطبيق بنجاح',
+            '',
+            $request->user()->id,
+            '',
+            0,
+            'مدير المشتريات والمبيعات',
+            ''
+        );
+        $this->notificationService->sellingPortNotification($data);
+
         return response()->json(["status" => true, "message" => "تمت الموافقة على حساب منفذ البيع بنجاح"]);
     }
 
@@ -237,9 +254,6 @@ class SellingPortController extends Controller
         $find->save();
         salesPurchasingRequset::where([['id', '=', $SellingPortOrderId]])
             ->update(['accept_by_sales' => 1]);
-
-        //UPDATE THE is_read IN REQUEST OFFER  TO read
-        $RequestToCompanyNotif = RequestToCompanyNotif::where('from', '=', $find->selling_port_id)->update(['is_read' => 1]);
 
         return response()->json(["status" => true, "message" => "تمت الموافقة على طلب الشراء من قبل مدير المشتريات وارساله إلى المدير التنفيذي"]);
     }
@@ -260,17 +274,26 @@ class SellingPortController extends Controller
         $findRequestOrder = salesPurchasingRequset::where([['id', '=', $SellingPortOrderId]])
             ->update(['accept_by_sales' => 0]);
 
-        //UPDATE THE is_read IN REQUEST OFFER  TO read
 
-        $find = salesPurchasingRequset::find($SellingPortOrderId);
-        $RequestToCompanyNotif = RequestToCompanyNotif::where('from', '=', $find->selling_port_id)->update(['is_read' => 1]);
+         $data = $this->notificationService->makeNotification(
+            'selling-port-channel',
+            'App\\Events\\sellingPortNotification',
+            'تم رفض طلبك للأسف',
+            '',
+            $request->user()->id,
+            '',
+            0,
+            'مدير المشتريات والمبيعات',
+            $request->reason_refuse
+        );
 
+        $this->notificationService->sellingPortNotification($data);
         return response()->json(["status" => true, "message" => "تم رفض الطلبية وتعبئة سبب الرفض"]);
     }
 
     public function displayOutputTypes(Request $request)
     {
-        $types = outPut_Type_Production::pluck('type');
+        $types = outPut_Type_Production::get('type');
         return response()->json($types, 200);
     }
 
@@ -287,52 +310,78 @@ class SellingPortController extends Controller
         return response()->json(["status" => true, "message" => "تم إضافة التقييم"]);
     }
 
-        //////////////////////  users profile and editiona /////////////////////
-        public function displayMyProfile(Request $request)
-        {
-            $user = SellingPort::find($request->user()->id);
-            $myProfileData = [
-                'username' => $user->username,
-                'name' => $user->name,
-                'type' => $user->type,
-                'owner' => $user->owner,
-                'location' => $user->location,
-                'mobile_number' => $user->mobile_number,
-                'password' =>  decrypt($user->password)
-            ];
-    
-            return response()->json($myProfileData);
+    //////////////////////  users profile and editiona /////////////////////
+    public function displayMyProfile(Request $request)
+    {
+        $user = SellingPort::find($request->user()->id);
+        $myProfileData = [
+            'username' => $user->username,
+            'name' => $user->name,
+            'type' => $user->type,
+            'owner' => $user->owner,
+            'location' => $user->location,
+            'mobile_number' => $user->mobile_number,
+            'password' => decrypt($user->password)
+        ];
+
+        return response()->json($myProfileData);
+    }
+
+    public function editMyProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'type' => 'required',
+            'owner' => 'required',
+            'location' => 'required',
+            'mobile_number' => 'required',
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->all()]);
         }
-    
-        public function editMyProfile(Request $request)
-        {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'type' => 'required',
-                'owner' => 'required',
-                'location' => 'required',
-                'mobile_number' => 'required',
-                'username' => 'required',
-                'password' =>  'required'
-            ]);
-    
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()->all()]);
-            }
-            $user = SellingPort::find($request->user()->id);
-         
-            $user->update([
-                'name' => $request->name,
-                'type' => $request->type,
-                'owner' => $request->owner,
-                'location' => $request->location,
-                'mobile_number' => $request->mobile_number,
-                'username' => $request->username,
-                'password' =>  encrypt($request->password)
-            ]);
-            return response()->json(["status"=>true, "message"=>"تم تعديل بياناتك بنجاح"]);
-        }
-    
-    
+        $user = SellingPort::find($request->user()->id);
+
+        $user->update([
+            'name' => $request->name,
+            'type' => $request->type,
+            'owner' => $request->owner,
+            'location' => $request->location,
+            'mobile_number' => $request->mobile_number,
+            'username' => $request->username,
+            'password' => encrypt($request->password)
+        ]);
+        return response()->json(["status" => true, "message" => "تم تعديل بياناتك بنجاح"]);
+    }
+
+    //////////////  NOTIFICATION PART //////////////////
+    public function displaySellingPortNotification(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'selling-port-channel'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+    }
+
+    public function displaySellingPortNotificationSwitchState(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'selling-port-channel'],
+            ['is_seen', '=', 0],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        Notification::where([
+            ['channel', '=', 'selling-port-channel'],
+            ['is_seen', '=', 0],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
+
+
 
 }

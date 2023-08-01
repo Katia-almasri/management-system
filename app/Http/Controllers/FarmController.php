@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddOfferNotif;
+use App\Models\Notification;
 use App\Models\RegisterFarmRequestNotif;
 use Illuminate\Http\Request;
 use App\Traits\validationTrait;
@@ -177,8 +178,20 @@ class FarmController extends Controller
         $findRequestFarm = Farm::where([['id', '=', $farmId]])
             ->update(array('approved_at' => Carbon::now()->toDateTimeString()));
 
-        //UPDATE THE is_read IN REGISTER FARM REQUEST TO read
-        $RegisterFarmRequestNotif = RegisterFarmRequestNotif::where('from', '=', $farmId)->update(['is_read' => 1]);
+       //send notification to the farm that it is now in the app
+       $data = $this->notificationService->makeNotification(
+        'farm-channel',
+        'App\\Events\\farmNotification',
+        'تم قبولك في تطبيق المصري للدواجن',
+        '',
+        $request->user()->id,
+        '',
+        0,
+        'مدير المشتريات والمبيعات',
+        ''
+    );
+
+    $this->notificationService->farmNotification($data);
         return response()->json(["status" => true, "message" => "تمت الموافقة على حساب المزرعة"]);
     }
 
@@ -238,7 +251,7 @@ class FarmController extends Controller
 
     public function displayRowMaterial(Request $request)
     {
-        $rowMaterial = RowMaterial::pluck('name');
+        $rowMaterial = RowMaterial::get('name');
         return response()->json($rowMaterial, 200);
     }
     public function displayDetailOffer(Request $request, $offer_id)
@@ -294,6 +307,32 @@ class FarmController extends Controller
         ]);
         return response()->json(["status"=>true, "message"=>"تم تعديل بياناتك بنجاح"]);
     }
+
+    ///////////////////  NOTIFICATIN PART //////////////////
+    public function displayFarmNotification(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'farm-channel'],
+            ['is_seen', '=', 0]
+        ])->orderBy('created_at', 'DESC')->get();
+        $notificationsCount = $notifications->count();
+        return response()->json(['notifications' => $notifications, 'notificationsCount' => $notificationsCount]);
+    }
+
+    public function displayFarmNotificationSwitchState(Request $request)
+    {
+        $notifications = Notification::where([
+            ['channel', '=', 'farm-channel'],
+            ['is_seen', '=', 0],
+        ])->orderBy('created_at', 'DESC')->get();
+
+        Notification::where([
+            ['channel', '=', 'farm-channel'],
+            ['is_seen', '=', 0],
+        ])->update(['is_seen' => 1]);
+        return response()->json($notifications);
+    }
+
 
 
 

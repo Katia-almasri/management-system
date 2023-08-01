@@ -22,6 +22,11 @@ Route::group( ['middleware' => ['auth:selling-port-api', 'check-scope-selling-po
         ///////////// profiles and editions ////////////////////
         Route::get('display-my-profile',[SellingPortController::class, 'displayMyProfile']);
         Route::post('edit-my-profile',[SellingPortController::class, 'editMyProfile']);
+
+        /////////////// NOTIFICATION PART //////////////////
+        Route::get('display-selling-port-notification',[SellingPortController::class, 'displaySellingPortNotification']);
+        Route::get('display-selling-port-notification-switch-state',[SellingPortController::class, 'displaySellingPortNotificationSwitchState']);
+        
         
 });
 
