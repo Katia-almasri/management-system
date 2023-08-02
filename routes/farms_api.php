@@ -22,13 +22,13 @@ Route::group( ['middleware' => ['auth:farms-api', 'check-scope-farms', 'scopes:f
     Route::get('display-my-profile',[FarmController::class, 'displayMyProfile']);
     //edit profile info
     Route::post('edit-my-profile',[FarmController::class, 'editMyProfile']);
-    
+
     //////////////// NOTIFICATION PART ////////////////////
     Route::get('display-farm-notification',[FarmController::class, 'displayFarmNotification']);
 
     Route::get('display-farm-notification-switch-state',[FarmController::class, 'displayFarmNotificationSwitchState']);
-    
-    
+
+    Route::get('display-sales-request/{offerId}',[FarmController::class, 'displaySalesRequest']);
 
 
 });

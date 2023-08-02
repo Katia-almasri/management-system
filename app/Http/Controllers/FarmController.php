@@ -147,7 +147,7 @@ class FarmController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
@@ -242,6 +242,13 @@ class FarmController extends Controller
         $displayOffer = PurchaseOffer::with('detailpurchaseOrders')->where('farm_id', $request->user()->id)->orderBy('id', 'DESC')->get();
         return response()->json($displayOffer, 200);
     }
+
+
+    public function displaySalesRequest(Request $request , $offerId){
+        $displaySales = PurchaseOffer::with('requestSales.salesPurchasingRequsetDetail')->where('id',$offerId)->get();
+        return response()->json($displaySales, 200);
+    }
+
     public function deleteOffer(Request $request, $offerId)
     {
         PurchaseOffer::find($offerId)->delete();
