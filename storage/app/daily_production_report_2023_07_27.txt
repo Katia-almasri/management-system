@@ -1,0 +1,1 @@
+[{"inputProduction":[]},{"outputSlaughter":[]},{"totWeightOutputSlaughter":[]},{"outputCutting":[]},{"totWeightOutputCutting":[]},{"outputManufacturing":[]},{"totWeightOutputManufactoring":[]},{"doneCommands":[]},{"nonDoneCommands":[]}]
