@@ -239,13 +239,26 @@ class FarmController extends Controller
 
     public function displayMyOffers(Request $request)
     {
-        $displayOffer = PurchaseOffer::with('detailpurchaseOrders')->where('farm_id', $request->user()->id)->orderBy('id', 'DESC')->get();
-        return response()->json($displayOffer, 200);
+        $PurchaseOffer = PurchaseOffer::with('detailpurchaseOrders')->where('farm_id', $request->user()->id)->orderBy('id', 'DESC')->get();
+        $totalPrice = 0;
+        foreach($PurchaseOffer as $_PurchaseOffer){
+            $detailPurchaseOffer = $_PurchaseOffer["detailpurchaseOrders"];
+            foreach($detailPurchaseOffer as $_detailPurchaseOffer){
+                $priceForType = $_detailPurchaseOffer->price * $_detailPurchaseOffer->amount;
+                $_detailPurchaseOffer->PriceForOffer = $priceForType;
+                $totalPrice += $priceForType;
+            }
+
+        $_PurchaseOffer->priceForTotalOffer = $totalPrice;
+        $totalPrice = 0;
+        }
+        return response()->json($PurchaseOffer, 200);
     }
 
 
     public function displaySalesRequest(Request $request , $offerId){
         $displaySales = PurchaseOffer::with('requestSales.salesPurchasingRequsetDetail')->where('id',$offerId)->get();
+
         return response()->json($displaySales, 200);
     }
 
@@ -342,6 +355,15 @@ class FarmController extends Controller
 
 
 
+    public function t(Request $request){
+        $t = Farm::where(function ($query)  {
+            $query->where('location','حمص')
+            ->orWhere([['id', '=', 2],['name','نافع الحبال']]);
+        })->get();
 
+
+        return response()->json($t);
+
+    }
 
 }

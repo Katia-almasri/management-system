@@ -163,13 +163,15 @@ Route::group( ['middleware' => ['auth:managers-api', 'check-scope-managers', 'sc
 
         //استعراض إشعارات إخراج من المخزن بنجاح
         Route::get('display-done-sales-command-notification',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotification']);
-        
+
         //استعراض إشعارات إخراج من المخزن بنجاح مع تغيير الحالة
         Route::get('display-done-sales-command-notification-switch-state',[SalesPurchasingRequestController::class, 'displayDoneSalesCommandNotificationSwitchState']);
 
 
         //////////////////// DAILY REPORT //////////////////////////
         Route::get('read-daily-sales-report',[SalesPurchasingRequestController::class, 'readDailySalesReport']);
+
+        Route::get('t',[FarmController::class, 't']);
 
     });
 
