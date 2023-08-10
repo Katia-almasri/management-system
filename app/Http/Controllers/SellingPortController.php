@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Notification;
 use App\Models\RegisterSellingPortRequestNotif;
 use App\Models\RequestToCompanyNotif;
@@ -156,8 +156,12 @@ class SellingPortController extends Controller
     //عرض طلبات منفذي
     public function displayMySellingPortRequest(Request $request)
     {
-        $SellingPortRequest = salesPurchasingRequset::with('salesPurchasingRequsetDetail', 'rating')
-            ->where('selling_port_id', $request->user()->id)->orderBy('id', 'DESC')->get();
+        $SellingPortRequest =
+        salesPurchasingRequset::
+        select("*")
+        ->join('ratings','sales_purchasing_requests.id','=','ratings.request_sales_id')
+        ->where('selling_port_id', $request->user()->id)
+        ->with('salesPurchasingRequsetDetail')->get();
 
         return response()->json($SellingPortRequest, 200);
     }
@@ -209,7 +213,7 @@ class SellingPortController extends Controller
         );
 
         $this->notificationService->salesNotification($data);
-        
+
         ////////////////// SEND THE NOTIFICATION /////////////////////////
 
         return response()->json(["status" => true, "message" => "تم إضافة الطلب بنجاح"]);
