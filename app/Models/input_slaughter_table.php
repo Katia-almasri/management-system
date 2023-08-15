@@ -51,4 +51,6 @@ class input_slaughter_table extends Model
          return $date;
      }
 
+     
+
 }
