@@ -11,6 +11,8 @@ use App\Http\Controllers\CuttingController;
 use App\Http\Controllers\ManufacturingController;
 use App\Http\Controllers\WarehouseController;
 
+
+Route::get('drop-down-get-governates',[Controller::class, 'getGovernateDropDown']);
 Route::post('login', [Controller::class, 'Login'])->name('Login');
 Route::get('display-warehouse-content', [Controller::class, 'displayWarehouseContent']);
 
@@ -46,7 +48,6 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     Route::get('drop-down-from-det1',[Controller::class, 'dropDownFromDet1']);
     Route::get('drop-down-from-det2',[Controller::class, 'dropDownFromDet2']);
     Route::get('drop-down-from-det3',[Controller::class, 'dropDownFromDet3']);
-    Route::get('drop-down-get-governates',[Controller::class, 'getGovernateDropDown']);
     Route::get('drop-down-from-lakes', [Controller::class, 'dropDownFromLake']);
     Route::get('drop-down-from-zero', [Controller::class, 'dropDownFromZero']);
     Route::get('drop-down-from-manufactoring', [Controller::class, 'dropDownFromManufactoring']);
@@ -54,7 +55,6 @@ Route::group(['middleware' => ['auth:managers-api']], function () {
     Route::get('drop-down-from-det1', [Controller::class, 'dropDownFromDet1']);
     Route::get('drop-down-from-det2', [Controller::class, 'dropDownFromDet2']);
     Route::get('drop-down-from-det3', [Controller::class, 'dropDownFromDet3']);
-    Route::get('drop-down-get-governates', [Controller::class, 'getGovernateDropDown']);
 
 
     ////////////////////عرض خرج الذبح////////////////////////
