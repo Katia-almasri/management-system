@@ -116,13 +116,13 @@ class SalesPurchasingRequestController extends Controller
         $findRecuest = salesPurchasingRequset::where([['accept_by_ceo', '=', 1], ['accept_by_sales', '=', 1], ['id', '=', $RequestId]])
             ->update(['command' => 1]);
         $find = salesPurchasingRequset::find($RequestId);
-        
+
         $data = $this->notificationService->makeNotification(
             'mechanism-channel',
             'App\\Events\\addStartCommandNotif',
             'أمر جديد لمنسق حركة الآليات',
             'http://127.0.0.1:8000//sales-api//command-for-mechanism//2',
-            $RequestId, 
+            $RequestId,
             $RequestId . ' تم إعطاء أمر جديد للشحنة',
             $find->total_amount,
             0,
@@ -142,7 +142,7 @@ class SalesPurchasingRequestController extends Controller
             $commandSales->sales_request_id = $RequestId;
             $commandSales->done = 0;
             $commandSales->save();
-    
+
             //now the details for this command
             $salesPurchaseRequestDetails = salesPurchasingRequsetDetail::where('requset_id', $RequestId)->get();
             foreach ($salesPurchaseRequestDetails as $_sales_details) {
@@ -154,7 +154,7 @@ class SalesPurchasingRequestController extends Controller
                 $commandSalesDetail->to = 'المبيع';
                 $commandSalesDetail->save();
             }
-    
+
             //send notification to warehouse coordinator
             $data = $this->notificationService->makeNotification(
                 'warehouse-channel',
@@ -167,7 +167,7 @@ class SalesPurchasingRequestController extends Controller
                 'مدير المشتريات والمبيعات',
                 ''
             );
-    
+
             $this->notificationService->warehouNotification($data);
 
             $data = $this->notificationService->makeNotification(
@@ -181,12 +181,12 @@ class SalesPurchasingRequestController extends Controller
                 'مدير المشتريات والمبيعات',
                 ''
             );
-    
+
             $this->notificationService->addStartCommandNotif($data);
 
            DB::commit();
             return response()->json(["status" => true, "message" => " تم اعطاء الامر لمنسق حركة الاليات ولمشرف المخازن"]);
-    
+
         } catch (\Exception $ex) {
             DB::rollBack();
             return response()->json(["status" => false, "message" => $ex->getMessage()]);
@@ -233,9 +233,9 @@ class SalesPurchasingRequestController extends Controller
                 $find->total_amount,
                 $fromName,
                 ''
-    
+
             );
-    
+
             $this->notificationService->sellingPortNotification($data);
         }
         if ($find->request_type == 0) {
@@ -253,9 +253,9 @@ class SalesPurchasingRequestController extends Controller
                 $find->total_amount,
                 $fromName,
                 ''
-    
+
             );
-    
+
             $this->notificationService->farmNotification($data);
         }
 
@@ -304,10 +304,10 @@ class SalesPurchasingRequestController extends Controller
                 $find->total_amount,
                 $fromName,
                 $find->reason_refuse_by_ceo
-    
+
             );
             $this->notificationService->sellingPortNotification($data);
-    
+
         }
         if ($find->request_type == 0) {
             //farm
@@ -324,7 +324,7 @@ class SalesPurchasingRequestController extends Controller
                 $find->total_amount,
                 $fromName,
                 $find->reason_refuse_by_ceo
-    
+
             );
             $this->notificationService->farmNotification($data);
 
@@ -585,6 +585,19 @@ class SalesPurchasingRequestController extends Controller
     {
         $requests = salesPurchasingRequset::with('sellingPort', 'farm', 'salesPurchasingRequsetDetail')
             ->where([['accept_by_ceo', '=', 1]])->orderBy('id', 'DESC')->get();
+            // return response()->json($requests, 200);
+            $totalPrice = 0;
+            foreach($requests as $_requests){
+                $detailrequests = $_requests["salesPurchasingRequsetDetail"];
+                foreach($detailrequests as $_detailrequests){
+                    $priceForType = $_detailrequests->price * $_detailrequests->amount;
+                    // $_detailrequests->PriceAll = $priceForType;
+                    $totalPrice += $priceForType;
+                }
+
+            $_requests->PriceAll = $totalPrice;
+            $totalPrice = 0;
+            }
         return response()->json($requests, 200);
     }
 
@@ -782,7 +795,7 @@ class SalesPurchasingRequestController extends Controller
         }
         return response()->json(["status" => false, "data" => null, "message" => "لم يتم توليد التقرير لهذا اليوم بعد"]);
     }
-    
+
 
 
 }
