@@ -39,7 +39,8 @@ class FarmController extends Controller
     public function displayPurchaseOffers(Request $request)
     {
         $offer_id = salesPurchasingRequset::pluck('offer_id');
-        $PurchaseOffer = PurchaseOffer::doesnthave('requestSales')->with('detailpurchaseOrders', 'farm')->orderBy('id', 'DESC')->get();
+        $PurchaseOffer = PurchaseOffer::doesnthave('requestSales')->with('detailpurchaseOrders', 'farm')
+        ->whereDate('created_at', Carbon::today())->orderBy('id', 'DESC')->get();
 
         $totalPrice = 0;
         foreach($PurchaseOffer as $_PurchaseOffer){
@@ -257,8 +258,18 @@ class FarmController extends Controller
 
 
     public function displaySalesRequest(Request $request , $offerId){
-        $displaySales = PurchaseOffer::with('requestSales.salesPurchasingRequsetDetail')->where('id',$offerId)->get();
+    $displaySales = salesPurchasingRequset::with('salesPurchasingRequsetDetail')->where('offer_id',$offerId)->get();
+        $totalPrice = 0;
+        foreach($displaySales as $_displaySales){
+            $detaildisplaySales = $_displaySales["salesPurchasingRequsetDetail"];
+            foreach($detaildisplaySales as $_detaildisplaySales){
+                $priceForType = $_detaildisplaySales->price * $_detaildisplaySales->amount;
+                $totalPrice += $priceForType;
+            }
 
+        $_displaySales->priceAll = $totalPrice;
+        $totalPrice = 0;
+        }
         return response()->json($displaySales, 200);
     }
 
