@@ -355,12 +355,12 @@ class WarehouseController extends Controller
                     'مشرف التصنيع',
                     ''
                 );
-    
+
                 $this->notificationService->productionNotification($data);
 
             }
             //send notification to production manager and the supervisor
-            
+
             DB::commit();
             return response()->json(["status" => true, "message" => $message]);
         } catch (\Exception $exception) {
@@ -1108,41 +1108,41 @@ class WarehouseController extends Controller
 
         $lake = "البحرات";
         $lakeMovement = Lake::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
         $zero = "الصفري";
                     $ZeroMovement = ZeroFrige::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
         $DetonatorFrige1 = "الصواعق 1";
                     $DetonatorFrige1Movement = DetonatorFrige1::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
 
                     $DetonatorFrige2 = "الصواعق 2";
                     $DetonatorFrige2Movement = DetonatorFrige2::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
 
                     $DetonatorFrige3 = "الصواعق 3";
                     $DetonatorFrige3Movement = DetonatorFrige3::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
 
                     $Store = "المخزن النهائي";
                     $StoreMovement = Store::select(DB::raw("sum(weight) as sum"))
-                    ->whereYear('created_at', date('Y'))
-                    ->groupBy(DB::raw("YEAR(created_at)"))
+                    ->whereYear('updated_at', date('Y'))
+                    ->groupBy(DB::raw("YEAR(updated_at)"))
                     ->orderBy('id','ASC')
                     ->pluck('sum')->first();
 
