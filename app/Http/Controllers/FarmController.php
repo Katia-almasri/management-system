@@ -258,18 +258,8 @@ class FarmController extends Controller
 
 
     public function displaySalesRequest(Request $request , $offerId){
-    $displaySales = salesPurchasingRequset::with('salesPurchasingRequsetDetail')->where('offer_id',$offerId)->get();
-        $totalPrice = 0;
-        foreach($displaySales as $_displaySales){
-            $detaildisplaySales = $_displaySales["salesPurchasingRequsetDetail"];
-            foreach($detaildisplaySales as $_detaildisplaySales){
-                $priceForType = $_detaildisplaySales->price * $_detaildisplaySales->amount;
-                $totalPrice += $priceForType;
-            }
+        $displaySales = PurchaseOffer::with('requestSales.salesPurchasingRequsetDetail')->where('id',$offerId)->get();
 
-        $_displaySales->priceAll = $totalPrice;
-        $totalPrice = 0;
-        }
         return response()->json($displaySales, 200);
     }
 

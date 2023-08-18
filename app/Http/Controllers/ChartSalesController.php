@@ -65,7 +65,7 @@ class ChartSalesController extends Controller
                     ->whereYear('created_at', date('Y'))
                     ->where([['request_type',0],['accept_by_sales',1],['accept_by_ceo',1]])
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('id','Desc')
+                    ->orderBy('id','ASC')
                     ->pluck('count', 'month_name');
         $labels = $CountPurchase->keys();
         $data = $CountPurchase->values();
