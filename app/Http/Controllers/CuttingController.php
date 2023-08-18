@@ -36,7 +36,7 @@ class CuttingController extends Controller
 
     public function displayInputCutting(Request $request)
     {
-        $input = InputCutting::with('output_types')->get();
+        $input = InputCutting::with('output_types')->orderBy('id', 'DESC')->get();
         return response()->json($input, 200);
     }
 
@@ -61,12 +61,14 @@ class CuttingController extends Controller
     public function addOutputCutting(Request $request, $type_id)
     {
         $output = new output_cutting();
-        // $output->production_date = $request->production_date;
         $output->save();
+
+
         $findInput = InputCutting::where([['type_id', $type_id],['output_citting_id',null]])
             ->update(['output_citting_id' => $output->id]);
 
             $totalWeightProduction = 0;
+
         foreach ($request->details as $_detail) {
             $outputDetail = new output_cutting_detail();
             $outputDetail->weight = $_detail['weight'];
@@ -128,7 +130,7 @@ class CuttingController extends Controller
             output_cutting::where('id',$output->id)->update(['wastage'=>$wastage]);
 
             $notification = null;
-            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){    
+            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){
                $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
 
             }
@@ -168,7 +170,7 @@ class CuttingController extends Controller
                     'مشرف التقطيع',
                     ''
                 );
-    
+
                 $this->notificationService->manufactoringNotification($data);
 
                 $data = $this->notificationService->makeNotification(
@@ -182,7 +184,7 @@ class CuttingController extends Controller
                     'مشرف التقطيع',
                     ''
                 );
-    
+
                 $this->notificationService->productionNotification($data);
             }
 
@@ -199,7 +201,7 @@ class CuttingController extends Controller
                     'مشرف التقطيع',
                     ''
                 );
-    
+
                 $this->notificationService->warehouNotification($data);
 
                 $data = $this->notificationService->makeNotification(
@@ -213,10 +215,10 @@ class CuttingController extends Controller
                     'مشرف التقطيع',
                     ''
                 );
-    
+
                 $this->notificationService->productionNotification($data);
             }
-            
+
             DB::commit();
             return response()->json(["status" => true, "message" => $result['message']]);
         } catch (\Exception $exception) {

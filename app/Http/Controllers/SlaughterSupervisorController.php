@@ -34,7 +34,8 @@ class SlaughterSupervisorController extends Controller
         $this->notificationService  = new notificationServices();
     }
     public function displayInputSlaughters(request $request){
-        $InputSlaughters = input_slaughter_table::where('output_date',null)->get();
+        $InputSlaughters = input_slaughter_table::where('output_date',null)
+        ->orderBy('created_at', 'DESC')->get();
         return response()->json($InputSlaughters, 200);
     }
 
@@ -144,7 +145,7 @@ class SlaughterSupervisorController extends Controller
             $wastage = $totalWeightInput - ($totalWeightProduction + $totalWeightRemnat);
             outPut_SlaughterSupervisor_table::where('id',$output->id)->update(['wastage'=>$wastage]);
             $notification = null;
-            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){    
+            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){
                $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
 
             }

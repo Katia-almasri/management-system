@@ -114,7 +114,7 @@ class LibraController extends Controller
     {
         $PoultryReceiptDetections = PoultryReceiptDetection::with([
             'PoultryReceiptDetectionDetails.rowMaterial','farm'
-        ])->orderBy('id', 'DESC')->get();
+        ])->orderBy('id', 'Asc')->get();
         return response()->json($PoultryReceiptDetections);
     }
 

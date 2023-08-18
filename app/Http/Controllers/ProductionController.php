@@ -260,7 +260,7 @@ class ProductionController extends Controller
         $inputProduction = input_slaughter_table::select(DB::raw("SUM(weight) as sum"), DB::raw("MONTHNAME(created_at) as month_name"))
         ->whereYear('created_at', date('Y'))
         ->groupBy(DB::raw("month_name"))
-        ->orderBy('id','Desc')
+        ->orderBy('id','ASC')
         ->pluck('sum', 'month_name');
 
         $labels = $inputProduction->keys();
@@ -277,7 +277,7 @@ class ProductionController extends Controller
         ->join('output_slaughtersupervisors_details','output_slaughtersupervisors_details.output_id','=','output_slaughtersupervisors.id')
         ->whereYear('output_slaughtersupervisors.created_at', date('Y'))
         ->groupBy(DB::raw("month_name"))
-        ->orderBy('output_slaughtersupervisors.id','Desc')
+        ->orderBy('output_slaughtersupervisors.id','ASC')
         ->pluck('sum', 'month_name');
         $labels = $outputSlaughter->keys();
         $data = $outputSlaughter->values();
@@ -293,7 +293,7 @@ class ProductionController extends Controller
         ->join('output_cutting_details','output_cutting_details.output_cutting_id','=','output_cuttings.id')
         ->whereYear('output_cuttings.created_at', date('Y'))
         ->groupBy(DB::raw("month_name"))
-        ->orderBy('output_cuttings.id','Desc')
+        ->orderBy('output_cuttings.id','ASC')
         ->pluck('sum', 'month_name');
         $labels = $outputCutting->keys();
         $data = $outputCutting->values();
@@ -308,7 +308,7 @@ class ProductionController extends Controller
         ->join('output_manufacturing_details','output_manufacturing_details.output_manufacturing_id','=','output_manufacturings.id')
         ->whereYear('output_manufacturings.created_at', date('Y'))
         ->groupBy(DB::raw("month_name"))
-        ->orderBy('output_manufacturings.id','Desc')
+        ->orderBy('output_manufacturings.id','ASC')
         ->pluck('sum', 'month_name');
         //  return response()->json($outputManufacturing, 200);
         $labels = $outputManufacturing->keys();
@@ -326,21 +326,21 @@ class ProductionController extends Controller
         ->whereMonth('output_cutting_details.created_at', Carbon::now()->month)
         ->groupBy('type')
         ->orderBy('sum','desc')
-        ->limit(5)->get('sum','type');
+        ->limit(3)->get('sum','type');
 
         $PerfectProductofManufacturing = OutputManufacturingDetails::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
         ->join('output_production_types','output_manufacturing_details.type_id','=','output_production_types.id')
         ->whereMonth('output_manufacturing_details.created_at', Carbon::now()->month)
         ->groupBy('type')
         ->orderBy('sum','desc')
-        ->limit(5)->get('sum','type');
+        ->limit(3)->get('sum','type');
 
         $PerfectProductofSlaughter = outPut_SlaughterSupervisor_detail::select(DB::raw("type") , DB::raw("SUM(weight) as sum"))
         ->join('output_production_types','output_slaughtersupervisors_details.type_id','=','output_production_types.id')
         ->whereMonth('output_slaughtersupervisors_details.created_at', Carbon::now()->month)
         ->groupBy('type')
         ->orderBy('sum','desc')
-        ->limit(5)->get('sum','type');
+        ->limit(3)->get('sum','type');
 
 
         $max = array($PerfectProductofCutting,$PerfectProductofManufacturing,$PerfectProductofSlaughter);

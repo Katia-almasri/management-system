@@ -38,7 +38,7 @@ class ManufacturingController extends Controller
 
     public function displayInputManufacturing(Request $request)
     {
-        $input = InputManufacturing::with('output_types')->get();
+        $input = InputManufacturing::with('output_types')->orderBy('id', 'deSC')->get();
         return response()->json($input, 200);
     }
 
@@ -128,7 +128,7 @@ class ManufacturingController extends Controller
             OutputManufacturing::where('id',$output->id)->update(['wastage'=>$wastage]);
 
             $notification = null;
-            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){    
+            if($wastage!=0 && $wastage > 0.05* $totalWeightInput){
                $notification =$wastage ." تجاوز الفقد الحد الأدنى بمقدار";
 
             }
@@ -277,5 +277,5 @@ class ManufacturingController extends Controller
 
     }
 
-    
+
 }

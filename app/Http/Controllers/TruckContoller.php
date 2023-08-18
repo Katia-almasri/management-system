@@ -36,6 +36,8 @@ class TruckContoller extends Controller
         $truck->truck_number = $request->truck_number;
         $truck->governorate_name = $request->governorate_name;
         $truck->storage_capacity = $request->storage_capacity;
+        $truck->oil_consumption = $request->oil_consumption;
+
         $truck->state = 'متاحة';
         $truck->save();
         return response()->json(["status" => true, "message" => "تم اضافة الشاحنة بنجاح"]);

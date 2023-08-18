@@ -229,7 +229,7 @@ class CEOController extends Controller
                     ->whereYear('sales_purchasing_requests.created_at', date('Y'))
                     ->where([['request_type',1],['accept_by_sales',1],['accept_by_ceo',1]])
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('sales_purchasing_requests.id','Desc')
+                    ->orderBy('sales_purchasing_requests.id','ASC')
                     ->pluck('sum', 'month_name');
         $labels = $AmountSales->keys();
         $data = $AmountSales->values();
@@ -246,7 +246,7 @@ class CEOController extends Controller
                     ->whereYear('sales_purchasing_requests.created_at', date('Y'))
                     ->where([['request_type',0],['accept_by_sales',1],['accept_by_ceo',1]])
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('sales_purchasing_requests.id','Desc')
+                    ->orderBy('sales_purchasing_requests.id','ASC')
                     ->pluck('sum', 'month_name');
         $labels = $AmountPurchase->keys();
         $data = $AmountPurchase->values();

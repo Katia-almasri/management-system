@@ -62,7 +62,7 @@ class ChartController extends Controller
         $Trips = Trip::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
                     ->whereYear('created_at', date('Y'))
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('id','desc')
+                    ->orderBy('id','ASC')
                     ->pluck('count', 'month_name');
         $labels = $Trips->keys();
         $data = $Trips->values();
@@ -102,7 +102,7 @@ class ChartController extends Controller
         $PoultryReceiptDetection = PoultryReceiptDetection::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
                     ->whereYear('created_at', date('Y'))
                     ->groupBy(DB::raw("month_name"))
-                    ->orderBy('id','desc')
+                    ->orderBy('id','asc')
                     ->pluck('count', 'month_name');
 
                     $labels = $PoultryReceiptDetection->keys();

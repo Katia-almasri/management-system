@@ -46,6 +46,7 @@ class productionServices
         } else if ($outputChoice == 'تصنيع') {
             $this->insertInInputManufacturing($type_id, $_detail['weight'], 'App\Models\output_cutting_detail', $output_cutting_detail);
         }
+
         return (["status" => true, "message" => "تمت عملية الإخراج  بنجاح"]);
     }
 
@@ -237,7 +238,7 @@ class productionServices
             ->groupBy('date')
             ->get();
         return (['totWeightOutputSlaughter' => $totWeightOutputSlaughter]);
-         
+
     }
 
     public function dailyOutputCutting()
@@ -259,7 +260,7 @@ class productionServices
             ->groupBy('date')
             ->get();
         return (['totWeightOutputCutting' => $totWeightOutputCutting]);
-         
+
     }
 
     public function dailyOutputManufacturing()
@@ -280,7 +281,7 @@ class productionServices
             ->groupBy('date')
             ->get();
         return (['totWeightOutputManufactoring' => $totWeightOutputManufactoring]);
-         
+
     }
 
 
