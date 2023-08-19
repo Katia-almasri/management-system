@@ -375,6 +375,7 @@ class SalesPurchasingRequestController extends Controller
 
         $findOffer = PurchaseOffer::find($offerId);
         $findOfferDet = DetailPurchaseOffer::where('purchase_offers_id', $offerId)->get()->first();
+
         //SAVE THE NEW OFFER
         $SalesPurchasingRequest = new salesPurchasingRequset();
         $SalesPurchasingRequest->purchasing_manager_id = $request->user()->id;
@@ -392,7 +393,8 @@ class SalesPurchasingRequestController extends Controller
             $salesPurchasingRequsetDetail->requset_id = $SalesPurchasingRequest->id;
             $salesPurchasingRequsetDetail->amount = $_detail['amount'];
             $salesPurchasingRequsetDetail->type = $_detail['type'];
-            $salesPurchasingRequsetDetail->price = $findOfferDet->price;
+            $findOfferDettYPE = DetailPurchaseOffer::where([['purchase_offers_id', $offerId],['type',$_detail['type']]])->get()->first();
+                $salesPurchasingRequsetDetail->price = $findOfferDettYPE->price;
             $salesPurchasingRequsetDetail->save();
         }
         //send notification to ceo
