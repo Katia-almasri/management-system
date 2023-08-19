@@ -132,7 +132,8 @@ class Controller extends BaseController
                 },
                 'weightAfterArrivalDetection' => function ($q) {
                     $q->with('weightAfterArrivalDetectionDetail');
-                }
+                },
+                'farm'
             ])
             ->get();
         //CHECK THE ROLE USER
